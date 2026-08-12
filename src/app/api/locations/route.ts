@@ -5,6 +5,7 @@ import { requireUserId } from "@/lib/session";
 import { getCurrentAQIByCoords, extractPollutants } from "@/lib/waqi";
 import { classifyRisk } from "@/lib/risk-engine";
 import { maybeStoreSnapshot } from "@/lib/snapshot";
+import { checkAndCreateAlerts } from "@/lib/alerts";
 
 export async function GET() {
   const userId = await requireUserId();
@@ -17,7 +18,15 @@ export async function GET() {
     locations.map(async (loc) => {
       try {
         const feed = await getCurrentAQIByCoords(loc.lat, loc.lng);
-        await maybeStoreSnapshot(loc._id.toString(), feed);
+        const locationId = loc._id.toString();
+        await maybeStoreSnapshot(locationId, feed);
+        await checkAndCreateAlerts({
+          userId,
+          locationId,
+          locationName: loc.name,
+          aqi: feed.aqi,
+          alertThreshold: loc.alertThreshold,
+        });
         return {
           ...loc,
           _id: loc._id.toString(),
