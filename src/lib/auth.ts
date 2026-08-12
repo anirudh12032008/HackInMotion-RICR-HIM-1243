@@ -34,10 +34,13 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.userId = user.id;
         token.healthProfile = user.healthProfile;
+      }
+      if (trigger === "update" && session?.healthProfile) {
+        token.healthProfile = session.healthProfile;
       }
       return token;
     },
