@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Reveal } from "@/components/motion/Reveal";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,7 +8,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <Link href="/" className="font-[family-name:var(--font-display)] text-lg italic">
           BreatheSafe
         </Link>
-        <div className="space-y-4">
+        <Reveal className="space-y-4">
           <h1 className="font-[family-name:var(--font-display)] text-4xl leading-tight text-balance">
             Breathe smarter.
             <br />
@@ -17,13 +18,13 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             Real-time air quality, personalized health guidance, and smart alerts —
             your personal air quality guardian.
           </p>
-        </div>
+        </Reveal>
         <p className="text-sm text-primary-foreground/60">
           &copy; {new Date().getFullYear()} BreatheSafe
         </p>
       </div>
       <div className="flex items-center justify-center p-6 sm:p-10">
-        <div className="w-full max-w-sm">{children}</div>
+        <Reveal className="w-full max-w-sm">{children}</Reveal>
       </div>
     </div>
   );

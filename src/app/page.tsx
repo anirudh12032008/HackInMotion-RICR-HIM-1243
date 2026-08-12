@@ -2,6 +2,8 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { QuickSearchTeaser } from "@/components/landing/QuickSearchTeaser";
 import { cn } from "@/lib/utils";
+import { Reveal } from "@/components/motion/Reveal";
+import { Magnetic } from "@/components/motion/Magnetic";
 
 const features = [
   {
@@ -62,7 +64,7 @@ export default function Home() {
 
       <main>
         <section className="mx-auto grid max-w-5xl gap-10 px-6 py-16 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-          <div>
+          <Reveal stagger>
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
               Air quality, made personal
             </p>
@@ -76,46 +78,56 @@ export default function Home() {
               act on today — for you, specifically, not the average person outside.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link href="/signup" className={cn(buttonVariants({ size: "lg" }))}>
-                Get started
-              </Link>
-              <a
-                href="#quick-search"
-                className={cn(buttonVariants({ size: "lg", variant: "outline" }))}
-              >
-                Check the air
-              </a>
+              <Magnetic>
+                <Link href="/signup" className={cn(buttonVariants({ size: "lg" }))}>
+                  Get started
+                </Link>
+              </Magnetic>
+              <Magnetic>
+                <a
+                  href="#quick-search"
+                  className={cn(buttonVariants({ size: "lg", variant: "outline" }))}
+                >
+                  Check the air
+                </a>
+              </Magnetic>
             </div>
-          </div>
+          </Reveal>
 
           <div id="quick-search" className="border-t border-border pt-6 lg:border-t-0 lg:border-l lg:pl-10 lg:pt-0">
-            <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              Try it now, no account needed
-            </p>
-            <QuickSearchTeaser />
+            <Reveal delay={0.2}>
+              <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                Try it now, no account needed
+              </p>
+              <QuickSearchTeaser />
+            </Reveal>
           </div>
         </section>
 
         <section className="border-t border-border">
           <div className="mx-auto max-w-5xl px-6 py-16">
-            <h2 className="font-[family-name:var(--font-display)] text-2xl">
-              Everything you need to breathe easier
-            </h2>
-            <dl className="mt-8 divide-y divide-border border-t border-border">
+            <Reveal>
+              <h2 className="font-[family-name:var(--font-display)] text-2xl">
+                Everything you need to breathe easier
+              </h2>
+            </Reveal>
+            <Reveal stagger className="mt-8 divide-y divide-border border-t border-border">
               {features.map((f) => (
                 <div key={f.title} className="grid gap-1 py-5 sm:grid-cols-[220px_1fr] sm:gap-6">
                   <dt className="font-medium">{f.title}</dt>
                   <dd className="text-sm text-muted-foreground">{f.description}</dd>
                 </div>
               ))}
-            </dl>
+            </Reveal>
           </div>
         </section>
 
         <section className="border-t border-border">
           <div className="mx-auto max-w-5xl px-6 py-16">
-            <h2 className="font-[family-name:var(--font-display)] text-2xl">How it works</h2>
-            <div className="mt-8 grid gap-8 sm:grid-cols-3">
+            <Reveal>
+              <h2 className="font-[family-name:var(--font-display)] text-2xl">How it works</h2>
+            </Reveal>
+            <Reveal stagger className="mt-8 grid gap-8 sm:grid-cols-3">
               {steps.map((s, i) => (
                 <div key={s.title}>
                   <span className="font-[family-name:var(--font-display)] text-3xl italic text-primary">
@@ -125,7 +137,7 @@ export default function Home() {
                   <p className="mt-1 text-sm text-muted-foreground">{s.description}</p>
                 </div>
               ))}
-            </div>
+            </Reveal>
           </div>
         </section>
       </main>
