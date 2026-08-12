@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, Loader2, CalendarCheck, AlertTriangle } from "lucide-react";
 import {
   LineChart,
@@ -13,6 +13,13 @@ import {
 } from "recharts";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,18 +27,29 @@ import { RiskBadge } from "@/components/aqi/RiskBadge";
 import { classifyRisk } from "@/lib/risk-engine";
 import { extractDailyForecast, getBestDay, hasUnhealthyDay, type ForecastDay } from "@/lib/forecast";
 
+interface SavedLocationOption {
+  _id: string;
+  name: string;
+  city?: string;
+}
+
 export function ForecastBoard() {
   const [query, setQuery] = useState("");
   const [city, setCity] = useState("");
   const [days, setDays] = useState<ForecastDay[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [savedLocations, setSavedLocations] = useState<SavedLocationOption[]>([]);
+  const [selectedSaved, setSelectedSaved] = useState("");
 
-  async function loadForecast(e?: React.FormEvent) {
-    e?.preventDefault();
-    const target = query.trim();
-    if (!target) return;
+  useEffect(() => {
+    fetch("/api/locations")
+      .then((res) => res.json())
+      .then((data) => setSavedLocations(data.locations ?? []))
+      .catch(() => setSavedLocations([]));
+  }, []);
 
+  async function fetchForecastFor(target: string) {
     setLoading(true);
     setError("");
     try {
@@ -48,25 +66,52 @@ export function ForecastBoard() {
     }
   }
 
+  function loadForecast(e: React.FormEvent) {
+    e.preventDefault();
+    if (query.trim()) fetchForecastFor(query.trim());
+  }
+
+  function loadSavedForecast(locationId: string) {
+    setSelectedSaved(locationId);
+    const loc = savedLocations.find((l) => l._id === locationId);
+    if (loc) fetchForecastFor(loc.city ?? loc.name);
+  }
+
   const bestDay = days ? getBestDay(days) : null;
   const unhealthyAhead = days ? hasUnhealthyDay(days) : false;
 
   return (
     <div className="space-y-6">
-      <form onSubmit={loadForecast} className="flex gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search a city for its forecast..."
-            className="pl-9"
-          />
-        </div>
-        <Button type="submit" disabled={loading}>
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Get forecast"}
-        </Button>
-      </form>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <form onSubmit={loadForecast} className="flex flex-1 gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search a city for its forecast..."
+              className="pl-9"
+            />
+          </div>
+          <Button type="submit" disabled={loading}>
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Get forecast"}
+          </Button>
+        </form>
+        {savedLocations.length > 0 && (
+          <Select value={selectedSaved} onValueChange={(v) => v && loadSavedForecast(v)}>
+            <SelectTrigger className="w-full sm:w-48">
+              <SelectValue placeholder="Or pick a saved location" />
+            </SelectTrigger>
+            <SelectContent>
+              {savedLocations.map((loc) => (
+                <SelectItem key={loc._id} value={loc._id}>
+                  {loc.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      </div>
 
       {error && (
         <Alert variant="destructive">
