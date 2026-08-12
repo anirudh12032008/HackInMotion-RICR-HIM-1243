@@ -21,13 +21,14 @@ export async function GET() {
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   await connectDB();
-  const user = await User.findById(userId).select("healthProfile name email");
+  const user = await User.findById(userId).select("healthProfile name email language");
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
   return NextResponse.json({
     name: user.name,
     email: user.email,
     healthProfile: user.healthProfile,
+    language: user.language,
   });
 }
 
@@ -54,4 +55,24 @@ export async function PUT(req: Request) {
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
   return NextResponse.json({ healthProfile: user.healthProfile });
+}
+
+const VALID_LANGUAGES = ["en", "hi"];
+
+export async function PATCH(req: Request) {
+  const userId = await requireUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { language } = await req.json();
+  if (!VALID_LANGUAGES.includes(language)) {
+    return NextResponse.json({ error: "Unsupported language" }, { status: 400 });
+  }
+
+  await connectDB();
+  const user = await User.findByIdAndUpdate(userId, { $set: { language } }, { new: true }).select(
+    "language"
+  );
+  if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+
+  return NextResponse.json({ language: user.language });
 }

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, Bell, LogOut } from "lucide-react";
+import { Menu, Bell, LogOut, Globe } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import { useTranslation, type Locale } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -24,11 +25,29 @@ import { SidebarNav } from "@/components/layout/Sidebar";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+const LOCALES: { value: Locale; label: string }[] = [
+  { value: "en", label: "English" },
+  { value: "hi", label: "हिन्दी" },
+];
+
 export function Navbar() {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  const { locale, setLocale, t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [unreadAlerts, setUnreadAlerts] = useState(0);
   const initial = session?.user?.name?.[0]?.toUpperCase() ?? "U";
+
+  async function changeLocale(next: Locale) {
+    setLocale(next);
+    if (session) {
+      await fetch("/api/user/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ language: next }),
+      });
+      await update({ language: next });
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -69,6 +88,25 @@ export function Navbar() {
       </div>
 
       <div className="flex items-center gap-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+          >
+            <Globe className="h-4 w-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {LOCALES.map((l) => (
+              <DropdownMenuItem
+                key={l.value}
+                onClick={() => changeLocale(l.value)}
+                className={locale === l.value ? "font-medium text-primary" : ""}
+              >
+                {l.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <a href="/dashboard/alerts" className="relative">
           <Button variant="ghost" size="icon">
             <Bell className="h-5 w-5" />
@@ -90,11 +128,11 @@ export function Navbar() {
             <DropdownMenuLabel>{session?.user?.name ?? "Account"}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => (window.location.href = "/dashboard/profile")}>
-              Profile
+              {t("nav.profile")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
               <LogOut className="mr-2 h-4 w-4" />
-              Log out
+              {t("nav.logout")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
