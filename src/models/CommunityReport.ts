@@ -27,7 +27,13 @@ const CommunityReportSchema = new Schema(
   { timestamps: { createdAt: true, updatedAt: false } }
 );
 
-CommunityReportSchema.pre("validate", function (this: any) {
+interface CommunityReportDoc {
+  lat: number;
+  lng: number;
+  location?: { type: string; coordinates: number[] };
+}
+
+CommunityReportSchema.pre("validate", function (this: CommunityReportDoc) {
   if (this.lat !== undefined && this.lng !== undefined) {
     this.location = { type: "Point", coordinates: [this.lng, this.lat] };
   }
