@@ -3,20 +3,22 @@ import Link from "next/link";
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      <div className="hidden flex-col justify-between bg-gradient-to-br from-blue-600 via-blue-500 to-sky-400 p-10 text-white lg:flex">
-        <Link href="/" className="text-lg font-bold tracking-tight">
+      <div className="hidden flex-col justify-between bg-primary p-10 text-primary-foreground lg:flex">
+        <Link href="/" className="font-[family-name:var(--font-display)] text-lg italic">
           BreatheSafe
         </Link>
         <div className="space-y-4">
-          <h1 className="text-4xl font-bold tracking-tight text-balance">
-            Breathe smarter. Live safer.
+          <h1 className="font-[family-name:var(--font-display)] text-4xl leading-tight text-balance">
+            Breathe smarter.
+            <br />
+            Live safer.
           </h1>
-          <p className="max-w-md text-blue-50/90">
+          <p className="max-w-md text-sm text-primary-foreground/75">
             Real-time air quality, personalized health guidance, and smart alerts —
             your personal air quality guardian.
           </p>
         </div>
-        <p className="text-sm text-blue-50/70">
+        <p className="text-sm text-primary-foreground/60">
           &copy; {new Date().getFullYear()} BreatheSafe
         </p>
       </div>

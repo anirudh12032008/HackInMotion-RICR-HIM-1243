@@ -33,10 +33,13 @@ export function AQIGauge({ aqi, size = 160 }: { aqi: number; size?: number }) {
         />
       </svg>
       <div className="absolute flex flex-col items-center">
-        <span className="text-4xl font-bold" style={{ color: risk.color }}>
+        <span
+          className="font-[family-name:var(--font-display)] text-5xl"
+          style={{ color: risk.color }}
+        >
           {aqi}
         </span>
-        <span className="text-xs text-muted-foreground">AQI</span>
+        <span className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground">AQI</span>
       </div>
     </div>
   );

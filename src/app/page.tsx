@@ -1,141 +1,127 @@
 import Link from "next/link";
-import {
-  Activity,
-  Bell,
-  MapPin,
-  TrendingUp,
-  Users,
-  Wind,
-  Search,
-  ClipboardCheck,
-  ShieldCheck,
-} from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { QuickSearchTeaser } from "@/components/landing/QuickSearchTeaser";
 import { cn } from "@/lib/utils";
 
 const features = [
   {
-    icon: Wind,
     title: "Real-time AQI",
-    description: "Live air quality readings for any city, powered by the World Air Quality Index network.",
+    description: "Live readings for any city, sourced from the World Air Quality Index network.",
   },
   {
-    icon: ShieldCheck,
-    title: "Personal Risk Analysis",
-    description: "Guidance tailored to your health profile — asthma, COPD, pregnancy, and more.",
+    title: "Personal risk analysis",
+    description: "Guidance tuned to your health profile — asthma, COPD, pregnancy, and more.",
   },
   {
-    icon: MapPin,
-    title: "Saved Locations",
-    description: "Track home, work, and family locations at a glance from one dashboard.",
+    title: "Saved locations",
+    description: "Track home, work, and family at a glance from one dashboard.",
   },
   {
-    icon: TrendingUp,
-    title: "Historical Trends",
-    description: "See how air quality has changed over the last 7 or 30 days.",
+    title: "Historical trends",
+    description: "See how air quality has moved over the last 7 or 30 days.",
   },
   {
-    icon: Bell,
-    title: "Smart Alerts",
-    description: "Get notified the moment air quality crosses your personal threshold.",
+    title: "Smart alerts",
+    description: "Get notified the moment air quality crosses your threshold.",
   },
   {
-    icon: Users,
-    title: "Community Reports",
-    description: "Real people reporting smoke, burning, and industrial emissions nearby.",
+    title: "Community reports",
+    description: "Real people flagging smoke, burning, and industrial emissions nearby.",
   },
 ];
 
 const steps = [
   {
-    icon: Search,
-    title: "Search Location",
-    description: "Look up any city or use your current location.",
+    title: "Search a location",
+    description: "Look up any city, or use where you are right now.",
   },
   {
-    icon: ClipboardCheck,
-    title: "Get Risk Analysis",
-    description: "See a personalized breakdown based on your health profile.",
+    title: "Read the risk",
+    description: "See a breakdown built around your own health profile.",
   },
   {
-    icon: Activity,
-    title: "Take Action",
-    description: "Follow tailored guidance on masks, exercise, and ventilation.",
+    title: "Take action",
+    description: "Follow specific guidance on masks, exercise, and ventilation.",
   },
 ];
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-white dark:from-slate-950 dark:via-background dark:to-background">
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
-        <span className="text-lg font-bold tracking-tight">BreatheSafe</span>
+    <div className="min-h-screen bg-background">
+      <header className="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
+        <span className="font-[family-name:var(--font-display)] text-lg italic">BreatheSafe</span>
         <nav className="flex items-center gap-3">
           <Link href="/login" className={cn(buttonVariants({ variant: "ghost" }))}>
             Log in
           </Link>
           <Link href="/signup" className={cn(buttonVariants())}>
-            Get Started
+            Get started
           </Link>
         </nav>
       </header>
 
       <main>
-        <section className="mx-auto max-w-4xl px-6 py-16 text-center sm:py-24">
-          <h1 className="text-4xl font-bold tracking-tight text-balance sm:text-6xl">
-            Know What You&apos;re <span className="text-primary">Breathing</span>
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted-foreground">
-            BreatheSafe turns raw air quality data into guidance you can actually act on —
-            personalized to your health, your family, and your day.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/signup" className={cn(buttonVariants({ size: "lg" }))}>
-              Get Started
-            </Link>
-            <a href="#quick-search" className={cn(buttonVariants({ size: "lg", variant: "outline" }))}>
-              Check Air Quality
-            </a>
+        <section className="mx-auto grid max-w-5xl gap-10 px-6 py-16 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+              Air quality, made personal
+            </p>
+            <h1 className="mt-4 font-[family-name:var(--font-display)] text-5xl leading-[1.05] tracking-tight text-balance sm:text-6xl">
+              Know what
+              <br />
+              you&apos;re <em className="italic text-primary">breathing</em>.
+            </h1>
+            <p className="mt-6 max-w-md text-balance text-muted-foreground">
+              BreatheSafe turns a raw pollution number into guidance you can actually
+              act on today — for you, specifically, not the average person outside.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link href="/signup" className={cn(buttonVariants({ size: "lg" }))}>
+                Get started
+              </Link>
+              <a
+                href="#quick-search"
+                className={cn(buttonVariants({ size: "lg", variant: "outline" }))}
+              >
+                Check the air
+              </a>
+            </div>
           </div>
 
-          <div id="quick-search" className="mt-14">
+          <div id="quick-search" className="border-t border-border pt-6 lg:border-t-0 lg:border-l lg:pl-10 lg:pt-0">
+            <p className="mb-3 text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+              Try it now, no account needed
+            </p>
             <QuickSearchTeaser />
           </div>
         </section>
 
-        <section className="mx-auto max-w-6xl px-6 py-16">
-          <div className="mb-10 text-center">
-            <h2 className="text-3xl font-bold tracking-tight">Everything you need to breathe easier</h2>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f) => (
-              <div
-                key={f.title}
-                className="rounded-xl border bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
-              >
-                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <f.icon className="h-5 w-5" />
+        <section className="border-t border-border">
+          <div className="mx-auto max-w-5xl px-6 py-16">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl">
+              Everything you need to breathe easier
+            </h2>
+            <dl className="mt-8 divide-y divide-border border-t border-border">
+              {features.map((f) => (
+                <div key={f.title} className="grid gap-1 py-5 sm:grid-cols-[220px_1fr] sm:gap-6">
+                  <dt className="font-medium">{f.title}</dt>
+                  <dd className="text-sm text-muted-foreground">{f.description}</dd>
                 </div>
-                <h3 className="font-semibold">{f.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{f.description}</p>
-              </div>
-            ))}
+              ))}
+            </dl>
           </div>
         </section>
 
-        <section className="bg-secondary/40 py-16">
-          <div className="mx-auto max-w-4xl px-6">
-            <div className="mb-10 text-center">
-              <h2 className="text-3xl font-bold tracking-tight">How it works</h2>
-            </div>
-            <div className="grid gap-8 sm:grid-cols-3">
+        <section className="border-t border-border">
+          <div className="mx-auto max-w-5xl px-6 py-16">
+            <h2 className="font-[family-name:var(--font-display)] text-2xl">How it works</h2>
+            <div className="mt-8 grid gap-8 sm:grid-cols-3">
               {steps.map((s, i) => (
-                <div key={s.title} className="text-center">
-                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                    <s.icon className="h-5 w-5" />
-                  </div>
-                  <p className="text-xs font-semibold text-primary">STEP {i + 1}</p>
-                  <h3 className="mt-1 font-semibold">{s.title}</h3>
+                <div key={s.title}>
+                  <span className="font-[family-name:var(--font-display)] text-3xl italic text-primary">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="mt-3 font-medium">{s.title}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">{s.description}</p>
                 </div>
               ))}
@@ -144,8 +130,8 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-muted-foreground sm:flex-row">
+      <footer className="border-t border-border">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-muted-foreground sm:flex-row">
           <span>&copy; {new Date().getFullYear()} BreatheSafe</span>
           <div className="flex gap-6">
             <Link href="/login" className="hover:text-foreground">
