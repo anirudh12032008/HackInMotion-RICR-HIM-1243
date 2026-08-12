@@ -4,6 +4,7 @@ import Location from "@/models/Location";
 import { requireUserId } from "@/lib/session";
 import { getCurrentAQIByCoords, extractPollutants } from "@/lib/waqi";
 import { classifyRisk } from "@/lib/risk-engine";
+import { maybeStoreSnapshot } from "@/lib/snapshot";
 
 export async function GET() {
   const userId = await requireUserId();
@@ -16,6 +17,7 @@ export async function GET() {
     locations.map(async (loc) => {
       try {
         const feed = await getCurrentAQIByCoords(loc.lat, loc.lng);
+        await maybeStoreSnapshot(loc._id.toString(), feed);
         return {
           ...loc,
           _id: loc._id.toString(),
