@@ -24,7 +24,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         </p>
       </div>
       <div className="flex items-center justify-center p-6 sm:p-10">
-        <Reveal className="w-full max-w-sm">{children}</Reveal>
+        <div className="w-full max-w-sm">{children}</div>
       </div>
     </div>
   );

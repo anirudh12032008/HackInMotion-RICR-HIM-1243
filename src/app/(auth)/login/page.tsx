@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Reveal } from "@/components/motion/Reveal";
+import { Magnetic } from "@/components/motion/Magnetic";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -39,7 +41,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <Reveal stagger className="space-y-6">
       <div className="space-y-1">
         <h2 className="text-2xl font-bold tracking-tight">Welcome back</h2>
         <p className="text-sm text-muted-foreground">
@@ -76,9 +78,11 @@ export default function LoginPage() {
             placeholder="••••••••"
           />
         </div>
-        <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Logging in..." : "Log in"}
-        </Button>
+        <Magnetic>
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Logging in..." : "Log in"}
+          </Button>
+        </Magnetic>
       </form>
 
       <p className="text-center text-sm text-muted-foreground">
@@ -87,6 +91,6 @@ export default function LoginPage() {
           Sign up
         </Link>
       </p>
-    </div>
+    </Reveal>
   );
 }
