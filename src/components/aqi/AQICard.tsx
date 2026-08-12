@@ -1,0 +1,95 @@
+"use client";
+
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
+import { Bookmark, BookmarkCheck } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AQIGauge } from "@/components/aqi/AQIGauge";
+import { RiskBadge } from "@/components/aqi/RiskBadge";
+import { PollutantBreakdown } from "@/components/aqi/PollutantBreakdown";
+import { HealthGuidance } from "@/components/aqi/HealthGuidance";
+import type { AqiResult } from "@/components/dashboard/QuickSearch";
+import { UserHealthProfile } from "@/types/index";
+
+const DEFAULT_PROFILE: UserHealthProfile = {
+  conditions: [],
+  ageGroup: "adult",
+  activityLevel: "moderate",
+};
+
+export function AQICard({ result }: { result: AqiResult }) {
+  const { data: session } = useSession();
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const profile = session?.user?.healthProfile ?? DEFAULT_PROFILE;
+
+  async function saveLocation() {
+    setSaving(true);
+    try {
+      const res = await fetch("/api/locations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: result.city.name,
+          city: result.city.name,
+          lat: result.city.geo[0],
+          lng: result.city.geo[1],
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error ?? "Failed to save location");
+      }
+      setSaved(true);
+      toast.success(`${result.city.name} saved to your locations`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to save location");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex-row items-center justify-between space-y-0">
+        <div>
+          <CardTitle>{result.city.name}</CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Updated {new Date(result.updatedAt).toLocaleString()}
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={saveLocation} disabled={saving || saved}>
+          {saved ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
+          <span className="ml-1.5">{saved ? "Saved" : "Save location"}</span>
+        </Button>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+          <AQIGauge aqi={result.aqi} />
+          <div className="flex-1 space-y-2 text-center sm:text-left">
+            <RiskBadge aqi={result.aqi} />
+            <p className="text-sm text-muted-foreground">
+              Dominant pollutant:{" "}
+              <span className="font-medium text-foreground">
+                {result.dominantPollutant?.toUpperCase()}
+              </span>
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-sm font-semibold">Pollutant breakdown</h3>
+          <PollutantBreakdown pollutants={result.pollutants} />
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-sm font-semibold">Health guidance</h3>
+          <HealthGuidance aqi={result.aqi} profile={profile} />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
