@@ -29,7 +29,7 @@ const AQISnapshotSchema = new Schema({
   dominantPollutant: { type: String },
   pollutants: { type: PollutantsSchema, default: () => ({}) },
   forecast: [ForecastDaySchema],
-  source: { type: String, default: "waqi" },
+  source: { type: String, default: "google" },
 });
 
 AQISnapshotSchema.index({ locationId: 1, timestamp: -1 });

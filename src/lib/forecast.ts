@@ -8,10 +8,9 @@ export interface ForecastDay {
 }
 
 /**
- * WAQI's forecast.daily is keyed by pollutant (pm25, pm10, o3, ...). PM2.5 is
- * the most commonly dominant pollutant, so it doubles as an AQI proxy here.
- * ponytail: pm25-as-AQI proxy, swap for a proper multi-pollutant max if a future
- * feature needs per-pollutant forecast accuracy.
+ * `/api/aqi/current` groups Google's hourly AQI forecast into a
+ * `{daily:{pm25:[...]}}` shape (see groupForecastByDay in lib/google-aqi.ts)
+ * for backward compatibility with this original WAQI-shaped extractor.
  */
 export function extractDailyForecast(
   daily: Record<string, { avg: number; day: string; max: number; min: number }[]> | null | undefined
