@@ -67,21 +67,18 @@ export function QuickSearchTeaser() {
 
       {result && risk && (
         <div
-          className="mt-4 flex items-center justify-between rounded-xl border p-4 shadow-sm"
-          style={{ backgroundColor: risk.bgColor }}
+          className="mt-4 flex items-center justify-between rounded-lg border border-border px-5 py-4"
         >
           <div>
-            <p className="text-sm font-medium text-slate-700">{result.city.name}</p>
-            <p className="text-xs text-slate-600">{risk.label}</p>
+            <p className="text-sm font-medium">{result.city.name}</p>
+            <p className="text-xs text-muted-foreground">{risk.label}</p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl" aria-hidden>
-              {risk.emoji}
-            </span>
-            <span className="text-3xl font-bold" style={{ color: risk.color }}>
-              {result.aqi}
-            </span>
-          </div>
+          <span
+            className="font-[family-name:var(--font-display)] text-3xl"
+            style={{ color: risk.color }}
+          >
+            {result.aqi}
+          </span>
         </div>
       )}
 

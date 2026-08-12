@@ -4,29 +4,29 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.625rem;
 
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #f7f5f0;
+  --foreground: #14231e;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #14231e;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #2563eb;
-  --primary-foreground: #f8fafc;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #e0f2fe;
-  --accent-foreground: #0c4a6e;
-  --destructive: #ef4444;
+  --popover-foreground: #14231e;
+  --primary: #1f5f4e;
+  --primary-foreground: #f7f5f0;
+  --secondary: #eeece4;
+  --secondary-foreground: #14231e;
+  --muted: #eeece4;
+  --muted-foreground: #6b6558;
+  --accent: #e4ece7;
+  --accent-foreground: #1f5f4e;
+  --destructive: #b3432f;
   --destructive-foreground: #ffffff;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #2563eb;
+  --border: #e3e0d8;
+  --input: #e3e0d8;
+  --ring: #1f5f4e;
 
-  --chart-1: #2563eb;
+  --chart-1: #1f5f4e;
   --chart-2: #22c55e;
   --chart-3: #eab308;
   --chart-4: #f97316;
@@ -34,25 +34,25 @@
 }
 
 .dark {
-  --background: #0f172a;
-  --foreground: #e2e8f0;
-  --card: #1e293b;
-  --card-foreground: #e2e8f0;
-  --popover: #1e293b;
-  --popover-foreground: #e2e8f0;
-  --primary: #3b82f6;
-  --primary-foreground: #0f172a;
-  --secondary: #1e293b;
-  --secondary-foreground: #e2e8f0;
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
-  --accent: #1e3a5f;
-  --accent-foreground: #dbeafe;
-  --destructive: #f87171;
-  --destructive-foreground: #0f172a;
-  --border: #334155;
-  --input: #334155;
-  --ring: #3b82f6;
+  --background: #101613;
+  --foreground: #e7e4db;
+  --card: #17201c;
+  --card-foreground: #e7e4db;
+  --popover: #17201c;
+  --popover-foreground: #e7e4db;
+  --primary: #4b9c86;
+  --primary-foreground: #0c1512;
+  --secondary: #1c2622;
+  --secondary-foreground: #e7e4db;
+  --muted: #1c2622;
+  --muted-foreground: #9aa39d;
+  --accent: #1d2d27;
+  --accent-foreground: #7fc4b0;
+  --destructive: #d9694f;
+  --destructive-foreground: #0c1512;
+  --border: #2a332e;
+  --input: #2a332e;
+  --ring: #4b9c86;
 }
 
 @theme inline {
@@ -95,6 +95,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
 }
 
 @layer base {
