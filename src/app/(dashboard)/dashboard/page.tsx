@@ -5,6 +5,7 @@ import { QuickSearch, type AqiResult } from "@/components/dashboard/QuickSearch"
 import { AQICard } from "@/components/aqi/AQICard";
 import { SavedLocations } from "@/components/dashboard/SavedLocations";
 import { ProfilePrompt } from "@/components/dashboard/ProfilePrompt";
+import { Reveal } from "@/components/motion/Reveal";
 
 export default function DashboardPage() {
   const [result, setResult] = useState<AqiResult | null>(null);
@@ -16,7 +17,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8">
+    <Reveal stagger className="mx-auto max-w-5xl space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-sm text-muted-foreground">
@@ -34,6 +35,6 @@ export default function DashboardPage() {
         <h2 className="mb-3 text-lg font-semibold">Saved locations</h2>
         <SavedLocations refreshKey={refreshKey} />
       </div>
-    </div>
+    </Reveal>
   );
 }
