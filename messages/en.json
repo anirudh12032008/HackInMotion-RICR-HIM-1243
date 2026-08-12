@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "compare": "Compare",
+    "forecast": "Forecast",
+    "routePlanner": "Route Planner",
+    "community": "Community",
+    "alerts": "Alerts",
+    "profile": "Profile",
+    "login": "Log in",
+    "signup": "Sign up",
+    "logout": "Log out"
+  },
+  "risk": {
+    "good": "Good",
+    "moderate": "Moderate",
+    "unhealthy_sensitive": "Unhealthy for Sensitive Groups",
+    "unhealthy": "Unhealthy",
+    "very_unhealthy": "Very Unhealthy",
+    "hazardous": "Hazardous"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Search any city or use your location to check current air quality.",
+    "savedLocations": "Saved locations",
+    "noSavedLocations": "No saved locations yet",
+    "searchPlaceholder": "Search a city...",
+    "useMyLocation": "Use my location",
+    "saveLocation": "Save location",
+    "saved": "Saved"
+  },
+  "guidance": {
+    "title": "Health guidance",
+    "exercise": "Exercise",
+    "windows": "Windows",
+    "precautions": "Precautions for you",
+    "recommendations": "Recommendations"
+  },
+  "alertsPage": {
+    "title": "Alerts",
+    "subtitle": "Threshold, rapid-change, and forecast warnings for your saved locations.",
+    "markAllRead": "Mark all read",
+    "markRead": "Mark read",
+    "noAlerts": "No alerts yet"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "submit": "Submit"
+  }
+}
