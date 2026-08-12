@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "compare": "तुलना करें",
+    "forecast": "पूर्वानुमान",
+    "routePlanner": "मार्ग योजनाकार",
+    "community": "समुदाय",
+    "alerts": "अलर्ट",
+    "profile": "प्रोफ़ाइल",
+    "login": "लॉग इन करें",
+    "signup": "साइन अप करें",
+    "logout": "लॉग आउट"
+  },
+  "risk": {
+    "good": "अच्छा",
+    "moderate": "मध्यम",
+    "unhealthy_sensitive": "संवेदनशील समूहों के लिए अस्वस्थ",
+    "unhealthy": "अस्वस्थ",
+    "very_unhealthy": "बहुत अस्वस्थ",
+    "hazardous": "खतरनाक"
+  },
+  "dashboard": {
+    "title": "डैशबोर्ड",
+    "subtitle": "वर्तमान वायु गुणवत्ता जांचने के लिए कोई भी शहर खोजें या अपना स्थान उपयोग करें।",
+    "savedLocations": "सहेजे गए स्थान",
+    "noSavedLocations": "अभी तक कोई स्थान सहेजा नहीं गया",
+    "searchPlaceholder": "एक शहर खोजें...",
+    "useMyLocation": "मेरा स्थान उपयोग करें",
+    "saveLocation": "स्थान सहेजें",
+    "saved": "सहेजा गया"
+  },
+  "guidance": {
+    "title": "स्वास्थ्य मार्गदर्शन",
+    "exercise": "व्यायाम",
+    "windows": "खिड़कियाँ",
+    "precautions": "आपके लिए सावधानियाँ",
+    "recommendations": "सिफारिशें"
+  },
+  "alertsPage": {
+    "title": "अलर्ट",
+    "subtitle": "आपके सहेजे गए स्थानों के लिए सीमा, तीव्र-परिवर्तन और पूर्वानुमान चेतावनियाँ।",
+    "markAllRead": "सभी को पढ़ा हुआ चिह्नित करें",
+    "markRead": "पढ़ा हुआ चिह्नित करें",
+    "noAlerts": "अभी तक कोई अलर्ट नहीं"
+  },
+  "common": {
+    "loading": "लोड हो रहा है...",
+    "error": "कुछ गलत हो गया",
+    "retry": "पुनः प्रयास करें",
+    "cancel": "रद्द करें",
+    "submit": "सबमिट करें"
+  }
+}

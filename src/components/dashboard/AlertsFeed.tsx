@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AlertSeverity, AlertType } from "@/types/index";
+import { useTranslation } from "@/lib/i18n";
 
 interface AlertItem {
   _id: string;
@@ -41,6 +42,7 @@ const SEVERITY_COLOR: Record<AlertSeverity, string> = {
 };
 
 export function AlertsFeed() {
+  const { t } = useTranslation();
   const [alerts, setAlerts] = useState<AlertItem[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [severityFilter, setSeverityFilter] = useState<string>("all");
@@ -92,7 +94,7 @@ export function AlertsFeed() {
         </Select>
         <Button variant="outline" size="sm" onClick={markAllRead}>
           <CheckCheck className="mr-1.5 h-4 w-4" />
-          Mark all read
+          {t("alertsPage.markAllRead")}
         </Button>
       </div>
 
@@ -105,7 +107,7 @@ export function AlertsFeed() {
       ) : !alerts || alerts.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-12 text-center">
           <Bell className="mb-2 h-8 w-8 text-muted-foreground" />
-          <p className="text-sm font-medium">No alerts yet</p>
+          <p className="text-sm font-medium">{t("alertsPage.noAlerts")}</p>
           <p className="text-sm text-muted-foreground">
             We&apos;ll notify you when air quality crosses your thresholds.
           </p>
@@ -137,7 +139,7 @@ export function AlertsFeed() {
                 </div>
                 {!a.read && (
                   <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => markRead(a._id)}>
-                    Mark read
+                    {t("alertsPage.markRead")}
                   </Button>
                 )}
               </li>

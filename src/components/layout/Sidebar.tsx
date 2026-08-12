@@ -12,19 +12,21 @@ import {
   User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n";
 
 const links = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/compare", label: "Compare", icon: BarChart3 },
-  { href: "/dashboard/forecast", label: "Forecast", icon: CloudSun },
-  { href: "/dashboard/route-planner", label: "Route Planner", icon: Route },
-  { href: "/dashboard/community", label: "Community", icon: Users },
-  { href: "/dashboard/alerts", label: "Alerts", icon: Bell },
-  { href: "/dashboard/profile", label: "Profile", icon: User },
+  { href: "/dashboard", key: "nav.dashboard", icon: LayoutDashboard },
+  { href: "/dashboard/compare", key: "nav.compare", icon: BarChart3 },
+  { href: "/dashboard/forecast", key: "nav.forecast", icon: CloudSun },
+  { href: "/dashboard/route-planner", key: "nav.routePlanner", icon: Route },
+  { href: "/dashboard/community", key: "nav.community", icon: Users },
+  { href: "/dashboard/alerts", key: "nav.alerts", icon: Bell },
+  { href: "/dashboard/profile", key: "nav.profile", icon: User },
 ];
 
 export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   return (
     <nav className="flex flex-col gap-1 p-3">
@@ -43,7 +45,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             )}
           >
             <link.icon className="h-4 w-4" />
-            {link.label}
+            {t(link.key)}
           </Link>
         );
       })}

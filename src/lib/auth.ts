@@ -29,6 +29,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           healthProfile: user.healthProfile,
+          language: user.language,
         };
       },
     }),
@@ -38,9 +39,13 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.userId = user.id;
         token.healthProfile = user.healthProfile;
+        token.language = user.language;
       }
       if (trigger === "update" && session?.healthProfile) {
         token.healthProfile = session.healthProfile;
+      }
+      if (trigger === "update" && session?.language) {
+        token.language = session.language;
       }
       return token;
     },
@@ -48,6 +53,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.userId;
         session.user.healthProfile = token.healthProfile;
+        session.user.language = token.language;
       }
       return session;
     },

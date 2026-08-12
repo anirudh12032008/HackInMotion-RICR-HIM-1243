@@ -3,6 +3,7 @@ import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthSessionProvider } from "@/components/session-provider";
+import { I18nProvider } from "@/lib/i18n";
 import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -38,8 +39,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthSessionProvider>
-            {children}
-            <Toaster richColors position="top-right" />
+            <I18nProvider>
+              {children}
+              <Toaster richColors position="top-right" />
+            </I18nProvider>
           </AuthSessionProvider>
         </ThemeProvider>
       </body>
