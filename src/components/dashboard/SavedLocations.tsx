@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Trash2, MapPin } from "lucide-react";
+import { Trash2, MapPin, LineChart } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RiskBadge } from "@/components/aqi/RiskBadge";
+import { TrendChart } from "@/components/charts/TrendChart";
 
 interface SavedLocation {
   _id: string;
@@ -20,6 +21,7 @@ interface SavedLocation {
 export function SavedLocations({ refreshKey }: { refreshKey?: number }) {
   const [locations, setLocations] = useState<SavedLocation[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -77,14 +79,24 @@ export function SavedLocations({ refreshKey }: { refreshKey?: number }) {
         <Card key={loc._id}>
           <CardHeader className="flex-row items-start justify-between space-y-0">
             <CardTitle className="text-base">{loc.name}</CardTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-7 w-7 text-muted-foreground hover:text-destructive"
-              onClick={() => remove(loc._id)}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                onClick={() => setExpanded(expanded === loc._id ? null : loc._id)}
+              >
+                <LineChart className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                onClick={() => remove(loc._id)}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             {loc.currentAqi !== null ? (
@@ -99,6 +111,11 @@ export function SavedLocations({ refreshKey }: { refreshKey?: number }) {
               <p className="mt-2 text-xs text-muted-foreground">
                 Updated {new Date(loc.updatedAt).toLocaleString()}
               </p>
+            )}
+            {expanded === loc._id && (
+              <div className="mt-4 border-t border-border pt-4">
+                <TrendChart locationId={loc._id} />
+              </div>
             )}
           </CardContent>
         </Card>
