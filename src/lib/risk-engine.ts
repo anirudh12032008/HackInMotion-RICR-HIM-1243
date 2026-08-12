@@ -83,6 +83,13 @@ export function classifyRisk(aqi: number): RiskClassification {
   return entry.classification;
 }
 
+/** Compact AQI colour scale for map/chart legends, derived from the risk table. */
+export const RISK_BANDS = RISK_TABLE.map((r) => ({
+  label: r.classification.label,
+  color: r.classification.color,
+  max: r.max,
+}));
+
 export interface HealthGuidance {
   outdoorActivity: string;
   precautions: string[];

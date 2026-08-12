@@ -3,6 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { Clock, Loader2, MapPin, RotateCcw } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -18,6 +19,8 @@ import {
   sampleRoute,
   averageAqi,
   getActivityGuidance,
+  routeDistanceKm,
+  estimateDurationMin,
   type ActivityType,
   type RoutePoint,
   type RouteSample,
@@ -80,14 +83,20 @@ export default function RoutePlannerPage() {
   }
 
   function useMyLocationAsStart() {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition((pos) => {
-      handleSetPoint({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-    });
+    if (!navigator.geolocation) {
+      toast.error("Geolocation isn't available in this browser.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => handleSetPoint({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => toast.error("Couldn't get your location. Click the map to set a start point.")
+    );
   }
 
   const avgAqi = averageAqi(samples);
   const guidance = getActivityGuidance(activity, avgAqi);
+  const distanceKm = start && end ? routeDistanceKm(start, end) : null;
+  const durationMin = distanceKm !== null ? estimateDurationMin(distanceKm, activity) : null;
 
   return (
     <div className="mx-auto flex min-h-[600px] max-w-6xl flex-col gap-4 sm:h-[calc(100vh-8rem)]">
@@ -129,6 +138,17 @@ export default function RoutePlannerPage() {
           </Button>
         </div>
       </div>
+
+      {distanceKm !== null && (
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1">
+            <MapPin className="h-3.5 w-3.5" />~{distanceKm.toFixed(1)} km straight-line
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <Clock className="h-3.5 w-3.5" />~{durationMin} min {activity}
+          </span>
+        </div>
+      )}
 
       {(loading || avgAqi !== null) && (
         <Alert variant={guidance.recommended ? "default" : "destructive"}>

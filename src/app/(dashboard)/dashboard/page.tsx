@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { QuickSearch, type AqiResult } from "@/components/dashboard/QuickSearch";
 import { AQICard } from "@/components/aqi/AQICard";
+import { AqiMap } from "@/components/map/AqiMap";
 import { SavedLocations } from "@/components/dashboard/SavedLocations";
 import { ProfilePrompt } from "@/components/dashboard/ProfilePrompt";
 import { Reveal } from "@/components/motion/Reveal";
@@ -28,6 +29,8 @@ export default function DashboardPage() {
       <ProfilePrompt />
 
       <QuickSearch onResult={handleResult} />
+
+      {result && <AqiMap result={result} onResult={handleResult} />}
 
       {result && <AQICard result={result} />}
 

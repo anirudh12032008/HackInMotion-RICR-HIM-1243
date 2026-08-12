@@ -1,8 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { APIProvider, Map, Marker, InfoWindow, useMap } from "@vis.gl/react-google-maps";
+import { APIProvider, Map, AdvancedMarker, InfoWindow } from "@vis.gl/react-google-maps";
 import { CommunityReportType } from "@/types/index";
+import {
+  MAPS_KEY,
+  MAP_ID,
+  useMapColorScheme,
+  AqiHeatmapOverlay,
+  MapClickListener,
+  RecenterOnChange,
+  AqiLegend,
+} from "@/components/map/shared";
 
 export interface CommunityReportPoint {
   _id: string;
@@ -34,55 +42,27 @@ const TYPE_LABELS: Record<CommunityReportType, string> = {
   other: "Other",
 };
 
-const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
-
-function AqiHeatmapOverlay() {
-  const map = useMap();
-
-  useEffect(() => {
-    if (!map || !window.google) return;
-
-    const overlay = new window.google.maps.ImageMapType({
-      getTileUrl: (coord, zoom) => `/api/aqi/heatmap-tile/UAQI_RED_GREEN/${zoom}/${coord.x}/${coord.y}`,
-      tileSize: new window.google.maps.Size(256, 256),
-      opacity: 0.4,
-      name: "AQI",
-    });
-
-    map.overlayMapTypes.insertAt(0, overlay);
-    return () => {
-      const idx = map.overlayMapTypes.getArray().indexOf(overlay);
-      if (idx > -1) map.overlayMapTypes.removeAt(idx);
-    };
-  }, [map]);
-
-  return null;
-}
-
-function ClickListener({ onClick }: { onClick: (lat: number, lng: number) => void }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (!map) return;
-    const listener = map.addListener("click", (e: google.maps.MapMouseEvent) => {
-      if (e.latLng) onClick(e.latLng.lat(), e.latLng.lng());
-    });
-    return () => listener.remove();
-  }, [map, onClick]);
-
-  return null;
-}
+const SEVERITY_SIZE: Record<CommunityReportPoint["severity"], number> = {
+  high: 22,
+  medium: 18,
+  low: 15,
+};
 
 export function CommunityMap({
   center,
   reports,
   onMapClick,
+  activeId = null,
+  onActiveChange,
 }: {
   center: [number, number];
   reports: CommunityReportPoint[];
   onMapClick?: (lat: number, lng: number) => void;
+  /** Selected report id — lets the page's list and the map share a highlight. */
+  activeId?: string | null;
+  onActiveChange?: (id: string | null) => void;
 }) {
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const colorScheme = useMapColorScheme();
 
   if (!MAPS_KEY) {
     return (
@@ -92,54 +72,80 @@ export function CommunityMap({
     );
   }
 
-  const active = reports.find((r) => r._id === activeId);
+  const active = reports.find((r) => r._id === activeId) ?? null;
 
   return (
     <APIProvider apiKey={MAPS_KEY}>
-      <Map
-        defaultCenter={{ lat: center[0], lng: center[1] }}
-        defaultZoom={12}
-        gestureHandling="greedy"
-        style={{ width: "100%", height: "100%" }}
-      >
-        <AqiHeatmapOverlay />
-        {onMapClick && <ClickListener onClick={onMapClick} />}
+      <div className="relative h-full w-full">
+        <Map
+          mapId={MAP_ID}
+          colorScheme={colorScheme}
+          defaultCenter={{ lat: center[0], lng: center[1] }}
+          defaultZoom={12}
+          gestureHandling="greedy"
+          clickableIcons={false}
+          style={{ width: "100%", height: "100%" }}
+        >
+          <AqiHeatmapOverlay opacity={0.4} />
+          {onMapClick && <MapClickListener onClick={onMapClick} />}
+          {active && <RecenterOnChange center={[active.lat, active.lng]} />}
 
-        {reports.map((report) => (
-          <Marker
-            key={report._id}
-            position={{ lat: report.lat, lng: report.lng }}
-            onClick={() => setActiveId(report._id)}
-            icon={{
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: report.severity === "high" ? 10 : report.severity === "medium" ? 8 : 6,
-              fillColor: TYPE_COLORS[report.type],
-              fillOpacity: 0.8,
-              strokeColor: TYPE_COLORS[report.type],
-              strokeWeight: 2,
-            }}
-          />
-        ))}
+          {reports.map((report) => (
+            <AdvancedMarker
+              key={report._id}
+              position={{ lat: report.lat, lng: report.lng }}
+              zIndex={report._id === activeId ? 20 : 1}
+              onClick={() => onActiveChange?.(report._id)}
+            >
+              <ReportPin
+                color={TYPE_COLORS[report.type]}
+                size={SEVERITY_SIZE[report.severity]}
+                active={report._id === activeId}
+              />
+            </AdvancedMarker>
+          ))}
 
-        {active && (
-          <InfoWindow
-            position={{ lat: active.lat, lng: active.lng }}
-            onCloseClick={() => setActiveId(null)}
-          >
-            <div className="space-y-1 text-sm">
-              <p className="font-medium">{TYPE_LABELS[active.type]}</p>
-              {active.description && <p className="text-muted-foreground">{active.description}</p>}
-              <p className="text-xs text-muted-foreground">
-                {active.severity} severity · {active.upvotes.length} upvotes
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {new Date(active.createdAt).toLocaleString()}
-              </p>
-            </div>
-          </InfoWindow>
-        )}
-      </Map>
+          {active && (
+            <InfoWindow
+              position={{ lat: active.lat, lng: active.lng }}
+              onCloseClick={() => onActiveChange?.(null)}
+            >
+              <div className="space-y-1 text-sm">
+                <p className="font-medium">{TYPE_LABELS[active.type]}</p>
+                {active.description && <p className="text-muted-foreground">{active.description}</p>}
+                <p className="text-xs text-muted-foreground">
+                  {active.severity} severity · {active.upvotes.length} upvotes
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {new Date(active.createdAt).toLocaleString()}
+                </p>
+              </div>
+            </InfoWindow>
+          )}
+        </Map>
+
+        <AqiLegend />
+      </div>
     </APIProvider>
+  );
+}
+
+/** Colored report dot: sized by severity, with a pulsing ring when selected. */
+function ReportPin({ color, size, active }: { color: string; size: number; active: boolean }) {
+  const dim = active ? size + 6 : size;
+  return (
+    <span className="relative flex items-center justify-center">
+      {active && (
+        <span
+          className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-40"
+          style={{ backgroundColor: color }}
+        />
+      )}
+      <span
+        className="rounded-full border-2 border-white shadow-md transition-all dark:border-white/80"
+        style={{ width: dim, height: dim, backgroundColor: color }}
+      />
+    </span>
   );
 }
 

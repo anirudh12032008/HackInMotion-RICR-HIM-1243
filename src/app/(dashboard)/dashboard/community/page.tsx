@@ -24,6 +24,7 @@ export default function CommunityPage() {
   const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
   const [pendingLocation, setPendingLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   const loadReports = useCallback(async (lat: number, lng: number) => {
     setLoading(true);
@@ -67,7 +68,13 @@ export default function CommunityPage() {
   return (
     <div className="mx-auto flex min-h-[600px] max-w-6xl flex-col gap-4 sm:h-[calc(100vh-8rem)] lg:flex-row">
       <div className="relative min-h-64 flex-1 overflow-hidden rounded-xl border">
-        <CommunityMap center={center} reports={reports} onMapClick={handleMapClick} />
+        <CommunityMap
+          center={center}
+          reports={reports}
+          onMapClick={handleMapClick}
+          activeId={activeId}
+          onActiveChange={setActiveId}
+        />
         <Button
           size="icon"
           className="absolute bottom-4 right-4 h-12 w-12 rounded-full shadow-lg"
@@ -94,11 +101,25 @@ export default function CommunityPage() {
           </p>
         ) : (
           sortedReports.map((r) => (
-            <Card key={r._id}>
+            <Card
+              key={r._id}
+              onClick={() => setActiveId(r._id)}
+              className={`cursor-pointer transition-colors hover:border-primary/50 ${
+                activeId === r._id ? "border-primary ring-1 ring-primary" : ""
+              }`}
+            >
               <CardContent className="space-y-1 p-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium">{TYPE_LABELS[r.type]}</p>
-                  <Button variant="ghost" size="sm" className="h-6 gap-1 text-xs" onClick={() => upvote(r._id)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 gap-1 text-xs"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      upvote(r._id);
+                    }}
+                  >
                     <ThumbsUp className="h-3 w-3" />
                     {r.upvotes.length}
                   </Button>

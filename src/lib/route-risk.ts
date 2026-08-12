@@ -67,6 +67,31 @@ export function averageAqi(samples: RouteSample[]): number | null {
   return Math.round(valid.reduce((sum, s) => sum + s.aqi, 0) / valid.length);
 }
 
+// Rough average speeds (km/h) per activity, for a straight-line time estimate.
+const ACTIVITY_SPEEDS: Record<ActivityType, number> = {
+  walking: 5,
+  jogging: 9,
+  cycling: 18,
+  driving: 30, // urban average, accounting for traffic and lights
+};
+
+/** Straight-line ("as the crow flies") distance of the route in km. */
+export function routeDistanceKm(
+  start: RoutePoint,
+  end: RoutePoint,
+  waypoints: RoutePoint[] = []
+): number {
+  const path = [start, ...waypoints, end];
+  let total = 0;
+  for (let i = 0; i < path.length - 1; i++) total += haversineKm(path[i], path[i + 1]);
+  return total;
+}
+
+/** Rough travel time in minutes for an activity over a straight-line distance. */
+export function estimateDurationMin(distanceKm: number, activity: ActivityType): number {
+  return Math.max(1, Math.round((distanceKm / ACTIVITY_SPEEDS[activity]) * 60));
+}
+
 export function getActivityGuidance(activity: ActivityType, avgAqi: number | null) {
   if (avgAqi === null) {
     return { recommended: true, message: "Not enough air quality data along this route yet." };
