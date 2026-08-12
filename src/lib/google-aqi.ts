@@ -89,13 +89,19 @@ export interface CurrentConditions {
   dominantPollutant: string;
   pollutants: Pollutants;
   timestamp: string;
+  scale: "regional" | "universal";
 }
 
 /**
- * ponytail: prefers the "usa_epa" 0-500 index (matches risk-engine.ts bands).
- * Locations outside Google's regional-index coverage only get "uaqi" (0-100)
- * back, which we pass through as-is rather than converting scales — good
- * enough for a hackathon demo, not scientifically equivalent.
+ * Google always returns "uaqi" (Universal AQI, 0-100, HIGHER = better air —
+ * inverted from every other scale in this app) alongside a country-specific
+ * regional index when one exists for the location (e.g. "usa_epa" for the
+ * US, "ind_cpcb" for India — both 0-500, higher = worse, matching
+ * risk-engine.ts's bands). We must prefer the regional index by name, not
+ * assume it's first in the array — picking anything other than "uaqi" here
+ * is what avoids silently classifying good air as hazardous or vice versa.
+ * Locations with no regional coverage fall back to uaqi and are flagged via
+ * `scale: "universal"` so callers can avoid running it through classifyRisk().
  */
 export async function getCurrentConditions(lat: number, lng: number): Promise<CurrentConditions> {
   assertKey();
@@ -118,7 +124,7 @@ export async function getCurrentConditions(lat: number, lng: number): Promise<Cu
   if (indexes.length === 0) {
     throw new GoogleAqiError("No air quality station near this location");
   }
-  const primary = indexes.find((i) => i.code === "usa_epa") ?? indexes[0];
+  const primary = pickIndex(indexes);
 
   const pollutants: Pollutants = {};
   for (const p of (data.pollutants ?? []) as AqPollutant[]) {
@@ -127,12 +133,20 @@ export async function getCurrentConditions(lat: number, lng: number): Promise<Cu
   }
 
   return {
-    aqi: primary.aqi,
-    category: primary.category,
-    dominantPollutant: primary.dominantPollutant,
+    aqi: primary.index.aqi,
+    category: primary.index.category,
+    dominantPollutant: primary.index.dominantPollutant,
     pollutants,
     timestamp: data.dateTime ?? new Date().toISOString(),
+    scale: primary.scale,
   };
+}
+
+/** Picks the country-specific regional index over Universal AQI whenever one is present. */
+function pickIndex(indexes: AqIndex[]): { index: AqIndex; scale: "regional" | "universal" } {
+  const regional = indexes.find((i) => i.code !== "uaqi");
+  if (regional) return { index: regional, scale: "regional" };
+  return { index: indexes[0], scale: "universal" };
 }
 
 export interface HourlyForecast {
@@ -148,8 +162,11 @@ export async function getHourlyForecast(lat: number, lng: number): Promise<Hourl
       location: { latitude: lat, longitude: lng },
       period: {
         startTime: new Date().toISOString(),
-        endTime: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
+        // 95h, not a full 96h — Google's API rejects periods right at its
+        // documented max, so this stays safely under the boundary.
+        endTime: new Date(Date.now() + 95 * 60 * 60 * 1000).toISOString(),
       },
+      pageSize: 100,
       extraComputations: ["LOCAL_AQI"],
       languageCode: "en",
     },
@@ -163,8 +180,9 @@ export async function getHourlyForecast(lat: number, lng: number): Promise<Hourl
 
   return hours
     .map((h) => {
-      const idx = h.indexes.find((i) => i.code === "usa_epa") ?? h.indexes[0];
-      return idx ? { dateTime: h.dateTime, aqi: idx.aqi } : null;
+      if (h.indexes.length === 0) return null;
+      const { index } = pickIndex(h.indexes);
+      return { dateTime: h.dateTime, aqi: index.aqi };
     })
     .filter((h): h is HourlyForecast => h !== null);
 }

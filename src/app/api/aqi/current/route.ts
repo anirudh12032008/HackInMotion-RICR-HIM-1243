@@ -8,6 +8,7 @@ import {
   GoogleAqiError,
 } from "@/lib/google-aqi";
 import { classifyRisk } from "@/lib/risk-engine";
+import { isAxiosError } from "axios";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -26,7 +27,11 @@ export async function GET(req: Request) {
 
     const [conditions, hourly, reverseGeocodedName] = await Promise.all([
       getCurrentConditions(targetLat, targetLng),
-      getHourlyForecast(targetLat, targetLng).catch(() => []),
+      getHourlyForecast(targetLat, targetLng).catch((err) => {
+        const detail = isAxiosError(err) ? JSON.stringify(err.response?.data) : String(err);
+        console.error("Forecast fetch failed:", detail);
+        return [];
+      }),
       place ? Promise.resolve(null) : reverseGeocode(targetLat, targetLng).catch(() => null),
     ]);
 
