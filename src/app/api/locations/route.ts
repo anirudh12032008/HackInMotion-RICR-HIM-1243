@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Location from "@/models/Location";
 import { requireUserId } from "@/lib/session";
-import { getCurrentAQIByCoords, extractPollutants } from "@/lib/waqi";
+import { getCurrentConditions } from "@/lib/google-aqi";
 import { classifyRisk } from "@/lib/risk-engine";
 import { maybeStoreSnapshot } from "@/lib/snapshot";
 import { checkAndCreateAlerts } from "@/lib/alerts";
@@ -17,25 +17,25 @@ export async function GET() {
   const withAqi = await Promise.all(
     locations.map(async (loc) => {
       try {
-        const feed = await getCurrentAQIByCoords(loc.lat, loc.lng);
+        const conditions = await getCurrentConditions(loc.lat, loc.lng);
         const locationId = loc._id.toString();
-        await maybeStoreSnapshot(locationId, feed);
+        await maybeStoreSnapshot(locationId, conditions);
         await checkAndCreateAlerts({
           userId,
           locationId,
           locationName: loc.name,
-          aqi: feed.aqi,
+          aqi: conditions.aqi,
           alertThreshold: loc.alertThreshold,
         });
         return {
           ...loc,
           _id: loc._id.toString(),
           userId: loc.userId.toString(),
-          currentAqi: feed.aqi,
-          dominantPollutant: feed.dominentpol,
-          pollutants: extractPollutants(feed.iaqi),
-          risk: classifyRisk(feed.aqi),
-          updatedAt: feed.time.s,
+          currentAqi: conditions.aqi,
+          dominantPollutant: conditions.dominantPollutant,
+          pollutants: conditions.pollutants,
+          risk: classifyRisk(conditions.aqi),
+          updatedAt: conditions.timestamp,
         };
       } catch {
         return {

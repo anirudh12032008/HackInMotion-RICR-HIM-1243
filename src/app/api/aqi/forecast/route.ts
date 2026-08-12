@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getForecast, WaqiError } from "@/lib/waqi";
+import { geocodeCity, getHourlyForecast, groupForecastByDay, GoogleAqiError } from "@/lib/google-aqi";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -10,10 +10,11 @@ export async function GET(req: Request) {
   }
 
   try {
-    const daily = await getForecast(city);
-    return NextResponse.json({ forecast: daily });
+    const place = await geocodeCity(city);
+    const hourly = await getHourlyForecast(place.lat, place.lng);
+    return NextResponse.json({ forecast: { pm25: groupForecastByDay(hourly) } });
   } catch (err) {
-    const message = err instanceof WaqiError ? err.message : "Failed to fetch forecast";
+    const message = err instanceof GoogleAqiError ? err.message : "Failed to fetch forecast";
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }

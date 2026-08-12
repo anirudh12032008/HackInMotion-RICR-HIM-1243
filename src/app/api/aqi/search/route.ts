@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { searchCity, WaqiError } from "@/lib/waqi";
+import { searchPlaces, GoogleAqiError } from "@/lib/google-aqi";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -10,10 +10,10 @@ export async function GET(req: Request) {
   }
 
   try {
-    const results = await searchCity(q.trim());
+    const results = await searchPlaces(q.trim());
     return NextResponse.json({ results });
   } catch (err) {
-    const message = err instanceof WaqiError ? err.message : "Failed to search locations";
+    const message = err instanceof GoogleAqiError ? err.message : "Failed to search locations";
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }
