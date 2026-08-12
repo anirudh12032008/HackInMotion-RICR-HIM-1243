@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { Loader2, MapPin, RotateCcw } from "lucide-react";
+import { Clock, Loader2, MapPin, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -79,6 +79,13 @@ export default function RoutePlannerPage() {
     setSamples([]);
   }
 
+  function useMyLocationAsStart() {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition((pos) => {
+      handleSetPoint({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+    });
+  }
+
   const avgAqi = averageAqi(samples);
   const guidance = getActivityGuidance(activity, avgAqi);
 
@@ -108,6 +115,15 @@ export default function RoutePlannerPage() {
               ))}
             </SelectContent>
           </Select>
+          <Button
+            variant="outline"
+            onClick={useMyLocationAsStart}
+            disabled={loading}
+            className="hidden sm:inline-flex"
+          >
+            <MapPin className="h-4 w-4" />
+            Use my location
+          </Button>
           <Button variant="outline" size="icon" onClick={reset} disabled={!start}>
             <RotateCcw className="h-4 w-4" />
           </Button>
@@ -119,6 +135,17 @@ export default function RoutePlannerPage() {
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4" />}
           <AlertTitle>{loading ? "Checking air quality along your route..." : "Route risk"}</AlertTitle>
           {!loading && <AlertDescription>{guidance.message}</AlertDescription>}
+        </Alert>
+      )}
+
+      {!loading && !guidance.recommended && (
+        <Alert>
+          <Clock className="h-4 w-4" />
+          <AlertTitle>Best time</AlertTitle>
+          <AlertDescription>
+            Air quality tends to improve later in the day or after rain — check back before
+            heading out, or move this {activity} indoors for now.
+          </AlertDescription>
         </Alert>
       )}
 
