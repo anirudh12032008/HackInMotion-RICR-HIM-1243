@@ -1,29 +1,77 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Polyline, useMapEvents, CircleMarker, Tooltip } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { useEffect } from "react";
+import { APIProvider, Map, Marker, Polyline, useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { classifyRisk } from "@/lib/risk-engine";
 import type { RoutePoint, RouteSample } from "@/lib/route-risk";
 
-// Leaflet's default marker icons reference image paths that break under
-// bundlers — rebuild them from the CDN so pins actually render.
-delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
+const DEFAULT_CENTER = { lat: 28.6139, lng: 77.209 }; // New Delhi
+const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 
-const DEFAULT_CENTER: [number, number] = [28.6139, 77.209]; // New Delhi
+function AqiHeatmapOverlay() {
+  const map = useMap();
 
-function ClickHandler({ onClick }: { onClick: (point: RoutePoint) => void }) {
-  useMapEvents({
-    click(e) {
-      onClick({ lat: e.latlng.lat, lng: e.latlng.lng });
-    },
-  });
+  useEffect(() => {
+    if (!map || !window.google) return;
+
+    const overlay = new window.google.maps.ImageMapType({
+      getTileUrl: (coord, zoom) => `/api/aqi/heatmap-tile/UAQI_RED_GREEN/${zoom}/${coord.x}/${coord.y}`,
+      tileSize: new window.google.maps.Size(256, 256),
+      opacity: 0.5,
+      name: "AQI",
+    });
+
+    map.overlayMapTypes.insertAt(0, overlay);
+    return () => {
+      const idx = map.overlayMapTypes.getArray().indexOf(overlay);
+      if (idx > -1) map.overlayMapTypes.removeAt(idx);
+    };
+  }, [map]);
+
   return null;
+}
+
+function ClickListener({ onClick }: { onClick: (point: RoutePoint) => void }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map) return;
+    const listener = map.addListener("click", (e: google.maps.MapMouseEvent) => {
+      if (e.latLng) onClick({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+    });
+    return () => listener.remove();
+  }, [map, onClick]);
+
+  return null;
+}
+
+function SampleMarkers({ samples }: { samples: RouteSample[] }) {
+  const markerLib = useMapsLibrary("marker");
+  const core = useMapsLibrary("core");
+  if (!markerLib || !core) return null;
+
+  return (
+    <>
+      {samples.map((sample, i) => {
+        const color = sample.aqi !== null ? classifyRisk(sample.aqi).color : "#94a3b8";
+        return (
+          <Marker
+            key={i}
+            position={sample}
+            title={sample.aqi !== null ? `AQI ${sample.aqi}` : undefined}
+            icon={{
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 7,
+              fillColor: color,
+              fillOpacity: 0.85,
+              strokeColor: color,
+              strokeWeight: 1,
+            }}
+          />
+        );
+      })}
+    </>
+  );
 }
 
 export function RoutePlanner({
@@ -37,42 +85,39 @@ export function RoutePlanner({
   samples: RouteSample[];
   onSetPoint: (point: RoutePoint) => void;
 }) {
+  if (!MAPS_KEY) {
+    return (
+      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+        Missing NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+      </div>
+    );
+  }
+
   return (
-    <MapContainer
-      center={DEFAULT_CENTER}
-      zoom={11}
-      className="h-full w-full"
-      scrollWheelZoom
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <ClickHandler onClick={onSetPoint} />
+    <APIProvider apiKey={MAPS_KEY}>
+      <Map
+        defaultCenter={DEFAULT_CENTER}
+        defaultZoom={11}
+        gestureHandling="greedy"
+        disableDefaultUI={false}
+        style={{ width: "100%", height: "100%" }}
+      >
+        <AqiHeatmapOverlay />
+        <ClickListener onClick={onSetPoint} />
 
-      {start && <Marker position={[start.lat, start.lng]} />}
-      {end && <Marker position={[end.lat, end.lng]} />}
+        {start && <Marker position={start} />}
+        {end && <Marker position={end} />}
+        {start && end && (
+          <Polyline
+            path={[start, end]}
+            strokeColor="#94a3b8"
+            strokeOpacity={0.8}
+            strokeWeight={2}
+          />
+        )}
 
-      {start && end && (
-        <Polyline
-          positions={[start, end].map((p) => [p.lat, p.lng])}
-          pathOptions={{ color: "var(--muted-foreground)", weight: 2, dashArray: "4 6" }}
-        />
-      )}
-
-      {samples.map((sample, i) => {
-        const color = sample.aqi !== null ? classifyRisk(sample.aqi).color : "#94a3b8";
-        return (
-          <CircleMarker
-            key={i}
-            center={[sample.lat, sample.lng]}
-            radius={6}
-            pathOptions={{ color, fillColor: color, fillOpacity: 0.8, weight: 1 }}
-          >
-            {sample.aqi !== null && <Tooltip>AQI {sample.aqi}</Tooltip>}
-          </CircleMarker>
-        );
-      })}
-    </MapContainer>
+        <SampleMarkers samples={samples} />
+      </Map>
+    </APIProvider>
   );
 }
