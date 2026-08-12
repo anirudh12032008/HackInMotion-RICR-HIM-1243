@@ -4,6 +4,7 @@ import {
   getCurrentConditions,
   getHourlyForecast,
   groupForecastByDay,
+  reverseGeocode,
   GoogleAqiError,
 } from "@/lib/google-aqi";
 import { classifyRisk } from "@/lib/risk-engine";
@@ -23,15 +24,19 @@ export async function GET(req: Request) {
     const targetLat = place ? place.lat : Number(lat);
     const targetLng = place ? place.lng : Number(lng);
 
-    const [conditions, hourly] = await Promise.all([
+    const [conditions, hourly, reverseGeocodedName] = await Promise.all([
       getCurrentConditions(targetLat, targetLng),
       getHourlyForecast(targetLat, targetLng).catch(() => []),
+      place ? Promise.resolve(null) : reverseGeocode(targetLat, targetLng).catch(() => null),
     ]);
+
+    const displayName =
+      place?.name ?? reverseGeocodedName ?? `${targetLat.toFixed(3)}, ${targetLng.toFixed(3)}`;
 
     return NextResponse.json({
       aqi: conditions.aqi,
       dominantPollutant: conditions.dominantPollutant,
-      city: { name: place?.name ?? `${targetLat.toFixed(3)}, ${targetLng.toFixed(3)}`, geo: [targetLat, targetLng] },
+      city: { name: displayName, geo: [targetLat, targetLng] },
       updatedAt: conditions.timestamp,
       pollutants: conditions.pollutants,
       forecast: { daily: { pm25: groupForecastByDay(hourly) } },

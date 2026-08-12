@@ -33,6 +33,21 @@ export async function geocodeCity(query: string): Promise<GeocodedPlace> {
   };
 }
 
+/** Turns lat/lng (from geolocation or a map click) into a human-readable place name. */
+export async function reverseGeocode(lat: number, lng: number): Promise<string | null> {
+  assertKey();
+  const { data } = await axios.get(GEOCODE_BASE, {
+    params: { latlng: `${lat},${lng}`, key: API_KEY },
+  });
+  if (data.status !== "OK" || !data.results?.length) return null;
+
+  // Prefer a locality/city-level result over the more specific street address.
+  const localityResult = data.results.find((r: { types: string[] }) =>
+    r.types.includes("locality")
+  );
+  return (localityResult ?? data.results[0]).formatted_address;
+}
+
 export async function searchPlaces(query: string): Promise<GeocodedPlace[]> {
   assertKey();
   const { data } = await axios.get(GEOCODE_BASE, {
