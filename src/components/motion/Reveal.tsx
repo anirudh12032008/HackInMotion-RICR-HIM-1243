@@ -19,6 +19,8 @@ export function Reveal({ children, className, stagger, delay = 0 }: RevealProps)
     if (!el || prefersReducedMotion()) return;
 
     const targets = stagger ? Array.from(el.children) : el;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const alreadyVisible = !viewportHeight || el.getBoundingClientRect().top < viewportHeight * 0.85;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
@@ -31,11 +33,15 @@ export function Reveal({ children, className, stagger, delay = 0 }: RevealProps)
           delay,
           ease: ease.out,
           stagger: stagger ? 0.08 : 0,
-          scrollTrigger: {
-            trigger: el,
-            start: "top 85%",
-            once: true,
-          },
+          ...(alreadyVisible
+            ? {}
+            : {
+                scrollTrigger: {
+                  trigger: el,
+                  start: "top 85%",
+                  once: true,
+                },
+              }),
         }
       );
     }, ref);
