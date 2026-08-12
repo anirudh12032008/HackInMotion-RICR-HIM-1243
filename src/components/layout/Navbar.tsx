@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, Bell, LogOut } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -24,10 +24,30 @@ import { SidebarNav } from "@/components/layout/Sidebar";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export function Navbar({ unreadAlerts = 0 }: { unreadAlerts?: number }) {
+export function Navbar() {
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
+  const [unreadAlerts, setUnreadAlerts] = useState(0);
   const initial = session?.user?.name?.[0]?.toUpperCase() ?? "U";
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadUnread() {
+      try {
+        const res = await fetch("/api/alerts?limit=1");
+        const data = await res.json();
+        if (!cancelled) setUnreadAlerts(data.unreadCount ?? 0);
+      } catch {
+        // ignore — bell just won't show a count this cycle
+      }
+    }
+    loadUnread();
+    const interval = setInterval(loadUnread, 60_000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-card px-4 sm:px-6">
@@ -69,7 +89,7 @@ export function Navbar({ unreadAlerts = 0 }: { unreadAlerts?: number }) {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>{session?.user?.name ?? "Account"}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => (window.location.href = "/profile")}>
+            <DropdownMenuItem onClick={() => (window.location.href = "/dashboard/profile")}>
               Profile
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
