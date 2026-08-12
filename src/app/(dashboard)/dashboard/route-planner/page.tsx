@@ -90,7 +90,7 @@ export default function RoutePlannerPage() {
   const guidance = getActivityGuidance(activity, avgAqi);
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-8rem)] max-w-6xl flex-col gap-4">
+    <div className="mx-auto flex min-h-[600px] max-w-6xl flex-col gap-4 sm:h-[calc(100vh-8rem)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Route planner</h1>

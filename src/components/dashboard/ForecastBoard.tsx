@@ -41,6 +41,7 @@ export function ForecastBoard() {
   const [error, setError] = useState("");
   const [savedLocations, setSavedLocations] = useState<SavedLocationOption[]>([]);
   const [selectedSaved, setSelectedSaved] = useState("");
+  const [lastTarget, setLastTarget] = useState("");
 
   useEffect(() => {
     fetch("/api/locations")
@@ -52,6 +53,7 @@ export function ForecastBoard() {
   async function fetchForecastFor(target: string) {
     setLoading(true);
     setError("");
+    setLastTarget(target);
     try {
       const res = await fetch(`/api/aqi/current?city=${encodeURIComponent(target)}`);
       const data = await res.json();
@@ -114,8 +116,16 @@ export function ForecastBoard() {
       </div>
 
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="flex items-center justify-between">
           <AlertDescription>{error}</AlertDescription>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 shrink-0"
+            onClick={() => fetchForecastFor(lastTarget)}
+          >
+            Retry
+          </Button>
         </Alert>
       )}
 

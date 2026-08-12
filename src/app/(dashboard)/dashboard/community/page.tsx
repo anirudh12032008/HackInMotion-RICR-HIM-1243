@@ -65,7 +65,7 @@ export default function CommunityPage() {
   const sortedReports = [...reports].sort((a, b) => b.upvotes.length - a.upvotes.length);
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-8rem)] max-w-6xl flex-col gap-4 lg:flex-row">
+    <div className="mx-auto flex min-h-[600px] max-w-6xl flex-col gap-4 sm:h-[calc(100vh-8rem)] lg:flex-row">
       <div className="relative min-h-64 flex-1 overflow-hidden rounded-xl border">
         <CommunityMap center={center} reports={reports} onMapClick={handleMapClick} />
         <Button

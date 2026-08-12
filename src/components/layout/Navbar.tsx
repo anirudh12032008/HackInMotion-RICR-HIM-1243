@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, Bell, LogOut, Globe } from "lucide-react";
+import { Menu, Bell, LogOut, Globe, Moon, Sun } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 import { useTranslation, type Locale } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,9 +34,14 @@ const LOCALES: { value: Locale; label: string }[] = [
 export function Navbar() {
   const { data: session, update } = useSession();
   const { locale, setLocale, t } = useTranslation();
+  const { resolvedTheme, setTheme } = useTheme();
   const [open, setOpen] = useState(false);
   const [unreadAlerts, setUnreadAlerts] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const initial = session?.user?.name?.[0]?.toUpperCase() ?? "U";
+
+  // Avoids a hydration mismatch: resolvedTheme is undefined until mounted.
+  useEffect(() => setMounted(true), []);
 
   async function changeLocale(next: Locale) {
     setLocale(next);
@@ -88,6 +94,16 @@ export function Navbar() {
       </div>
 
       <div className="flex items-center gap-2">
+        {mounted && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+          >
+            {resolvedTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </Button>
+        )}
+
         <DropdownMenu>
           <DropdownMenuTrigger
             className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
