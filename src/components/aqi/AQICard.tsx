@@ -10,6 +10,7 @@ import { AQIGauge } from "@/components/aqi/AQIGauge";
 import { RiskBadge } from "@/components/aqi/RiskBadge";
 import { PollutantBreakdown } from "@/components/aqi/PollutantBreakdown";
 import { HealthGuidance } from "@/components/aqi/HealthGuidance";
+import { PollenWidget } from "@/components/aqi/PollenWidget";
 import type { AqiResult } from "@/components/dashboard/QuickSearch";
 import { UserHealthProfile } from "@/types/index";
 
@@ -89,6 +90,8 @@ export function AQICard({ result }: { result: AqiResult }) {
           <h3 className="mb-3 text-sm font-semibold">Health guidance</h3>
           <HealthGuidance aqi={result.aqi} profile={profile} />
         </div>
+
+        <PollenWidget lat={result.city.geo[0]} lng={result.city.geo[1]} />
       </CardContent>
     </Card>
   );
