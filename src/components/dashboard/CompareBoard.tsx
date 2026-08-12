@@ -26,6 +26,12 @@ const POLLUTANT_LABELS: { key: keyof Pollutants; label: string }[] = [
   { key: "no2", label: "NO2" },
 ];
 
+interface SavedLocationOption {
+  _id: string;
+  name: string;
+  city?: string;
+}
+
 export function CompareBoard() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -33,6 +39,7 @@ export function CompareBoard() {
   const [loading, setLoading] = useState(false);
   const [adding, setAdding] = useState(false);
   const [query, setQuery] = useState("");
+  const [savedLocations, setSavedLocations] = useState<SavedLocationOption[]>([]);
 
   const fetchCity = useCallback(async (city: string): Promise<ComparisonEntry> => {
     const res = await fetch(`/api/aqi/current?city=${encodeURIComponent(city)}`);
@@ -67,17 +74,20 @@ export function CompareBoard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    fetch("/api/locations")
+      .then((res) => res.json())
+      .then((data) => setSavedLocations(data.locations ?? []))
+      .catch(() => setSavedLocations([]));
+  }, []);
+
   function syncUrl(next: ComparisonEntry[]) {
     const params = new URLSearchParams();
     if (next.length > 0) params.set("cities", next.map((e) => e.key).join(","));
     router.replace(`/dashboard/compare${params.toString() ? `?${params}` : ""}`, { scroll: false });
   }
 
-  async function addCity(e: React.FormEvent) {
-    e.preventDefault();
-    const city = query.trim();
-    if (!city) return;
-
+  async function addByCity(city: string) {
     if (entries.length >= MAX_LOCATIONS) {
       toast.error(`You can compare up to ${MAX_LOCATIONS} locations`);
       return;
@@ -100,6 +110,16 @@ export function CompareBoard() {
       setAdding(false);
     }
   }
+
+  function addCity(e: React.FormEvent) {
+    e.preventDefault();
+    const city = query.trim();
+    if (city) addByCity(city);
+  }
+
+  const unusedSavedLocations = savedLocations.filter(
+    (loc) => !entries.some((e) => e.key.toLowerCase() === (loc.city ?? loc.name).toLowerCase())
+  );
 
   function removeCity(key: string) {
     const next = entries.filter((e) => e.key !== key);
@@ -124,6 +144,22 @@ export function CompareBoard() {
           <span className="ml-1.5 hidden sm:inline">Add location</span>
         </Button>
       </form>
+
+      {unusedSavedLocations.length > 0 && entries.length < MAX_LOCATIONS && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs text-muted-foreground">Quick add:</span>
+          {unusedSavedLocations.map((loc) => (
+            <button
+              key={loc._id}
+              onClick={() => addByCity(loc.city ?? loc.name)}
+              disabled={adding}
+              className="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:border-primary hover:text-primary disabled:opacity-50"
+            >
+              {loc.name}
+            </button>
+          ))}
+        </div>
+      )}
 
       {loading ? (
         <div className="grid gap-4 sm:grid-cols-2">
