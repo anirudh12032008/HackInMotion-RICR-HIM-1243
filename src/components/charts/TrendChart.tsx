@@ -14,7 +14,22 @@ import {
 import { ArrowDown, ArrowRight, ArrowUp } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { classifyRisk } from "@/lib/risk-engine";
+
+const POLLUTANT_OPTIONS = [
+  { value: "none", label: "None" },
+  { value: "pm25", label: "PM2.5" },
+  { value: "pm10", label: "PM10" },
+  { value: "o3", label: "O3" },
+  { value: "no2", label: "NO2" },
+];
 
 interface Snapshot {
   timestamp: string;
@@ -50,6 +65,7 @@ function TooltipContent({ active, payload }: { active?: boolean; payload?: { pay
 
 export function TrendChart({ locationId }: { locationId: string }) {
   const [period, setPeriod] = useState<"7d" | "30d">("7d");
+  const [overlay, setOverlay] = useState("none");
   const [snapshots, setSnapshots] = useState<Snapshot[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -75,14 +91,28 @@ export function TrendChart({ locationId }: { locationId: string }) {
 
   return (
     <div>
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <Tabs value={period} onValueChange={(v) => setPeriod(v as "7d" | "30d")}>
           <TabsList>
             <TabsTrigger value="7d">7 days</TabsTrigger>
             <TabsTrigger value="30d">30 days</TabsTrigger>
           </TabsList>
         </Tabs>
-        {trend && <TrendIndicator direction={trend.direction} />}
+        <div className="flex items-center gap-3">
+          <Select value={overlay} onValueChange={(v) => setOverlay(v ?? "none")}>
+            <SelectTrigger className="h-8 w-28 text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {POLLUTANT_OPTIONS.map((p) => (
+                <SelectItem key={p.value} value={p.value}>
+                  {p.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {trend && <TrendIndicator direction={trend.direction} />}
+        </div>
       </div>
 
       {loading ? (
@@ -129,6 +159,17 @@ export function TrendChart({ locationId }: { locationId: string }) {
               dot={false}
               activeDot={{ r: 4 }}
             />
+            {overlay !== "none" && (
+              <Line
+                type="monotone"
+                dataKey={`pollutants.${overlay}`}
+                stroke="#94a3b8"
+                strokeWidth={1.5}
+                strokeDasharray="4 3"
+                dot={false}
+                name={overlay.toUpperCase()}
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       )}
