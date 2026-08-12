@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Loader2, MapPin } from "lucide-react";
+import { Search, Loader2, MapPin, RotateCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export interface AqiResult {
   aqi: number;
@@ -19,10 +20,12 @@ export function QuickSearch({ onResult }: { onResult: (result: AqiResult) => voi
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [lastUrl, setLastUrl] = useState<string | null>(null);
 
   async function fetchAndEmit(url: string) {
     setLoading(true);
     setError("");
+    setLastUrl(url);
     try {
       const res = await fetch(url);
       const data = await res.json();
@@ -58,6 +61,10 @@ export function QuickSearch({ onResult }: { onResult: (result: AqiResult) => voi
     );
   }
 
+  function retry() {
+    if (lastUrl) fetchAndEmit(lastUrl);
+  }
+
   return (
     <div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-2 sm:flex-row">
@@ -80,7 +87,17 @@ export function QuickSearch({ onResult }: { onResult: (result: AqiResult) => voi
           </Button>
         </div>
       </form>
-      {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
+      {error && (
+        <Alert variant="destructive" className="mt-2 flex items-center justify-between">
+          <AlertDescription>{error}</AlertDescription>
+          {lastUrl && (
+            <Button variant="ghost" size="sm" className="h-7 shrink-0" onClick={retry}>
+              <RotateCcw className="mr-1 h-3.5 w-3.5" />
+              Retry
+            </Button>
+          )}
+        </Alert>
+      )}
     </div>
   );
 }
