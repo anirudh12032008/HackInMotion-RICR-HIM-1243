@@ -25,6 +25,11 @@ export async function GET(req: Request) {
   }
 
   await connectDB();
+  // Mongoose's own promise for "indexes are actually built" — connectDB()
+  // alone doesn't guarantee the 2dsphere index exists yet, and querying
+  // before it does throws NoQueryExecutionPlans. Resolves instantly once
+  // already built, so this is cheap after the first request.
+  await CommunityReport.init();
 
   const reports = await CommunityReport.find({
     active: true,

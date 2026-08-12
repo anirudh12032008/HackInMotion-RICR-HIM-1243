@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
-import { getCurrentAQI, getCurrentAQIByCoords, extractPollutants, WaqiError } from "@/lib/waqi";
+import {
+  geocodeCity,
+  getCurrentConditions,
+  getHourlyForecast,
+  groupForecastByDay,
+  reverseGeocode,
+  GoogleAqiError,
+} from "@/lib/google-aqi";
 import { classifyRisk } from "@/lib/risk-engine";
+import { isAxiosError } from "axios";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -13,21 +21,34 @@ export async function GET(req: Request) {
   }
 
   try {
-    const feed = city
-      ? await getCurrentAQI(city)
-      : await getCurrentAQIByCoords(Number(lat), Number(lng));
+    const place = city ? await geocodeCity(city) : null;
+    const targetLat = place ? place.lat : Number(lat);
+    const targetLng = place ? place.lng : Number(lng);
+
+    const [conditions, hourly, reverseGeocodedName] = await Promise.all([
+      getCurrentConditions(targetLat, targetLng),
+      getHourlyForecast(targetLat, targetLng).catch((err) => {
+        const detail = isAxiosError(err) ? JSON.stringify(err.response?.data) : String(err);
+        console.error("Forecast fetch failed:", detail);
+        return [];
+      }),
+      place ? Promise.resolve(null) : reverseGeocode(targetLat, targetLng).catch(() => null),
+    ]);
+
+    const displayName =
+      place?.name ?? reverseGeocodedName ?? `${targetLat.toFixed(3)}, ${targetLng.toFixed(3)}`;
 
     return NextResponse.json({
-      aqi: feed.aqi,
-      dominantPollutant: feed.dominentpol,
-      city: feed.city,
-      updatedAt: feed.time.s,
-      pollutants: extractPollutants(feed.iaqi),
-      forecast: feed.forecast?.daily ?? null,
-      risk: classifyRisk(feed.aqi),
+      aqi: conditions.aqi,
+      dominantPollutant: conditions.dominantPollutant,
+      city: { name: displayName, geo: [targetLat, targetLng] },
+      updatedAt: conditions.timestamp,
+      pollutants: conditions.pollutants,
+      forecast: { daily: { pm25: groupForecastByDay(hourly) } },
+      risk: classifyRisk(conditions.aqi),
     });
   } catch (err) {
-    const message = err instanceof WaqiError ? err.message : "Failed to fetch air quality data";
+    const message = err instanceof GoogleAqiError ? err.message : "Failed to fetch air quality data";
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }

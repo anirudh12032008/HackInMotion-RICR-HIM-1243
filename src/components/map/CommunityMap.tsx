@@ -1,7 +1,7 @@
 "use client";
 
-import { MapContainer, TileLayer, CircleMarker, Popup, useMapEvents } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+import { useEffect, useState } from "react";
+import { APIProvider, Map, Marker, InfoWindow, useMap } from "@vis.gl/react-google-maps";
 import { CommunityReportType } from "@/types/index";
 
 export interface CommunityReportPoint {
@@ -34,12 +34,42 @@ const TYPE_LABELS: Record<CommunityReportType, string> = {
   other: "Other",
 };
 
-function ClickHandler({ onClick }: { onClick: (lat: number, lng: number) => void }) {
-  useMapEvents({
-    click(e) {
-      onClick(e.latlng.lat, e.latlng.lng);
-    },
-  });
+const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
+
+function AqiHeatmapOverlay() {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map || !window.google) return;
+
+    const overlay = new window.google.maps.ImageMapType({
+      getTileUrl: (coord, zoom) => `/api/aqi/heatmap-tile/UAQI_RED_GREEN/${zoom}/${coord.x}/${coord.y}`,
+      tileSize: new window.google.maps.Size(256, 256),
+      opacity: 0.4,
+      name: "AQI",
+    });
+
+    map.overlayMapTypes.insertAt(0, overlay);
+    return () => {
+      const idx = map.overlayMapTypes.getArray().indexOf(overlay);
+      if (idx > -1) map.overlayMapTypes.removeAt(idx);
+    };
+  }, [map]);
+
+  return null;
+}
+
+function ClickListener({ onClick }: { onClick: (lat: number, lng: number) => void }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!map) return;
+    const listener = map.addListener("click", (e: google.maps.MapMouseEvent) => {
+      if (e.latLng) onClick(e.latLng.lat(), e.latLng.lng());
+    });
+    return () => listener.remove();
+  }, [map, onClick]);
+
   return null;
 }
 
@@ -52,41 +82,64 @@ export function CommunityMap({
   reports: CommunityReportPoint[];
   onMapClick?: (lat: number, lng: number) => void;
 }) {
-  return (
-    <MapContainer center={center} zoom={12} className="h-full w-full" scrollWheelZoom>
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      {onMapClick && <ClickHandler onClick={onMapClick} />}
+  const [activeId, setActiveId] = useState<string | null>(null);
 
-      {reports.map((report) => (
-        <CircleMarker
-          key={report._id}
-          center={[report.lat, report.lng]}
-          radius={report.severity === "high" ? 10 : report.severity === "medium" ? 8 : 6}
-          pathOptions={{
-            color: TYPE_COLORS[report.type],
-            fillColor: TYPE_COLORS[report.type],
-            fillOpacity: 0.7,
-            weight: 2,
-          }}
-        >
-          <Popup>
+  if (!MAPS_KEY) {
+    return (
+      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+        Missing NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+      </div>
+    );
+  }
+
+  const active = reports.find((r) => r._id === activeId);
+
+  return (
+    <APIProvider apiKey={MAPS_KEY}>
+      <Map
+        defaultCenter={{ lat: center[0], lng: center[1] }}
+        defaultZoom={12}
+        gestureHandling="greedy"
+        style={{ width: "100%", height: "100%" }}
+      >
+        <AqiHeatmapOverlay />
+        {onMapClick && <ClickListener onClick={onMapClick} />}
+
+        {reports.map((report) => (
+          <Marker
+            key={report._id}
+            position={{ lat: report.lat, lng: report.lng }}
+            onClick={() => setActiveId(report._id)}
+            icon={{
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: report.severity === "high" ? 10 : report.severity === "medium" ? 8 : 6,
+              fillColor: TYPE_COLORS[report.type],
+              fillOpacity: 0.8,
+              strokeColor: TYPE_COLORS[report.type],
+              strokeWeight: 2,
+            }}
+          />
+        ))}
+
+        {active && (
+          <InfoWindow
+            position={{ lat: active.lat, lng: active.lng }}
+            onCloseClick={() => setActiveId(null)}
+          >
             <div className="space-y-1 text-sm">
-              <p className="font-medium">{TYPE_LABELS[report.type]}</p>
-              {report.description && <p className="text-muted-foreground">{report.description}</p>}
+              <p className="font-medium">{TYPE_LABELS[active.type]}</p>
+              {active.description && <p className="text-muted-foreground">{active.description}</p>}
               <p className="text-xs text-muted-foreground">
-                {report.severity} severity · {report.upvotes.length} upvotes
+                {active.severity} severity · {active.upvotes.length} upvotes
               </p>
               <p className="text-xs text-muted-foreground">
-                {new Date(report.createdAt).toLocaleString()}
+                {new Date(active.createdAt).toLocaleString()}
               </p>
             </div>
-          </Popup>
-        </CircleMarker>
-      ))}
-    </MapContainer>
+          </InfoWindow>
+        )}
+      </Map>
+    </APIProvider>
   );
 }
 

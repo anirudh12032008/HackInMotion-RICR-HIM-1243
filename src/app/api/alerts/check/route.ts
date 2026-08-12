@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Location from "@/models/Location";
 import { requireUserId } from "@/lib/session";
-import { getCurrentAQIByCoords } from "@/lib/waqi";
+import { getCurrentConditions } from "@/lib/google-aqi";
 import { checkAndCreateAlerts } from "@/lib/alerts";
 
 export async function POST(req: Request) {
@@ -20,12 +20,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Location not found" }, { status: 404 });
   }
 
-  const feed = await getCurrentAQIByCoords(location.lat, location.lng);
+  const conditions = await getCurrentConditions(location.lat, location.lng);
   const created = await checkAndCreateAlerts({
     userId,
     locationId,
     locationName: location.name,
-    aqi: feed.aqi,
+    aqi: conditions.aqi,
     alertThreshold: location.alertThreshold,
   });
 

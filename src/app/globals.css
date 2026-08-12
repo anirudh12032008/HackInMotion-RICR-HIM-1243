@@ -112,10 +112,3 @@
 @utility text-balance {
   text-wrap: balance;
 }
-
-/* Leaflet needs an explicit height and a z-index below our overlays. */
-.leaflet-container {
-  height: 100%;
-  width: 100%;
-  z-index: 0;
-}
