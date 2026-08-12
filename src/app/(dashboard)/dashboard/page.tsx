@@ -4,6 +4,7 @@ import { useState } from "react";
 import { QuickSearch, type AqiResult } from "@/components/dashboard/QuickSearch";
 import { AQICard } from "@/components/aqi/AQICard";
 import { SavedLocations } from "@/components/dashboard/SavedLocations";
+import { ProfilePrompt } from "@/components/dashboard/ProfilePrompt";
 
 export default function DashboardPage() {
   const [result, setResult] = useState<AqiResult | null>(null);
@@ -22,6 +23,8 @@ export default function DashboardPage() {
           Search any city or use your location to check current air quality.
         </p>
       </div>
+
+      <ProfilePrompt />
 
       <QuickSearch onResult={handleResult} />
 
