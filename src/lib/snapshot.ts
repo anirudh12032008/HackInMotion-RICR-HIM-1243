@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import AQISnapshot from "@/models/AQISnapshot";
 import { CurrentConditions, getHistoricalDailyAqi } from "@/lib/google-aqi";
 
@@ -58,8 +59,10 @@ export async function backfillHistoryIfSparse(locationId: string, lat: number, l
     if (toInsert.length > 0) {
       await AQISnapshot.insertMany(toInsert, { ordered: false });
     }
-  } catch {
-    // History unavailable for this location — charts just fall back to
-    // whatever opportunistic data exists, same as before this feature.
+  } catch (err) {
+    const detail = isAxiosError(err) ? JSON.stringify(err.response?.data) : String(err);
+    console.error("History backfill failed:", detail);
+    // Non-fatal — charts just fall back to whatever opportunistic data
+    // exists, same as before this feature.
   }
 }
