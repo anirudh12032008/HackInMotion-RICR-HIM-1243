@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isAxiosError } from "axios";
 import { requireUserId } from "@/lib/session";
 import { askGemini, GeminiError, type ChatMessage } from "@/lib/gemini";
 import { connectDB } from "@/lib/db";
@@ -58,6 +59,8 @@ export async function POST(req: Request) {
     ]);
     return NextResponse.json({ reply });
   } catch (err) {
+    const detail = isAxiosError(err) ? JSON.stringify(err.response?.data) : String(err);
+    console.error("Gemini chat failed:", detail);
     const errorMessage = err instanceof GeminiError ? err.message : "The AI assistant is unavailable right now";
     return NextResponse.json({ error: errorMessage }, { status: 502 });
   }
