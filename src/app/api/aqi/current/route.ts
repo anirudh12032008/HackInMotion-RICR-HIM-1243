@@ -46,6 +46,7 @@ export async function GET(req: Request) {
       pollutants: conditions.pollutants,
       forecast: { daily: { pm25: groupForecastByDay(hourly) } },
       risk: classifyRisk(conditions.aqi),
+      healthRecommendations: conditions.healthRecommendations ?? null,
     });
   } catch (err) {
     const message = err instanceof GoogleAqiError ? err.message : "Failed to fetch air quality data";
