@@ -24,11 +24,24 @@ export function AiAssistant({ result }: { result: AqiResult | null }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
+
+  // Best-effort, silent — gives the assistant real location context even
+  // when no city has been explicitly searched. No prompt/error shown if
+  // it's unavailable or denied; the assistant just asks the user instead.
+  useEffect(() => {
+    if (result || !navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => {},
+      { timeout: 5000 }
+    );
+  }, [result]);
 
   async function send(text: string) {
     if (!text.trim() || loading) return;
@@ -54,6 +67,7 @@ export function AiAssistant({ result }: { result: AqiResult | null }) {
                 pollutants: result.pollutants,
               }
             : null,
+          coords,
         }),
       });
       const data = await res.json();
@@ -89,7 +103,11 @@ export function AiAssistant({ result }: { result: AqiResult | null }) {
             <div>
               <p className="text-sm font-semibold">BreatheSafe AI</p>
               <p className="text-[11px] text-muted-foreground">
-                {result ? `Knows about ${result.city.name}` : "Ask me anything about air quality"}
+                {result
+                  ? `Knows about ${result.city.name}`
+                  : coords
+                    ? "Knows your current location"
+                    : "Ask me anything about air quality"}
               </p>
             </div>
           </div>
