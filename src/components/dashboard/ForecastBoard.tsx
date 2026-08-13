@@ -58,7 +58,7 @@ export function ForecastBoard() {
       const res = await fetch(`/api/aqi/current?city=${encodeURIComponent(target)}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Location not found");
-      setDays(extractDailyForecast(data.forecast));
+      setDays(extractDailyForecast(data.forecast?.daily));
       setCity(data.city.name.split(",")[0]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
