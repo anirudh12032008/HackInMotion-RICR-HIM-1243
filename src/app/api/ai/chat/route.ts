@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAxiosError } from "axios";
 import { requireUserId } from "@/lib/session";
-import { askGemini, GeminiError, type ChatMessage } from "@/lib/gemini";
+import { askGroq, GroqError, type ChatMessage } from "@/lib/groq";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 
@@ -53,15 +53,15 @@ export async function POST(req: Request) {
   const systemInstruction = buildSystemInstruction(context ?? null, user?.healthProfile);
 
   try {
-    const reply = await askGemini(systemInstruction, [
+    const reply = await askGroq(systemInstruction, [
       ...trimmedHistory,
       { role: "user", text: message },
     ]);
     return NextResponse.json({ reply });
   } catch (err) {
     const detail = isAxiosError(err) ? JSON.stringify(err.response?.data) : String(err);
-    console.error("Gemini chat failed:", detail);
-    const errorMessage = err instanceof GeminiError ? err.message : "The AI assistant is unavailable right now";
+    console.error("Groq chat failed:", detail);
+    const errorMessage = err instanceof GroqError ? err.message : "The AI assistant is unavailable right now";
     return NextResponse.json({ error: errorMessage }, { status: 502 });
   }
 }
