@@ -25,6 +25,7 @@ export function AiAssistant({ result }: { result: AqiResult | null }) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [resolvedCity, setResolvedCity] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -73,6 +74,7 @@ export function AiAssistant({ result }: { result: AqiResult | null }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Something went wrong");
       setMessages([...nextMessages, { role: "model", text: data.reply }]);
+      if (data.resolvedContext?.cityName) setResolvedCity(data.resolvedContext.cityName);
     } catch (err) {
       setMessages([
         ...nextMessages,
@@ -105,9 +107,11 @@ export function AiAssistant({ result }: { result: AqiResult | null }) {
               <p className="text-[11px] text-muted-foreground">
                 {result
                   ? `Knows about ${result.city.name}`
-                  : coords
-                    ? "Knows your current location"
-                    : "Ask me anything about air quality"}
+                  : resolvedCity
+                    ? `Knows about ${resolvedCity}`
+                    : coords
+                      ? "Knows your current location"
+                      : "Ask me anything about air quality"}
               </p>
             </div>
           </div>

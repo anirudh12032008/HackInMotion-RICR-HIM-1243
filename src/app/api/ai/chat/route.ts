@@ -5,7 +5,7 @@ import { askGroq, GroqError, type ChatMessage } from "@/lib/groq";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 import Location from "@/models/Location";
-import { getCurrentConditions, reverseGeocode } from "@/lib/google-aqi";
+import { getCurrentConditions, geocodeCity, reverseGeocode } from "@/lib/google-aqi";
 import { classifyRisk } from "@/lib/risk-engine";
 
 const MAX_HISTORY = 10;
@@ -20,8 +20,11 @@ interface AqiContext {
 }
 
 interface SavedLocationSummary {
+  _id: string;
   name: string;
   city?: string;
+  lat: number;
+  lng: number;
 }
 
 function buildSystemInstruction(
@@ -47,7 +50,49 @@ ${contextLine}
 ${savedLocationsLine}
 The user's health profile: ${profile}
 
-Keep answers to 2-4 sentences unless the user asks for more detail. Be warm but concise, like a knowledgeable friend, not a corporate chatbot. Reference the actual AQI number and pollutant when relevant. Address the user by name occasionally, not every message.`;
+Keep answers to 2-4 sentences unless the user asks for more detail. Be warm but concise, like a knowledgeable friend, not a corporate chatbot. Reference the actual AQI number and pollutant when relevant. Address the user by name occasionally, not every message. Never say you'll "try to find" or "simulate" data — if air quality data is given to you above, use it directly; if none is given, just ask for a location.`;
+}
+
+async function conditionsToContext(lat: number, lng: number, name: string): Promise<AqiContext> {
+  const conditions = await getCurrentConditions(lat, lng);
+  return {
+    cityName: name,
+    aqi: conditions.aqi,
+    riskLabel: classifyRisk(conditions.aqi).label,
+    dominantPollutant: conditions.dominantPollutant,
+    pollutants: conditions.pollutants as Record<string, number | undefined>,
+  };
+}
+
+/** Looks for a saved location named in the message, then falls back to geocoding the message itself as a place name. */
+async function resolveLocationFromMessage(
+  message: string,
+  savedLocations: SavedLocationSummary[]
+): Promise<AqiContext | null> {
+  const lower = message.toLowerCase();
+  const matched = savedLocations.find(
+    (loc) => lower.includes(loc.name.toLowerCase()) || (loc.city && lower.includes(loc.city.toLowerCase()))
+  );
+  if (matched) {
+    try {
+      return await conditionsToContext(matched.lat, matched.lng, matched.name);
+    } catch {
+      return null;
+    }
+  }
+
+  // Short messages are often just a place name ("bhopal", "what about Delhi?") —
+  // try geocoding the raw text directly rather than requiring an exact match.
+  if (message.trim().length > 0 && message.trim().length <= 60) {
+    try {
+      const place = await geocodeCity(message.trim());
+      return await conditionsToContext(place.lat, place.lng, place.name);
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
 }
 
 export async function POST(req: Request) {
@@ -69,24 +114,29 @@ export async function POST(req: Request) {
   await connectDB();
   const [user, savedLocations] = await Promise.all([
     User.findById(userId).select("name healthProfile"),
-    Location.find({ userId, isActive: true }).select("name city").limit(10).lean(),
+    Location.find({ userId, isActive: true }).select("name city lat lng").limit(10).lean(),
   ]);
+  const savedLocationSummaries = savedLocations.map((l) => ({
+    _id: l._id.toString(),
+    name: l.name,
+    city: l.city,
+    lat: l.lat,
+    lng: l.lng,
+  }));
 
-  // If the client didn't already have a searched location's AQI loaded,
-  // fall back to the browser's geolocation coords so the assistant still
-  // has real, live context instead of asking "which city?" every time.
   let liveContext = context ?? null;
+
+  // No location already loaded client-side — try to resolve one, in order:
+  // a saved/mentioned location in the message text, then the browser's
+  // geolocation coords. This is what lets the assistant answer "bhopal"
+  // with real data instead of just repeating the name back.
+  if (!liveContext) {
+    liveContext = await resolveLocationFromMessage(message, savedLocationSummaries);
+  }
   if (!liveContext && coords) {
     try {
-      const conditions = await getCurrentConditions(coords.lat, coords.lng);
       const placeName = (await reverseGeocode(coords.lat, coords.lng).catch(() => null)) ?? "your location";
-      liveContext = {
-        cityName: placeName,
-        aqi: conditions.aqi,
-        riskLabel: classifyRisk(conditions.aqi).label,
-        dominantPollutant: conditions.dominantPollutant,
-        pollutants: conditions.pollutants as Record<string, number | undefined>,
-      };
+      liveContext = await conditionsToContext(coords.lat, coords.lng, placeName);
     } catch {
       // No AQI station nearby, or Google call failed — assistant just
       // proceeds without live location context.
@@ -94,19 +144,14 @@ export async function POST(req: Request) {
   }
 
   const trimmedHistory = Array.isArray(history) ? history.slice(-MAX_HISTORY) : [];
-  const systemInstruction = buildSystemInstruction(
-    liveContext,
-    user?.name,
-    user?.healthProfile,
-    savedLocations as SavedLocationSummary[]
-  );
+  const systemInstruction = buildSystemInstruction(liveContext, user?.name, user?.healthProfile, savedLocationSummaries);
 
   try {
     const reply = await askGroq(systemInstruction, [
       ...trimmedHistory,
       { role: "user", text: message },
     ]);
-    return NextResponse.json({ reply });
+    return NextResponse.json({ reply, resolvedContext: liveContext });
   } catch (err) {
     const detail = isAxiosError(err) ? JSON.stringify(err.response?.data) : String(err);
     console.error("Groq chat failed:", detail);
