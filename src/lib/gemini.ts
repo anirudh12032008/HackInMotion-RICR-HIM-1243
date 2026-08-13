@@ -2,7 +2,11 @@ import axios from "axios";
 
 const API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
-const MODEL = "gemini-2.0-flash";
+// "-latest" aliases auto-update to Google's current recommended model with
+// a 2-week deprecation notice, instead of a hardcoded version that silently
+// stops working when Google retires it (as gemini-2.0-flash and
+// gemini-2.5-flash both did within this session).
+const MODEL = "gemini-flash-latest";
 
 export class GeminiError extends Error {}
 

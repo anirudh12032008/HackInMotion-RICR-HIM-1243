@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Alert from "@/models/Alert";
+// Imported for its side effect of registering the "Location" schema with
+// Mongoose — required before .populate("locationId") below can resolve it.
+import "@/models/Location";
 import { requireUserId } from "@/lib/session";
 
 export async function GET(req: Request) {
