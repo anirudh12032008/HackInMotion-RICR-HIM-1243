@@ -172,11 +172,12 @@ export async function getHourlyForecast(lat: number, lng: number): Promise<Hourl
     `${AQ_BASE}/forecast:lookup`,
     {
       location: { latitude: lat, longitude: lng },
+      // No startTime — Google defaults it to "now" on its own clock, which
+      // avoids client/server clock-skew pushing the window past whatever the
+      // true max is. 96h and 95h both got INVALID_ARGUMENT in practice, so
+      // this stays well under the documented max instead of hugging it.
       period: {
-        startTime: new Date().toISOString(),
-        // 95h, not a full 96h — Google's API rejects periods right at its
-        // documented max, so this stays safely under the boundary.
-        endTime: new Date(Date.now() + 95 * 60 * 60 * 1000).toISOString(),
+        endTime: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
       },
       pageSize: 100,
       extraComputations: ["LOCAL_AQI"],
