@@ -239,15 +239,12 @@ const MAX_HISTORY_PAGES = 8;
  */
 export async function getHistoricalDailyAqi(lat: number, lng: number, days = 30): Promise<HistoricalDay[]> {
   assertKey();
-  // Round to a clean hour boundary — this is an hourly-granularity API and
-  // sub-hour precision in the period (from Date.now()'s ms) may be why both
-  // this and forecast:lookup rejected every duration tried as "period not
-  // supported" regardless of length.
-  const now = new Date();
-  now.setUTCMinutes(0, 0, 0);
-  const startTime = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
 
-  const hours: { dateTime: string; aqi: number; pollutants: Pollutants }[] = [];
+  // "hours" is a plain integer (1-720) and mutually exclusive with "period"
+  // — no timestamp construction needed. Confirmed against Google's actual
+  // REST reference after "period" rejected every startTime/endTime
+  // combination tried as INVALID_ARGUMENT regardless of duration or rounding.
+  const hourlyPoints: { dateTime: string; aqi: number; pollutants: Pollutants }[] = [];
   let pageToken: string | undefined;
   let pages = 0;
 
@@ -256,7 +253,7 @@ export async function getHistoricalDailyAqi(lat: number, lng: number, days = 30)
       `${AQ_BASE}/history:lookup`,
       {
         location: { latitude: lat, longitude: lng },
-        period: { startTime: startTime.toISOString(), endTime: now.toISOString() },
+        hours: Math.min(720, days * 24),
         pageSize: 168,
         pageToken,
         extraComputations: ["LOCAL_AQI", "POLLUTANT_CONCENTRATION"],
@@ -276,15 +273,15 @@ export async function getHistoricalDailyAqi(lat: number, lng: number, days = 30)
         if (key && p.concentration) pollutants[key] = Math.round(p.concentration.value);
       }
 
-      hours.push({ dateTime: h.dateTime, aqi: index.aqi, pollutants });
+      hourlyPoints.push({ dateTime: h.dateTime, aqi: index.aqi, pollutants });
     }
 
     pageToken = data.nextPageToken;
     pages++;
   } while (pageToken && pages < MAX_HISTORY_PAGES);
 
-  const byDay = new Map<string, typeof hours>();
-  for (const h of hours) {
+  const byDay = new Map<string, typeof hourlyPoints>();
+  for (const h of hourlyPoints) {
     const day = h.dateTime.slice(0, 10);
     if (!byDay.has(day)) byDay.set(day, []);
     byDay.get(day)!.push(h);
