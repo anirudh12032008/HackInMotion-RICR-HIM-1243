@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_KEY = process.env.GOOGLE_API_KEY;
+const API_KEY = process.env.GEMINI_API_KEY;
 const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
 const MODEL = "gemini-2.0-flash";
 
@@ -12,7 +12,7 @@ export interface ChatMessage {
 }
 
 export async function askGemini(systemInstruction: string, history: ChatMessage[]): Promise<string> {
-  if (!API_KEY) throw new GeminiError("Missing GOOGLE_API_KEY environment variable");
+  if (!API_KEY) throw new GeminiError("Missing GEMINI_API_KEY environment variable");
 
   const { data } = await axios.post(
     `${GEMINI_BASE}/${MODEL}:generateContent`,
