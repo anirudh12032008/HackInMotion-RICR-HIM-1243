@@ -168,16 +168,23 @@ export interface HourlyForecast {
 
 export async function getHourlyForecast(lat: number, lng: number): Promise<HourlyForecast[]> {
   assertKey();
+
+  // Google's own documented example always includes an explicit period —
+  // omitting it entirely (the previous attempt) apparently doesn't default
+  // to "any time" the way the Interval sub-object's own optional fields do;
+  // it likely resolves to a zero-length window, which is trivially "not
+  // supported" for a forecast. Matching the doc example's shape/format here.
+  const now = new Date();
+  const period = {
+    startTime: now.toISOString(),
+    endTime: new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString(),
+  };
+
   const { data } = await axios.post(
     `${AQ_BASE}/forecast:lookup`,
     {
       location: { latitude: lat, longitude: lng },
-      // No explicit period — every window we tried (96h, 95h, 72h, with and
-      // without startTime) got the identical INVALID_ARGUMENT "time period
-      // is not supported" error, which means duration isn't the actual
-      // variable. Omitting it entirely lets Google apply its own default
-      // forecast window instead of us guessing at an undocumented boundary.
-      pageSize: 100,
+      period,
       extraComputations: ["LOCAL_AQI"],
       languageCode: "en",
     },
