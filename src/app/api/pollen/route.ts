@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isAxiosError } from "axios";
 import { getPollenForecast, GooglePollenError } from "@/lib/google-pollen";
 
 export async function GET(req: Request) {
@@ -14,6 +15,8 @@ export async function GET(req: Request) {
     const types = await getPollenForecast(lat, lng);
     return NextResponse.json({ types });
   } catch (err) {
+    const detail = isAxiosError(err) ? JSON.stringify(err.response?.data) : String(err);
+    console.error("Pollen fetch failed:", detail);
     const message = err instanceof GooglePollenError ? err.message : "Failed to fetch pollen forecast";
     return NextResponse.json({ error: message }, { status: 502 });
   }
