@@ -4,7 +4,7 @@ import Location from "@/models/Location";
 import { requireUserId } from "@/lib/session";
 import { getCurrentConditions } from "@/lib/google-aqi";
 import { classifyRisk } from "@/lib/risk-engine";
-import { maybeStoreSnapshot } from "@/lib/snapshot";
+import { maybeStoreSnapshot, backfillHistoryIfSparse } from "@/lib/snapshot";
 import { checkAndCreateAlerts } from "@/lib/alerts";
 
 export async function GET() {
@@ -20,6 +20,7 @@ export async function GET() {
         const conditions = await getCurrentConditions(loc.lat, loc.lng);
         const locationId = loc._id.toString();
         await maybeStoreSnapshot(locationId, conditions);
+        await backfillHistoryIfSparse(locationId, loc.lat, loc.lng);
         await checkAndCreateAlerts({
           userId,
           locationId,

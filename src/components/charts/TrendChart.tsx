@@ -89,8 +89,31 @@ export function TrendChart({ locationId }: { locationId: string }) {
 
   const maxAqi = snapshots?.length ? Math.max(...snapshots.map((s) => s.aqi), 60) : 60;
 
+  const stats = useMemo(() => {
+    if (!snapshots || snapshots.length === 0) return null;
+    const aqis = snapshots.map((s) => s.aqi);
+    const unhealthyDays = new Set(
+      snapshots.filter((s) => s.aqi > 100).map((s) => s.timestamp.slice(0, 10))
+    ).size;
+    return {
+      avg: Math.round(avg(aqis)),
+      min: Math.min(...aqis),
+      max: Math.max(...aqis),
+      unhealthyDays,
+    };
+  }, [snapshots]);
+
   return (
     <div>
+      {stats && (
+        <div className="mb-3 grid grid-cols-4 gap-2 text-center">
+          <StatTile label="Average" value={stats.avg} />
+          <StatTile label="Best" value={stats.min} valueColor={classifyRisk(stats.min).color} />
+          <StatTile label="Worst" value={stats.max} valueColor={classifyRisk(stats.max).color} />
+          <StatTile label="Unhealthy days" value={stats.unhealthyDays} />
+        </div>
+      )}
+
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <Tabs value={period} onValueChange={(v) => setPeriod(v as "7d" | "30d")}>
           <TabsList>
@@ -179,6 +202,17 @@ export function TrendChart({ locationId }: { locationId: string }) {
 
 function avg(nums: number[]) {
   return nums.reduce((a, b) => a + b, 0) / (nums.length || 1);
+}
+
+function StatTile({ label, value, valueColor }: { label: string; value: number; valueColor?: string }) {
+  return (
+    <div className="rounded-lg border border-border py-2">
+      <p className="font-[family-name:var(--font-display)] text-xl" style={{ color: valueColor }}>
+        {value}
+      </p>
+      <p className="text-[10px] text-muted-foreground">{label}</p>
+    </div>
+  );
 }
 
 function TrendIndicator({ direction }: { direction: "improving" | "worsening" | "stable" }) {
