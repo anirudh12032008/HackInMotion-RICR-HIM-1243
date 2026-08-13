@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
   DropdownMenuLabel,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SidebarNav } from "@/components/layout/Sidebar";
@@ -141,15 +142,17 @@ export function Navbar() {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{session?.user?.name ?? "Account"}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => (window.location.href = "/dashboard/profile")}>
-              {t("nav.profile")}
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
-              <LogOut className="mr-2 h-4 w-4" />
-              {t("nav.logout")}
-            </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>{session?.user?.name ?? "Account"}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => (window.location.href = "/dashboard/profile")}>
+                {t("nav.profile")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
+                <LogOut className="mr-2 h-4 w-4" />
+                {t("nav.logout")}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
