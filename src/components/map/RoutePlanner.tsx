@@ -19,11 +19,13 @@ export function RoutePlanner({
   start,
   end,
   samples,
+  roadPath,
   onSetPoint,
 }: {
   start: RoutePoint | null;
   end: RoutePoint | null;
   samples: RouteSample[];
+  roadPath?: RoutePoint[] | null;
   onSetPoint: (point: RoutePoint) => void;
 }) {
   const colorScheme = useMapColorScheme();
@@ -55,13 +57,23 @@ export function RoutePlanner({
           <AqiHeatmapOverlay opacity={0.5} />
           <MapClickListener onClick={handleClick} />
 
-          {start && end && (
+          {roadPath && roadPath.length > 1 ? (
             <Polyline
-              path={[start, end]}
-              strokeColor="#64748b"
+              path={roadPath}
+              strokeColor="#1f5f4e"
               strokeOpacity={0.9}
-              strokeWeight={3}
+              strokeWeight={4}
             />
+          ) : (
+            start &&
+            end && (
+              <Polyline
+                path={[start, end]}
+                strokeColor="#64748b"
+                strokeOpacity={0.9}
+                strokeWeight={3}
+              />
+            )
           )}
 
           {samples.map((sample, i) => (

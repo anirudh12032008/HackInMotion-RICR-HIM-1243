@@ -49,6 +49,40 @@ export function sampleRoute(start: RoutePoint, end: RoutePoint, waypoints: Route
   return samples;
 }
 
+/** Samples evenly-spaced points (~every 2km, capped) along a real road path from Directions API. */
+export function sampleAlongPath(path: RoutePoint[]): RoutePoint[] {
+  if (path.length <= 1) return path;
+
+  let totalKm = 0;
+  for (let i = 0; i < path.length - 1; i++) totalKm += haversineKm(path[i], path[i + 1]);
+
+  const targetSamples = Math.min(MAX_SAMPLES * 3, Math.max(2, Math.round(totalKm / 2)));
+  const stepKm = totalKm / (targetSamples - 1);
+
+  const samples: RoutePoint[] = [path[0]];
+  let distSinceLastSample = 0;
+
+  for (let i = 0; i < path.length - 1; i++) {
+    const segKm = haversineKm(path[i], path[i + 1]);
+    let covered = 0;
+
+    while (distSinceLastSample + (segKm - covered) >= stepKm) {
+      const remaining = stepKm - distSinceLastSample;
+      const t = (covered + remaining) / segKm;
+      samples.push({
+        lat: path[i].lat + (path[i + 1].lat - path[i].lat) * t,
+        lng: path[i].lng + (path[i + 1].lng - path[i].lng) * t,
+      });
+      covered += remaining;
+      distSinceLastSample = 0;
+    }
+    distSinceLastSample += segKm - covered;
+  }
+
+  samples.push(path[path.length - 1]);
+  return samples;
+}
+
 function haversineKm(a: RoutePoint, b: RoutePoint): number {
   const R = 6371;
   const dLat = ((b.lat - a.lat) * Math.PI) / 180;

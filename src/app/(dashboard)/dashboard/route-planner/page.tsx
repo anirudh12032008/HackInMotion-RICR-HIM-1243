@@ -17,6 +17,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   sampleRoute,
+  sampleAlongPath,
   averageAqi,
   getActivityGuidance,
   routeDistanceKm,
@@ -25,6 +26,13 @@ import {
   type RoutePoint,
   type RouteSample,
 } from "@/lib/route-risk";
+
+const DIRECTIONS_MODE: Record<ActivityType, "walking" | "bicycling" | "driving"> = {
+  jogging: "walking",
+  walking: "walking",
+  cycling: "bicycling",
+  driving: "driving",
+};
 
 const RoutePlanner = dynamic(
   () => import("@/components/map/RoutePlanner").then((m) => m.RoutePlanner),
@@ -42,6 +50,10 @@ export default function RoutePlannerPage() {
   const [start, setStart] = useState<RoutePoint | null>(null);
   const [end, setEnd] = useState<RoutePoint | null>(null);
   const [samples, setSamples] = useState<RouteSample[]>([]);
+  const [roadPath, setRoadPath] = useState<RoutePoint[] | null>(null);
+  const [directionsInfo, setDirectionsInfo] = useState<{ distanceKm: number; durationMin: number } | null>(
+    null
+  );
   const [activity, setActivity] = useState<ActivityType>("jogging");
   const [loading, setLoading] = useState(false);
 
@@ -55,12 +67,38 @@ export default function RoutePlannerPage() {
       setStart(point);
       setEnd(null);
       setSamples([]);
+      setRoadPath(null);
+      setDirectionsInfo(null);
     }
   }
 
   async function loadRouteAqi(from: RoutePoint, to: RoutePoint) {
     setLoading(true);
-    const points = sampleRoute(from, to);
+    setRoadPath(null);
+    setDirectionsInfo(null);
+
+    let points: RoutePoint[];
+    try {
+      const res = await fetch("/api/route/directions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ start: from, end: to, mode: DIRECTIONS_MODE[activity] }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      setRoadPath(data.path);
+      setDirectionsInfo({
+        distanceKm: data.distanceMeters / 1000,
+        durationMin: Math.round(data.durationSeconds / 60),
+      });
+      points = sampleAlongPath(data.path);
+    } catch {
+      // Directions unavailable (API not enabled, no route found) — fall back
+      // to straight-line sampling so the feature degrades instead of breaking.
+      points = sampleRoute(from, to);
+    }
+
     const results = await Promise.all(
       points.map(async (p): Promise<RouteSample> => {
         try {
@@ -80,6 +118,8 @@ export default function RoutePlannerPage() {
     setStart(null);
     setEnd(null);
     setSamples([]);
+    setRoadPath(null);
+    setDirectionsInfo(null);
   }
 
   function useMyLocationAsStart() {
@@ -142,10 +182,12 @@ export default function RoutePlannerPage() {
       {distanceKm !== null && (
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
           <span className="inline-flex items-center gap-1">
-            <MapPin className="h-3.5 w-3.5" />~{distanceKm.toFixed(1)} km straight-line
+            <MapPin className="h-3.5 w-3.5" />~
+            {(directionsInfo?.distanceKm ?? distanceKm).toFixed(1)} km
+            {directionsInfo ? "" : " (straight-line)"}
           </span>
           <span className="inline-flex items-center gap-1">
-            <Clock className="h-3.5 w-3.5" />~{durationMin} min {activity}
+            <Clock className="h-3.5 w-3.5" />~{directionsInfo?.durationMin ?? durationMin} min {activity}
           </span>
         </div>
       )}
@@ -171,7 +213,13 @@ export default function RoutePlannerPage() {
 
       <Card className="min-h-0 flex-1 overflow-hidden p-0">
         <CardContent className="h-full p-0">
-          <RoutePlanner start={start} end={end} samples={samples} onSetPoint={handleSetPoint} />
+          <RoutePlanner
+            start={start}
+            end={end}
+            samples={samples}
+            roadPath={roadPath}
+            onSetPoint={handleSetPoint}
+          />
         </CardContent>
       </Card>
     </div>
