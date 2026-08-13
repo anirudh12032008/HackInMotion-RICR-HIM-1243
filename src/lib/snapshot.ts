@@ -44,25 +44,30 @@ export async function backfillHistoryIfSparse(locationId: string, lat: number, l
 
   const existingDays = new Set(existing.map((s) => s.timestamp.toISOString().slice(0, 10)));
 
-  try {
-    const days = await getHistoricalDailyAqi(lat, lng, HISTORY_WINDOW_DAYS);
-    const toInsert = days
-      .filter((d) => !existingDays.has(d.date))
-      .map((d) => ({
-        locationId,
-        timestamp: new Date(`${d.date}T12:00:00.000Z`),
-        aqi: d.avgAqi,
-        pollutants: d.pollutants,
-        source: "google-history",
-      }));
+  // If Google rejects the full 30-day window, fall back to shorter windows
+  // rather than getting nothing — a 7-day chart with real data beats an
+  // empty 30-day one.
+  for (const windowDays of [HISTORY_WINDOW_DAYS, 7, 3]) {
+    try {
+      const days = await getHistoricalDailyAqi(lat, lng, windowDays);
+      const toInsert = days
+        .filter((d) => !existingDays.has(d.date))
+        .map((d) => ({
+          locationId,
+          timestamp: new Date(`${d.date}T12:00:00.000Z`),
+          aqi: d.avgAqi,
+          pollutants: d.pollutants,
+          source: "google-history",
+        }));
 
-    if (toInsert.length > 0) {
-      await AQISnapshot.insertMany(toInsert, { ordered: false });
+      if (toInsert.length > 0) {
+        await AQISnapshot.insertMany(toInsert, { ordered: false });
+      }
+      return;
+    } catch (err) {
+      const detail = isAxiosError(err) ? JSON.stringify(err.response?.data) : String(err);
+      console.error(`History backfill failed (${windowDays}d window):`, detail);
+      // Try the next, shorter window instead of giving up entirely.
     }
-  } catch (err) {
-    const detail = isAxiosError(err) ? JSON.stringify(err.response?.data) : String(err);
-    console.error("History backfill failed:", detail);
-    // Non-fatal — charts just fall back to whatever opportunistic data
-    // exists, same as before this feature.
   }
 }
