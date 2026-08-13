@@ -83,6 +83,16 @@ interface AqPollutant {
   concentration?: { value: number; units: string };
 }
 
+export interface HealthRecommendations {
+  generalPopulation?: string;
+  elderly?: string;
+  lungDiseasePopulation?: string;
+  heartDiseasePopulation?: string;
+  athletes?: string;
+  pregnantWomen?: string;
+  children?: string;
+}
+
 export interface CurrentConditions {
   aqi: number;
   category: string;
@@ -90,6 +100,7 @@ export interface CurrentConditions {
   pollutants: Pollutants;
   timestamp: string;
   scale: "regional" | "universal";
+  healthRecommendations?: HealthRecommendations;
 }
 
 /**
@@ -139,6 +150,7 @@ export async function getCurrentConditions(lat: number, lng: number): Promise<Cu
     pollutants,
     timestamp: data.dateTime ?? new Date().toISOString(),
     scale: primary.scale,
+    healthRecommendations: data.healthRecommendations,
   };
 }
 

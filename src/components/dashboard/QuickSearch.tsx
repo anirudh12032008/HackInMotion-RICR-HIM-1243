@@ -14,6 +14,15 @@ export interface AqiResult {
   pollutants: Record<string, number | undefined>;
   forecast: unknown;
   risk: { level: string; label: string; color: string; bgColor: string; emoji: string; description: string };
+  healthRecommendations?: {
+    generalPopulation?: string;
+    elderly?: string;
+    lungDiseasePopulation?: string;
+    heartDiseasePopulation?: string;
+    athletes?: string;
+    pregnantWomen?: string;
+    children?: string;
+  } | null;
 }
 
 export function QuickSearch({ onResult }: { onResult: (result: AqiResult) => void }) {

@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { classifyRisk } from "@/lib/risk-engine";
+import { LandingMapPreview } from "@/components/landing/LandingMapPreview";
 
 interface QuickResult {
   aqi: number;
-  city: { name: string };
+  city: { name: string; geo: [number, number] };
 }
 
 export function QuickSearchTeaser() {
@@ -80,6 +81,10 @@ export function QuickSearchTeaser() {
             {result.aqi}
           </span>
         </div>
+      )}
+
+      {result && (
+        <LandingMapPreview lat={result.city.geo[0]} lng={result.city.geo[1]} aqi={result.aqi} />
       )}
 
       {result && (
