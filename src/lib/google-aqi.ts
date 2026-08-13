@@ -172,13 +172,11 @@ export async function getHourlyForecast(lat: number, lng: number): Promise<Hourl
     `${AQ_BASE}/forecast:lookup`,
     {
       location: { latitude: lat, longitude: lng },
-      // No startTime — Google defaults it to "now" on its own clock, which
-      // avoids client/server clock-skew pushing the window past whatever the
-      // true max is. 96h and 95h both got INVALID_ARGUMENT in practice, so
-      // this stays well under the documented max instead of hugging it.
-      period: {
-        endTime: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
-      },
+      // No explicit period — every window we tried (96h, 95h, 72h, with and
+      // without startTime) got the identical INVALID_ARGUMENT "time period
+      // is not supported" error, which means duration isn't the actual
+      // variable. Omitting it entirely lets Google apply its own default
+      // forecast window instead of us guessing at an undocumented boundary.
       pageSize: 100,
       extraComputations: ["LOCAL_AQI"],
       languageCode: "en",
@@ -220,4 +218,83 @@ export function groupForecastByDay(hourly: HourlyForecast[]) {
 /** Google's official AQI heatmap tile URL for a given map style — proxied server-side via /api/aqi/heatmap-tile to keep the API key off the client. */
 export function heatmapTileUrl(mapType: string, z: number, x: number, y: number) {
   return `${AQ_BASE}/mapTypes/${mapType}/heatmapTiles/${z}/${x}/${y}?key=${API_KEY}`;
+}
+
+export interface HistoricalDay {
+  date: string; // YYYY-MM-DD
+  avgAqi: number;
+  minAqi: number;
+  maxAqi: number;
+  pollutants: Pollutants;
+}
+
+const MAX_HISTORY_PAGES = 8;
+
+/**
+ * Real hourly history for the past `days` (Google supports up to 30),
+ * grouped into one daily entry per date. This is what actually fixes sparse
+ * 7/30-day trend charts — without it, AQISnapshot only ever accumulates
+ * opportunistically (once/hour, only when a saved location happens to be
+ * viewed), so a brand-new location's chart would stay empty for weeks.
+ */
+export async function getHistoricalDailyAqi(lat: number, lng: number, days = 30): Promise<HistoricalDay[]> {
+  assertKey();
+  const now = new Date();
+  const startTime = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+
+  const hours: { dateTime: string; aqi: number; pollutants: Pollutants }[] = [];
+  let pageToken: string | undefined;
+  let pages = 0;
+
+  do {
+    const { data }: { data: { hoursInfo?: unknown[]; nextPageToken?: string } } = await axios.post(
+      `${AQ_BASE}/history:lookup`,
+      {
+        location: { latitude: lat, longitude: lng },
+        period: { startTime: startTime.toISOString(), endTime: now.toISOString() },
+        pageSize: 168,
+        pageToken,
+        extraComputations: ["LOCAL_AQI", "POLLUTANT_CONCENTRATION"],
+        languageCode: "en",
+      },
+      { params: { key: API_KEY } }
+    );
+
+    for (const raw of data.hoursInfo ?? []) {
+      const h = raw as { dateTime: string; indexes?: AqIndex[]; pollutants?: AqPollutant[] };
+      if (!h.indexes?.length) continue;
+      const { index } = pickIndex(h.indexes);
+
+      const pollutants: Pollutants = {};
+      for (const p of h.pollutants ?? []) {
+        const key = POLLUTANT_CODE_MAP[p.code];
+        if (key && p.concentration) pollutants[key] = Math.round(p.concentration.value);
+      }
+
+      hours.push({ dateTime: h.dateTime, aqi: index.aqi, pollutants });
+    }
+
+    pageToken = data.nextPageToken;
+    pages++;
+  } while (pageToken && pages < MAX_HISTORY_PAGES);
+
+  const byDay = new Map<string, typeof hours>();
+  for (const h of hours) {
+    const day = h.dateTime.slice(0, 10);
+    if (!byDay.has(day)) byDay.set(day, []);
+    byDay.get(day)!.push(h);
+  }
+
+  return Array.from(byDay.entries())
+    .map(([date, entries]) => {
+      const aqis = entries.map((e) => e.aqi);
+      return {
+        date,
+        avgAqi: Math.round(aqis.reduce((a, b) => a + b, 0) / aqis.length),
+        minAqi: Math.min(...aqis),
+        maxAqi: Math.max(...aqis),
+        pollutants: entries[entries.length - 1].pollutants,
+      };
+    })
+    .sort((a, b) => a.date.localeCompare(b.date));
 }
