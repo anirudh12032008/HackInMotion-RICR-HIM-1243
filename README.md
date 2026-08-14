@@ -7,9 +7,20 @@
 An Environmental Risk & Air Quality Monitoring Platform that turns raw pollutant
 telemetry into a decision a person can make in five seconds.
 
-[Architecture](docs/architecture.md) · [API reference](docs/api-documentation.md) · [Deployment](#deployment)
+[Architecture](docs/architecture.md) · [Diagram](architecture-diagram.png) · [API reference](api-documentation.md) · [Deployment](#deployment)
 
 </div>
+
+---
+
+## Team
+
+| | |
+| --- | --- |
+| **Team** | RICR |
+| **Members** | Anirudh Sahu (solo) |
+| **Theme** | Environment & CleanTech |
+| **Problem statement** | Environmental Risk & Air Quality Monitoring Platform |
 
 ---
 
@@ -247,7 +258,7 @@ src/
   app/
     (auth)/            login, signup
     (dashboard)/       dashboard, alerts, community, compare, forecast, profile, route-planner
-    api/               route handlers — see docs/api-documentation.md
+    api/               route handlers — see api-documentation.md
     error.tsx          root error boundary
   components/
     aqi/               gauge, risk badge, guidance, pollutants, pollen, exposure insights
@@ -401,7 +412,7 @@ Vercel Cron entry for background alerting.
 
 ## Documentation
 
-- **[docs/api-documentation.md](docs/api-documentation.md)** — every endpoint, with
+- **[api-documentation.md](api-documentation.md)** — every endpoint, with
   request/response shapes and status codes
 - **[docs/architecture.md](docs/architecture.md)** — system design, request lifecycles,
   and the architecture diagram source
