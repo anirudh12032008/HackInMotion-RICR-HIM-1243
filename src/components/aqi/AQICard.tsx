@@ -15,6 +15,7 @@ import { ExposureInsights } from "@/components/aqi/ExposureInsights";
 import type { AqiResult } from "@/components/dashboard/QuickSearch";
 import { UserHealthProfile } from "@/types/index";
 import { pickHealthRecommendation } from "@/lib/health-recommendation";
+import { subscribeToPush } from "@/lib/push-client";
 
 const DEFAULT_PROFILE: UserHealthProfile = {
   conditions: [],
@@ -53,6 +54,12 @@ export function AQICard({ result }: { result: AqiResult }) {
       }
       setSaved(true);
       toast.success(`${result.city.name} saved to your locations`);
+
+      // First saved location is the natural moment to ask for push
+      // permission — the user has just told us they want to track this
+      // place, so alerts about it are obviously wanted, not a cold prompt
+      // on first page load.
+      subscribeToPush().catch(() => {});
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to save location");
     } finally {

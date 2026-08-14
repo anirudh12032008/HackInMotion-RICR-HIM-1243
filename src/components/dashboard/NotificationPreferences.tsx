@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BellRing } from "lucide-react";
+import { BellRing, BellOff } from "lucide-react";
+import { isPushSupported, getPushSubscription, subscribeToPush, unsubscribeFromPush } from "@/lib/push-client";
 
 const CATEGORIES = [
   { key: "thresholdAlerts", label: "Threshold alerts", desc: "A saved location crosses your AQI alert threshold." },
@@ -25,11 +27,17 @@ const DEFAULTS: Preferences = {
   communityNearby: true,
 };
 
-/** Push is on by default across every category — this is where a user narrows it, not opts in. */
+/**
+ * Push is on by default the moment a user saves their first location (see
+ * AQICard) — this card is where they narrow it (per category) or turn the
+ * whole thing off for this device, not where they opt in from scratch.
+ */
 export function NotificationPreferences() {
   const [loading, setLoading] = useState(true);
   const [prefs, setPrefs] = useState<Preferences>(DEFAULTS);
   const [subscribedDevices, setSubscribedDevices] = useState(0);
+  const [subscribedHere, setSubscribedHere] = useState(false);
+  const [pushBusy, setPushBusy] = useState(false);
 
   useEffect(() => {
     fetch("/api/user/notifications")
@@ -39,6 +47,10 @@ export function NotificationPreferences() {
         setSubscribedDevices(data.subscribedDevices ?? 0);
       })
       .finally(() => setLoading(false));
+
+    if (isPushSupported()) {
+      getPushSubscription().then((sub) => setSubscribedHere(Boolean(sub)));
+    }
   }, []);
 
   async function toggle(key: PreferenceKey, checked: boolean) {
@@ -54,21 +66,61 @@ export function NotificationPreferences() {
     }
   }
 
+  async function togglePush() {
+    setPushBusy(true);
+    try {
+      if (subscribedHere) {
+        await unsubscribeFromPush();
+        setSubscribedHere(false);
+        setSubscribedDevices((n) => Math.max(0, n - 1));
+        toast.success("Push notifications turned off for this device.");
+      } else {
+        const ok = await subscribeToPush();
+        if (!ok) {
+          toast.error("Notifications were blocked — enable them in your browser's site settings.");
+          return;
+        }
+        setSubscribedHere(true);
+        setSubscribedDevices((n) => n + 1);
+        toast.success("Push notifications turned on for this device.");
+      }
+    } catch {
+      toast.error("Couldn't update push notifications.");
+    } finally {
+      setPushBusy(false);
+    }
+  }
+
   if (loading) return <Skeleton className="h-64 rounded-xl" />;
 
   return (
     <Card>
-      <CardHeader className="pb-3">
+      <CardHeader className="flex-row items-center justify-between gap-3 space-y-0 pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <BellRing className="h-4 w-4" />
           Notifications
         </CardTitle>
+        {isPushSupported() && (
+          <Button variant="outline" size="sm" disabled={pushBusy} onClick={togglePush}>
+            {subscribedHere ? (
+              <>
+                <BellOff className="mr-1.5 h-3.5 w-3.5" />
+                Disable push
+              </>
+            ) : (
+              <>
+                <BellRing className="mr-1.5 h-3.5 w-3.5" />
+                Enable push
+              </>
+            )}
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-xs text-muted-foreground">
           {subscribedDevices > 0
-            ? `Push is on for ${subscribedDevices} device${subscribedDevices === 1 ? "" : "s"}. Turn off any category you don't want.`
-            : "Enable push from the bell icon in the top bar to receive these on your lock screen."}
+            ? `Push is on for ${subscribedDevices} device${subscribedDevices === 1 ? "" : "s"}. Turn off any category you don't want, or disable push entirely above.`
+            : "Push turns on automatically the first time you save a location. Turn it on above if you'd like it now."}
         </p>
         <div className="space-y-3">
           {CATEGORIES.map((c) => (
