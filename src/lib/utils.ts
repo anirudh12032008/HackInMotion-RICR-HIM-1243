@@ -78,5 +78,11 @@ export async function speak(text: string, locale: "en" | "hi" = "en") {
   // calling them back-to-back is a well-known Chrome race that clips or
   // silently drops the utterance.
   setTimeout(() => window.speechSynthesis.speak(utterance), 50);
-  return true;
+  return utterance;
+}
+
+/** Stops whatever speak() is currently reading. */
+export function stopSpeak() {
+  if (!canSpeak()) return;
+  window.speechSynthesis.cancel();
 }

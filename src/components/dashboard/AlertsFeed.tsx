@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { AlertTriangle, Bell, CheckCheck, Info, ShieldAlert, Siren, Volume2 } from "lucide-react";
-import { canSpeak, speak } from "@/lib/utils";
+import { AlertTriangle, Bell, CheckCheck, Info, ShieldAlert, Siren, Volume2, VolumeX } from "lucide-react";
+import { canSpeak, speak, stopSpeak } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -47,6 +47,7 @@ export function AlertsFeed() {
   const [alerts, setAlerts] = useState<AlertItem[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [severityFilter, setSeverityFilter] = useState<string>("all");
+  const [speakingId, setSpeakingId] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -69,17 +70,37 @@ export function AlertsFeed() {
   }
 
   /** Accessibility path: hear the backlog without reading the dashboard. */
-  function speakUnread() {
-    const unread = (alerts ?? []).filter((a) => !a.read);
-    if (unread.length === 0) {
-      speak("You have no unread air quality alerts.", locale);
+  async function speakUnread() {
+    if (speakingId === "unread-summary") {
+      stopSpeak();
+      setSpeakingId(null);
       return;
     }
-    speak(
-      `You have ${unread.length} unread alert${unread.length === 1 ? "" : "s"}. ` +
-        unread.map((a) => `${a.title}. ${a.message}`).join(" "),
-      locale
-    );
+    const unread = (alerts ?? []).filter((a) => !a.read);
+    const text =
+      unread.length === 0
+        ? "You have no unread air quality alerts."
+        : `You have ${unread.length} unread alert${unread.length === 1 ? "" : "s"}. ` +
+          unread.map((a) => `${a.title}. ${a.message}`).join(" ");
+
+    const utterance = await speak(text, locale);
+    if (!utterance) return;
+    setSpeakingId("unread-summary");
+    utterance.onend = () => setSpeakingId(null);
+    utterance.onerror = () => setSpeakingId(null);
+  }
+
+  async function speakAlert(a: AlertItem) {
+    if (speakingId === a._id) {
+      stopSpeak();
+      setSpeakingId(null);
+      return;
+    }
+    const utterance = await speak(`${a.title}. ${a.message}`, locale);
+    if (!utterance) return;
+    setSpeakingId(a._id);
+    utterance.onend = () => setSpeakingId(null);
+    utterance.onerror = () => setSpeakingId(null);
   }
 
   async function markAllRead() {
@@ -108,9 +129,22 @@ export function AlertsFeed() {
           </SelectContent>
         </Select>
         {canSpeak() && (
-          <Button variant="outline" size="sm" onClick={speakUnread}>
-            <Volume2 className="mr-1.5 h-4 w-4" />
-            Read unread aloud
+          <Button
+            variant={speakingId === "unread-summary" ? "destructive" : "outline"}
+            size="sm"
+            onClick={speakUnread}
+          >
+            {speakingId === "unread-summary" ? (
+              <>
+                <VolumeX className="mr-1.5 h-4 w-4" />
+                Stop
+              </>
+            ) : (
+              <>
+                <Volume2 className="mr-1.5 h-4 w-4" />
+                Read unread aloud
+              </>
+            )}
           </Button>
         )}
         <Button variant="outline" size="sm" onClick={markAllRead}>
@@ -164,10 +198,14 @@ export function AlertsFeed() {
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7"
-                      aria-label={`Read alert aloud: ${a.title}`}
-                      onClick={() => speak(`${a.title}. ${a.message}`, locale)}
+                      aria-label={speakingId === a._id ? `Stop reading: ${a.title}` : `Read alert aloud: ${a.title}`}
+                      onClick={() => speakAlert(a)}
                     >
-                      <Volume2 className="h-3.5 w-3.5" />
+                      {speakingId === a._id ? (
+                        <VolumeX className="h-3.5 w-3.5 text-destructive" />
+                      ) : (
+                        <Volume2 className="h-3.5 w-3.5" />
+                      )}
                     </Button>
                   )}
                   {!a.read && (
