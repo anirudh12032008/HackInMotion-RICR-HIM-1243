@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { AlertTriangle, Bell, CheckCheck, Info, ShieldAlert, Siren } from "lucide-react";
+import { AlertTriangle, Bell, CheckCheck, Info, ShieldAlert, Siren, Volume2 } from "lucide-react";
+import { canSpeak, speak } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -42,7 +43,7 @@ const SEVERITY_COLOR: Record<AlertSeverity, string> = {
 };
 
 export function AlertsFeed() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [alerts, setAlerts] = useState<AlertItem[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [severityFilter, setSeverityFilter] = useState<string>("all");
@@ -65,6 +66,20 @@ export function AlertsFeed() {
   async function markRead(id: string) {
     setAlerts((prev) => prev?.map((a) => (a._id === id ? { ...a, read: true } : a)) ?? null);
     await fetch(`/api/alerts/${id}/read`, { method: "PUT" });
+  }
+
+  /** Accessibility path: hear the backlog without reading the dashboard. */
+  function speakUnread() {
+    const unread = (alerts ?? []).filter((a) => !a.read);
+    if (unread.length === 0) {
+      speak("You have no unread air quality alerts.", locale);
+      return;
+    }
+    speak(
+      `You have ${unread.length} unread alert${unread.length === 1 ? "" : "s"}. ` +
+        unread.map((a) => `${a.title}. ${a.message}`).join(" "),
+      locale
+    );
   }
 
   async function markAllRead() {
@@ -92,6 +107,12 @@ export function AlertsFeed() {
             <SelectItem value="emergency">Emergency</SelectItem>
           </SelectContent>
         </Select>
+        {canSpeak() && (
+          <Button variant="outline" size="sm" onClick={speakUnread}>
+            <Volume2 className="mr-1.5 h-4 w-4" />
+            Read unread aloud
+          </Button>
+        )}
         <Button variant="outline" size="sm" onClick={markAllRead}>
           <CheckCheck className="mr-1.5 h-4 w-4" />
           {t("alertsPage.markAllRead")}
@@ -137,11 +158,24 @@ export function AlertsFeed() {
                     <p className="mt-1 text-xs text-muted-foreground">{a.locationId.name}</p>
                   )}
                 </div>
-                {!a.read && (
-                  <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => markRead(a._id)}>
-                    {t("alertsPage.markRead")}
-                  </Button>
-                )}
+                <div className="flex shrink-0 items-center gap-1">
+                  {canSpeak() && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7"
+                      aria-label={`Read alert aloud: ${a.title}`}
+                      onClick={() => speak(`${a.title}. ${a.message}`, locale)}
+                    >
+                      <Volume2 className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                  {!a.read && (
+                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => markRead(a._id)}>
+                      {t("alertsPage.markRead")}
+                    </Button>
+                  )}
+                </div>
               </li>
             );
           })}

@@ -12,7 +12,10 @@ export interface AqiResult {
   city: { name: string; geo: [number, number] };
   updatedAt: string;
   pollutants: Record<string, number | undefined>;
-  forecast: unknown;
+  forecast: {
+    daily?: { pm25?: { day: string; avg: number; min: number; max: number }[] };
+    hourly?: { dateTime: string; aqi: number }[];
+  } | null;
   risk: { level: string; label: string; color: string; bgColor: string; emoji: string; description: string };
   healthRecommendations?: {
     generalPopulation?: string;

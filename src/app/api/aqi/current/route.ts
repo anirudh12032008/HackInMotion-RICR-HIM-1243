@@ -44,7 +44,9 @@ export async function GET(req: Request) {
       city: { name: displayName, geo: [targetLat, targetLng] },
       updatedAt: conditions.timestamp,
       pollutants: conditions.pollutants,
-      forecast: { daily: { pm25: groupForecastByDay(hourly) } },
+      // `hourly` carries the raw 48 points so the client can find clean-air
+      // windows; `daily` is the collapsed shape the forecast board expects.
+      forecast: { daily: { pm25: groupForecastByDay(hourly) }, hourly },
       risk: classifyRisk(conditions.aqi),
       healthRecommendations: conditions.healthRecommendations ?? null,
     });
