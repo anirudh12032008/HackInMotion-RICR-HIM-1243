@@ -124,14 +124,12 @@ export async function POST(req: Request) {
     lng: l.lng,
   }));
 
-  let liveContext = context ?? null;
-
-  // No location already loaded client-side — try to resolve one, in order:
-  // a saved/mentioned location in the message text, then the browser's
-  // geolocation coords. This is what lets the assistant answer "bhopal"
-  // with real data instead of just repeating the name back.
+  // A location named in *this* message always wins, even if a city is
+  // already loaded client-side — otherwise the stale `context` from an
+  // earlier search silently overrides every new city the user types.
+  let liveContext = await resolveLocationFromMessage(message, savedLocationSummaries);
   if (!liveContext) {
-    liveContext = await resolveLocationFromMessage(message, savedLocationSummaries);
+    liveContext = context ?? null;
   }
   if (!liveContext && coords) {
     try {

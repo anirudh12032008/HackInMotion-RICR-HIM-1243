@@ -32,17 +32,19 @@ export function AiAssistant({ result }: { result: AqiResult | null }) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
 
-  // Best-effort, silent — gives the assistant real location context even
-  // when no city has been explicitly searched. No prompt/error shown if
-  // it's unavailable or denied; the assistant just asks the user instead.
+  // Best-effort, silent — gives the assistant real location context as a
+  // fallback even after a city has been searched, since a later message
+  // might ask about "my location" rather than the currently displayed
+  // city. No prompt/error shown if it's unavailable or denied; the
+  // assistant just asks the user instead.
   useEffect(() => {
-    if (result || !navigator.geolocation) return;
+    if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
       (pos) => setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
       () => {},
       { timeout: 5000 }
     );
-  }, [result]);
+  }, []);
 
   async function send(text: string) {
     if (!text.trim() || loading) return;
