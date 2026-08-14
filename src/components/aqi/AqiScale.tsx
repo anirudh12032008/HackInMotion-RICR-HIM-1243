@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
  * precision marker on the current value.
  *
  * This replaced a donut gauge that filled to `aqi / 300`, which implied AQI is
- * a smooth 0-300 continuum. It isn't — it's a banded scale where 150 and 151
+ * a smooth 0-300 continuum. It isn't  it's a banded scale where 150 and 151
  * carry different guidance, and where the top band runs to 500. Showing the
  * bands themselves means the reading is always in context: you see not just
  * where you are but what's on either side of you.

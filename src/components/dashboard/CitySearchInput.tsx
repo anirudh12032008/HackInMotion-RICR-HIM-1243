@@ -12,7 +12,7 @@ export interface CitySearchResult {
 
 /**
  * Debounced city search with a dropdown of matches, backed by
- * /api/aqi/search (Google Geocoding) — previously unused by any component
+ * /api/aqi/search (Google Geocoding)  previously unused by any component
  * even though the route existed.
  */
 export function CitySearchInput({

@@ -81,7 +81,7 @@ export function AqiBarChart({ entries }: { entries: ComparisonEntry[] }) {
 }
 
 export function PollutantRadarChart({ entries }: { entries: ComparisonEntry[] }) {
-  // Pollutants sit on wildly different scales — CO readings (often 500-1000+
+  // Pollutants sit on wildly different scales  CO readings (often 500-1000+
   // µg/m³) are 10-50x every other axis (typically 0-200), so plotting raw
   // concentrations on one shared radial scale collapses every axis but CO
   // to the center. Normalize each axis independently to a 0-100 percent of

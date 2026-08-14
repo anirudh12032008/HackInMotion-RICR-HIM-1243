@@ -107,9 +107,9 @@ export interface CurrentConditions {
  * Google always returns "uaqi" (Universal AQI, 0-100, HIGHER = better air —
  * inverted from every other scale in this app) alongside a country-specific
  * regional index when one exists for the location (e.g. "usa_epa" for the
- * US, "ind_cpcb" for India — both 0-500, higher = worse, matching
+ * US, "ind_cpcb" for India  both 0-500, higher = worse, matching
  * risk-engine.ts's bands). We must prefer the regional index by name, not
- * assume it's first in the array — picking anything other than "uaqi" here
+ * assume it's first in the array  picking anything other than "uaqi" here
  * is what avoids silently classifying good air as hazardous or vice versa.
  * Locations with no regional coverage fall back to uaqi and are flagged via
  * `scale: "universal"` so callers can avoid running it through classifyRisk().
@@ -172,7 +172,7 @@ const FORECAST_STEP_HOURS = 3;
 /**
  * The `period` (ranged) form of forecast:lookup returns a 400
  * INVALID_ARGUMENT "specified time period is not supported" on this
- * project for every shape tried — any duration, any timestamp format,
+ * project for every shape tried  any duration, any timestamp format,
  * even Google's own documented example verbatim, and with `period`
  * omitted entirely. The singular `dateTime` field (exactly one hour per
  * request) works. So instead of one ranged call, this fans out one
@@ -232,7 +232,7 @@ export function groupForecastByDay(hourly: HourlyForecast[]) {
   }));
 }
 
-/** Google's official AQI heatmap tile URL for a given map style — proxied server-side via /api/aqi/heatmap-tile to keep the API key off the client. */
+/** Google's official AQI heatmap tile URL for a given map style  proxied server-side via /api/aqi/heatmap-tile to keep the API key off the client. */
 export function heatmapTileUrl(mapType: string, z: number, x: number, y: number) {
   return `${AQ_BASE}/mapTypes/${mapType}/heatmapTiles/${z}/${x}/${y}?key=${API_KEY}`;
 }
@@ -250,7 +250,7 @@ const MAX_HISTORY_PAGES = 8;
 /**
  * Real hourly history for the past `days` (Google supports up to 30),
  * grouped into one daily entry per date. This is what actually fixes sparse
- * 7/30-day trend charts — without it, AQISnapshot only ever accumulates
+ * 7/30-day trend charts  without it, AQISnapshot only ever accumulates
  * opportunistically (once/hour, only when a saved location happens to be
  * viewed), so a brand-new location's chart would stay empty for weeks.
  */
@@ -258,7 +258,7 @@ export async function getHistoricalDailyAqi(lat: number, lng: number, days = 30)
   assertKey();
 
   // "hours" is a plain integer (1-720) and mutually exclusive with "period"
-  // — no timestamp construction needed. Confirmed against Google's actual
+  //  no timestamp construction needed. Confirmed against Google's actual
   // REST reference after "period" rejected every startTime/endTime
   // combination tried as INVALID_ARGUMENT regardless of duration or rounding.
   const hourlyPoints: { dateTime: string; aqi: number; pollutants: Pollutants }[] = [];

@@ -8,19 +8,19 @@ Node runtime. Responses are JSON.
 **Authentication.** Every endpoint except `POST /api/auth/signup`, the NextAuth handler,
 and `GET /api/aqi/*` requires a valid NextAuth session cookie. Protected handlers call
 `requireUserId()` and return `401 {"error":"Unauthorized"}` before touching the database.
-All user-owned queries are filtered by the session `userId` — a user can never read or
+All user-owned queries are filtered by the session `userId` a user can never read or
 mutate another user's locations, alerts, or profile.
 
 **Errors.** Always `{"error": "<human-readable message>"}` with an appropriate status.
 Messages are safe to render directly in the UI.
 
-| Status | Meaning |
-| --- | --- |
-| `400` | Missing or malformed parameters |
-| `401` | No session |
-| `404` | Resource not found, or not owned by this user |
-| `409` | Conflict (e.g. email already registered) |
-| `502` | Upstream provider (Google / Groq) failed or has no data for this location |
+| Status | Meaning                                                                   |
+| ------ | ------------------------------------------------------------------------- |
+| `400`  | Missing or malformed parameters                                           |
+| `401`  | No session                                                                |
+| `404`  | Resource not found, or not owned by this user                             |
+| `409`  | Conflict (e.g. email already registered)                                  |
+| `502`  | Upstream provider (Google / Groq) failed or has no data for this location |
 
 **AQI scale.** Every `aqi` value is on the US EPA 0–500 scale (higher = worse). See the
 README's "scale trap" section for why this is not the same as Google's Universal AQI.
@@ -58,10 +58,10 @@ no extra round trip.
 The primary read. Live conditions, pollutants, risk classification, Google's health
 recommendations, and the 48-hour forecast in both daily and hourly form.
 
-| Param | Required | Notes |
-| --- | --- | --- |
-| `city` | one of | Free-text place name, forward-geocoded |
-| `lat` + `lng` | one of | Coordinates; the display name is reverse-geocoded |
+| Param         | Required | Notes                                             |
+| ------------- | -------- | ------------------------------------------------- |
+| `city`        | one of   | Free-text place name, forward-geocoded            |
+| `lat` + `lng` | one of   | Coordinates; the display name is reverse-geocoded |
 
 ```
 GET /api/aqi/current?city=Delhi
@@ -72,24 +72,33 @@ GET /api/aqi/current?lat=28.6139&lng=77.2090
 
 ```json
 {
-"aqi": 121,
-"dominantPollutant": "pm10",
-"city": { "name": "Delhi, India", "geo": [28.6139, 77.209] },
-"updatedAt": "2026-08-14T09:00:00Z",
-"pollutants": { "pm25": 48, "pm10": 148, "o3": 22, "no2": 31, "so2": 6, "co": 700 },
-"forecast": {
-"daily": { "pm25": [{ "day": "2026-08-14", "avg": 118, "min": 84, "max": 163 }] },
-"hourly": [{ "dateTime": "2026-08-14T09:00:00Z", "aqi": 121 }]
-},
-"risk": {
-"level": "unhealthy_sensitive",
-"label": "Unhealthy for Sensitive Groups",
-"color": "#f97316",
-"bgColor": "#ffedd5",
-"emoji": "",
-"description": "Sensitive groups may experience health effects..."
-},
-"healthRecommendations": { "generalPopulation": "...", "children": "..." }
+  "aqi": 121,
+  "dominantPollutant": "pm10",
+  "city": { "name": "Delhi, India", "geo": [28.6139, 77.209] },
+  "updatedAt": "2026-08-14T09:00:00Z",
+  "pollutants": {
+    "pm25": 48,
+    "pm10": 148,
+    "o3": 22,
+    "no2": 31,
+    "so2": 6,
+    "co": 700
+  },
+  "forecast": {
+    "daily": {
+      "pm25": [{ "day": "2026-08-14", "avg": 118, "min": 84, "max": 163 }]
+    },
+    "hourly": [{ "dateTime": "2026-08-14T09:00:00Z", "aqi": 121 }]
+  },
+  "risk": {
+    "level": "unhealthy_sensitive",
+    "label": "Unhealthy for Sensitive Groups",
+    "color": "#f97316",
+    "bgColor": "#ffedd5",
+    "emoji": "",
+    "description": "Sensitive groups may experience health effects..."
+  },
+  "healthRecommendations": { "generalPopulation": "...", "children": "..." }
 }
 ```
 
@@ -143,17 +152,21 @@ an hourly snapshot if the last one is stale) and `backfillHistoryIfSparse()` (pu
 
 ```json
 {
-"locations": [
-{
-"_id": "66f...",
-"name": "Home",
-"city": "Delhi",
-"lat": 28.6139,
-"lng": 77.209,
-"alertThreshold": 100,
-"current": { "aqi": 121, "dominantPollutant": "pm10", "risk": { "label": "Unhealthy for Sensitive Groups" } }
-}
-]
+  "locations": [
+    {
+      "_id": "66f...",
+      "name": "Home",
+      "city": "Delhi",
+      "lat": 28.6139,
+      "lng": 77.209,
+      "alertThreshold": 100,
+      "current": {
+        "aqi": 121,
+        "dominantPollutant": "pm10",
+        "risk": { "label": "Unhealthy for Sensitive Groups" }
+      }
+    }
+  ]
 }
 ```
 
@@ -163,7 +176,13 @@ the whole request.
 ### `POST /api/locations`
 
 ```json
-{ "name": "Child's school", "city": "Delhi", "lat": 28.6139, "lng": 77.209, "alertThreshold": 80 }
+{
+  "name": "Child's school",
+  "city": "Delhi",
+  "lat": 28.6139,
+  "lng": 77.209,
+  "alertThreshold": 80
+}
 ```
 
 **`201`** the created location · **`400`** missing `name`/`lat`/`lng`
@@ -190,23 +209,23 @@ Alerts for the session user, newest first, with `locationId` populated to `{ nam
 
 ```json
 {
-"alerts": [
-{
-"_id": "66f...",
-"type": "threshold_exceeded",
-"severity": "warning",
-"title": "Home: AQI crossed your threshold",
-"message": "AQI is 121, above your alert threshold of 100. Sensitive groups may experience health effects.",
-"aqiValue": 121,
-"read": false,
-"createdAt": "2026-08-14T09:02:00Z",
-"locationId": { "name": "Home" }
-}
-]
+  "alerts": [
+    {
+      "_id": "66f...",
+      "type": "threshold_exceeded",
+      "severity": "warning",
+      "title": "Home: AQI crossed your threshold",
+      "message": "AQI is 121, above your alert threshold of 100. Sensitive groups may experience health effects.",
+      "aqiValue": 121,
+      "read": false,
+      "createdAt": "2026-08-14T09:02:00Z",
+      "locationId": { "name": "Home" }
+    }
+  ]
 }
 ```
 
-### `POST /api/alerts` — `{ "markAllRead": true }`
+### `POST /api/alerts` `{ "markAllRead": true }`
 
 Marks every unread alert read. **`200`** `{ "updated": 4 }`
 
@@ -221,14 +240,14 @@ within the cooldown window, so it's safe to call from a Vercel Cron entry.
 
 **Alert rules** (`src/lib/alerts.ts`)
 
-| Type | Trigger |
-| --- | --- |
-| `threshold_exceeded` | Current AQI ≥ the location's `alertThreshold` |
-| `rapid_change` | AQI moved ≥ 50 points versus the previous snapshot, in either direction |
-| `forecast_warning` | Reserved for forecast-driven warnings |
+| Type                 | Trigger                                                                 |
+| -------------------- | ----------------------------------------------------------------------- |
+| `threshold_exceeded` | Current AQI ≥ the location's `alertThreshold`                           |
+| `rapid_change`       | AQI moved ≥ 50 points versus the previous snapshot, in either direction |
+| `forecast_warning`   | Reserved for forecast-driven warnings                                   |
 
 **Severity** is derived from the AQI value: `info` ≤ 100, `warning` > 100, `danger` > 200,
-`emergency` > 300. A 3-hour per-(location, type) cooldown prevents alert spam — the single
+`emergency` > 300. A 3-hour per-(location, type) cooldown prevents alert spam the single
 most important property for a notification feed anyone will keep enabled.
 
 ---
@@ -245,32 +264,38 @@ guaranteed built before the query runs.
 
 ```json
 {
-"reports": [
-{
-"_id": "66f...",
-"userName": "Asha",
-"type": "burning_waste",
-"severity": "high",
-"description": "Open waste burning near the market",
-"lat": 28.61,
-"lng": 77.2,
-"upvotes": 4,
-"hasUpvoted": false,
-"createdAt": "2026-08-14T08:00:00Z"
-}
-]
+  "reports": [
+    {
+      "_id": "66f...",
+      "userName": "Asha",
+      "type": "burning_waste",
+      "severity": "high",
+      "description": "Open waste burning near the market",
+      "lat": 28.61,
+      "lng": 77.2,
+      "upvotes": 4,
+      "hasUpvoted": false,
+      "createdAt": "2026-08-14T08:00:00Z"
+    }
+  ]
 }
 ```
 
 ### `POST /api/community`
 
 ```json
-{ "type": "smoke", "severity": "medium", "description": "Heavy smoke", "lat": 28.61, "lng": 77.2 }
+{
+  "type": "smoke",
+  "severity": "medium",
+  "description": "Heavy smoke",
+  "lat": 28.61,
+  "lng": 77.2
+}
 ```
 
 `type` ∈ `smoke | burning_waste | industrial_emission | dust_storm | chemical_smell | other`,
 `severity` ∈ `low | medium | high`, `description` ≤ 500 chars. Reports carry a 24-hour TTL
-so the map reflects what's happening *now*.
+so the map reflects what's happening _now_.
 
 ### `POST /api/community/{id}/upvote`
 
@@ -283,7 +308,11 @@ Toggles the session user's upvote. **`200`** `{ "upvotes": 5, "hasUpvoted": true
 ### `POST /api/route/directions`
 
 ```json
-{ "start": { "lat": 28.61, "lng": 77.2 }, "end": { "lat": 28.65, "lng": 77.25 }, "mode": "walking" }
+{
+  "start": { "lat": 28.61, "lng": 77.2 },
+  "end": { "lat": 28.65, "lng": 77.25 },
+  "mode": "walking"
+}
 ```
 
 Fetches a real route from Google Directions, decodes the polyline, samples AQI along the
@@ -293,12 +322,15 @@ actual road geometry (not a straight line), and scores each sample.
 
 ```json
 {
-"path": [[28.61, 77.2], [28.612, 77.203]],
-"distanceKm": 5.4,
-"durationMin": 62,
-"samples": [{ "lat": 28.61, "lng": 77.2, "aqi": 118 }],
-"worstAqi": 156,
-"averageAqi": 124
+  "path": [
+    [28.61, 77.2],
+    [28.612, 77.203]
+  ],
+  "distanceKm": 5.4,
+  "durationMin": 62,
+  "samples": [{ "lat": 28.61, "lng": 77.2, "aqi": 118 }],
+  "worstAqi": 156,
+  "averageAqi": 124
 }
 ```
 
@@ -314,7 +346,7 @@ UI draws a dashed line to signal the difference.
 **`200`** `{ "types": [{ "code": "GRASS", "displayName": "Grass", "indexValue": 2, "category": "Low" }] }`
 
 Google's Pollen product has real geographic gaps (India, among others). That case returns
-`200` with `{"types": []}` rather than an error — an empty state in the UI, not a failure
+`200` with `{"types": []}` rather than an error an empty state in the UI, not a failure
 banner. Genuine failures still return `502`.
 
 ---
@@ -325,12 +357,12 @@ banner. Genuine failures still return `502`.
 
 ```json
 {
-"healthProfile": {
-"conditions": ["asthma", "children"],
-"ageGroup": "adult",
-"activityLevel": "active"
-},
-"language": "hi"
+  "healthProfile": {
+    "conditions": ["asthma", "children"],
+    "ageGroup": "adult",
+    "activityLevel": "active"
+  },
+  "language": "hi"
 }
 ```
 
@@ -348,10 +380,19 @@ mask class, inhaled-dose multipliers, and the clean-air-window AQI ceiling.
 
 ```json
 {
-"message": "should I run this evening?",
-"history": [{ "role": "user", "text": "hi" }, { "role": "model", "text": "Hi Asha!" }],
-"context": { "cityName": "Delhi", "aqi": 121, "riskLabel": "...", "dominantPollutant": "pm10", "pollutants": {} },
-"coords": { "lat": 28.61, "lng": 77.2 }
+  "message": "should I run this evening?",
+  "history": [
+    { "role": "user", "text": "hi" },
+    { "role": "model", "text": "Hi Asha!" }
+  ],
+  "context": {
+    "cityName": "Delhi",
+    "aqi": 121,
+    "riskLabel": "...",
+    "dominantPollutant": "pm10",
+    "pollutants": {}
+  },
+  "coords": { "lat": 28.61, "lng": 77.2 }
 }
 ```
 
@@ -360,13 +401,13 @@ mask class, inhaled-dose multipliers, and the clean-air-window AQI ceiling.
 The handler grounds the model before calling it, resolving live AQI in this order:
 
 1. `context` supplied by the client (a city already on screen)
-2. A saved location or place name mentioned in `message` — matched, else geocoded
+2. A saved location or place name mentioned in `message` matched, else geocoded
 3. The browser `coords`, reverse-geocoded for a display name
 
 Whatever it resolves is returned as `resolvedContext` so the UI can show which city the
 assistant is actually talking about. The system prompt carries the user's name, health
 profile, and saved locations, and explicitly forbids the model from saying it will
-"simulate" or "try to find" data — if no location resolves, it must ask for one.
+"simulate" or "try to find" data if no location resolves, it must ask for one.
 
 History is capped at 10 turns and `message` at 500 characters.
 

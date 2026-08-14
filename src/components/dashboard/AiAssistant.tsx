@@ -32,7 +32,7 @@ export function AiAssistant({ result }: { result: AqiResult | null }) {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
 
-  // Best-effort, silent — gives the assistant real location context as a
+  // Best-effort, silent  gives the assistant real location context as a
   // fallback even after a city has been searched, since a later message
   // might ask about "my location" rather than the currently displayed
   // city. No prompt/error shown if it's unavailable or denied; the
@@ -82,7 +82,7 @@ export function AiAssistant({ result }: { result: AqiResult | null }) {
         ...nextMessages,
         {
           role: "model",
-          text: err instanceof Error ? `Sorry — ${err.message}` : "Sorry, something went wrong.",
+          text: err instanceof Error ? `Sorry  ${err.message}` : "Sorry, something went wrong.",
         },
       ]);
     } finally {

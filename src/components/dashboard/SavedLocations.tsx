@@ -2,26 +2,37 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Trash2, MapPin, LineChart } from "lucide-react";
+import { Trash2, MapPin, LineChart, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RiskBadge } from "@/components/aqi/RiskBadge";
 import { TrendChart } from "@/components/charts/TrendChart";
+import type { AqiResult } from "@/components/dashboard/QuickSearch";
 
 interface SavedLocation {
   _id: string;
   name: string;
   city?: string;
+  lat: number;
+  lng: number;
   currentAqi: number | null;
   error?: string;
   updatedAt?: string;
 }
 
-export function SavedLocations({ refreshKey }: { refreshKey?: number }) {
+export function SavedLocations({
+  refreshKey,
+  onSelect,
+}: {
+  refreshKey?: number;
+  /** Loads the full AQI card for a saved location, same as searching its city. */
+  onSelect?: (result: AqiResult) => void;
+}) {
   const [locations, setLocations] = useState<SavedLocation[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -40,6 +51,21 @@ export function SavedLocations({ refreshKey }: { refreshKey?: number }) {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshKey]);
+
+  async function selectLocation(loc: SavedLocation) {
+    if (!onSelect) return;
+    setLoadingId(loc._id);
+    try {
+      const res = await fetch(`/api/aqi/current?lat=${loc.lat}&lng=${loc.lng}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to load this location");
+      onSelect(data);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to load this location");
+    } finally {
+      setLoadingId(null);
+    }
+  }
 
   async function remove(id: string) {
     const prev = locations;
@@ -76,15 +102,27 @@ export function SavedLocations({ refreshKey }: { refreshKey?: number }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {locations.map((loc) => (
-        <Card key={loc._id}>
+        <Card
+          key={loc._id}
+          onClick={() => selectLocation(loc)}
+          className={
+            onSelect ? "cursor-pointer transition-shadow hover:ring-2 hover:ring-ring/40" : undefined
+          }
+        >
           <CardHeader className="flex-row items-start justify-between space-y-0">
             <CardTitle className="text-base">{loc.name}</CardTitle>
             <div className="flex items-center gap-1">
+              {loadingId === loc._id && (
+                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+              )}
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                onClick={() => setExpanded(expanded === loc._id ? null : loc._id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpanded(expanded === loc._id ? null : loc._id);
+                }}
               >
                 <LineChart className="h-4 w-4" />
               </Button>
@@ -92,7 +130,10 @@ export function SavedLocations({ refreshKey }: { refreshKey?: number }) {
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                onClick={() => remove(loc._id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  remove(loc._id);
+                }}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -113,7 +154,7 @@ export function SavedLocations({ refreshKey }: { refreshKey?: number }) {
               </p>
             )}
             {expanded === loc._id && (
-              <div className="mt-4 border-t border-border pt-4">
+              <div className="mt-4 border-t border-border pt-4" onClick={(e) => e.stopPropagation()}>
                 <TrendChart locationId={loc._id} />
               </div>
             )}

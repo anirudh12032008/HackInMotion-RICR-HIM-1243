@@ -89,7 +89,7 @@ function ExposureCard({
     try {
       const connection = await connectHeartRateMonitor(setHeartRate);
       setWearable(connection);
-      toast.success(`Connected to ${connection.deviceName} — live dose is now heart-rate based.`);
+      toast.success(`Connected to ${connection.deviceName}  live dose is now heart-rate based.`);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Couldn't connect to a wearable.");
     } finally {
@@ -138,11 +138,11 @@ function ExposureCard({
 
         <p className="text-[11px] leading-relaxed text-muted-foreground">
           {heartRate
-            ? "Dose is scaled to your live heart rate below — this is more personal than a self-reported activity level."
+            ? "Dose is scaled to your live heart rate below  this is more personal than a self-reported activity level."
             : (
               <>
                 Dose is scaled to your <strong>{profile.activityLevel}</strong> activity level and{" "}
-                <strong>{profile.ageGroup}</strong> age group — identical air delivers very
+                <strong>{profile.ageGroup}</strong> age group  identical air delivers very
                 different amounts depending on how hard you breathe.
               </>
             )}

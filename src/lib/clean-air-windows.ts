@@ -6,7 +6,7 @@ import type { UserHealthProfile } from "@/types/index";
  * collapses them straight into daily min/avg/max (see lib/forecast.ts). That
  * throws away the most actionable signal in the whole payload: air quality
  * swings by two or three risk bands within a single day, so "don't go outside
- * today" is usually wrong — "go outside between 6am and 9am" is right.
+ * today" is usually wrong  "go outside between 6am and 9am" is right.
  *
  * This module recovers that: it finds contiguous runs of hours that are safe
  * for a *specific* person and ranks them.
@@ -110,7 +110,7 @@ export interface PeakHour {
   label: string;
 }
 
-/** The single worst forecast hour — what a forward-looking alert should warn about. */
+/** The single worst forecast hour  what a forward-looking alert should warn about. */
 export function worstHour(hourly: HourPoint[]): PeakHour | null {
   if (hourly.length === 0) return null;
   const worst = hourly.reduce((a, b) => (b.aqi > a.aqi ? b : a), hourly[0]);
@@ -126,7 +126,7 @@ export function worstHour(hourly: HourPoint[]): PeakHour | null {
 }
 
 /**
- * Whether the coming hours trend cleaner or dirtier — the "is this about to
+ * Whether the coming hours trend cleaner or dirtier  the "is this about to
  * get better or worse?" question the 30-day trend chart cannot answer.
  */
 export function shortTermTrend(hourly: HourPoint[]): {
@@ -152,7 +152,7 @@ export function shortTermTrend(hourly: HourPoint[]): {
     return {
       direction: "improving",
       deltaAqi: delta,
-      summary: `Clearing up — AQI is forecast to fall about ${Math.abs(delta)} points, toward ${classifyRisk(
+      summary: `Clearing up  AQI is forecast to fall about ${Math.abs(delta)} points, toward ${classifyRisk(
         Math.round(later)
       ).label.toLowerCase()} levels.`,
     };
@@ -160,7 +160,7 @@ export function shortTermTrend(hourly: HourPoint[]): {
   return {
     direction: "worsening",
     deltaAqi: delta,
-    summary: `Getting worse — AQI is forecast to climb about ${delta} points, toward ${classifyRisk(
+    summary: `Getting worse  AQI is forecast to climb about ${delta} points, toward ${classifyRisk(
       Math.round(later)
     ).label.toLowerCase()} levels.`,
   };

@@ -58,7 +58,7 @@ export function CommunityMap({
   center: [number, number];
   reports: CommunityReportPoint[];
   onMapClick?: (lat: number, lng: number) => void;
-  /** Selected report id — lets the page's list and the map share a highlight. */
+  /** Selected report id  lets the page's list and the map share a highlight. */
   activeId?: string | null;
   onActiveChange?: (id: string | null) => void;
 }) {

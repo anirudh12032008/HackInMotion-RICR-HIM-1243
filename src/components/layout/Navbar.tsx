@@ -64,7 +64,7 @@ export function Navbar() {
         const data = await res.json();
         if (!cancelled) setUnreadAlerts(data.unreadCount ?? 0);
       } catch {
-        // ignore — bell just won't show a count this cycle
+        // ignore  bell just won't show a count this cycle
       }
     }
     loadUnread();

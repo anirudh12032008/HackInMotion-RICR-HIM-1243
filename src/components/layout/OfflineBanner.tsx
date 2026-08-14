@@ -23,7 +23,7 @@ export function OfflineBanner() {
   return (
     <div className="flex items-center justify-center gap-2 bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground">
       <WifiOff className="h-4 w-4" />
-      You&apos;re offline — some data may be out of date.
+      You&apos;re offline  some data may be out of date.
     </div>
   );
 }

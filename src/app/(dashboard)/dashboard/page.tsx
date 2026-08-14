@@ -20,6 +20,14 @@ export default function DashboardPage() {
     setRefreshKey((k) => k + 1);
   }
 
+  function handleSelectSaved(r: AqiResult) {
+    setResult(r);
+    // Saved locations render below the AQI card, so a click there needs to
+    // scroll up to the card it just loaded rather than leaving the user
+    // looking at the list they just clicked in.
+    requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+  }
+
   return (
     <Reveal stagger className="mx-auto max-w-5xl space-y-8">
       <div>
@@ -37,7 +45,7 @@ export default function DashboardPage() {
 
       <div>
         <h2 className="mb-3 text-lg font-semibold">{t("dashboard.savedLocations")}</h2>
-        <SavedLocations refreshKey={refreshKey} />
+        <SavedLocations refreshKey={refreshKey} onSelect={handleSelectSaved} />
       </div>
 
       <AiAssistant result={result} />

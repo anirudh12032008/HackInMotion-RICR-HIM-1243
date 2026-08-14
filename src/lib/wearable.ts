@@ -1,9 +1,9 @@
 /**
  * Real wearable integration via the standard Bluetooth GATT Heart Rate
- * Service (0x180D) — the same profile chest straps, most fitness watches,
+ * Service (0x180D)  the same profile chest straps, most fitness watches,
  * and rings broadcast. No proprietary SDK, no fake step counter: this pairs
  * with an actual nearby device over Web Bluetooth and reads its live BPM.
- * Requires Chrome/Edge on desktop or Android — Web Bluetooth isn't
+ * Requires Chrome/Edge on desktop or Android  Web Bluetooth isn't
  * available on iOS Safari, which is a platform limitation, not ours.
  */
 
@@ -40,7 +40,7 @@ export async function connectHeartRateMonitor(
 ): Promise<WearableConnection> {
   if (!isWearableSupported()) {
     throw new WearableUnsupportedError(
-      "Web Bluetooth isn't available in this browser — try Chrome or Edge on desktop or Android."
+      "Web Bluetooth isn't available in this browser  try Chrome or Edge on desktop or Android."
     );
   }
 

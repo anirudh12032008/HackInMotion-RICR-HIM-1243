@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ types });
   } catch (err) {
     // Google's Pollen API has limited regional coverage (no India, for
-    // example) — that's an expected, non-actionable gap, not a real error,
+    // example)  that's an expected, non-actionable gap, not a real error,
     // so return an empty result quietly instead of logging/502ing.
     if (isAxiosError(err) && err.response?.data?.error?.message?.includes("unavailable for this location")) {
       return NextResponse.json({ types: [] });

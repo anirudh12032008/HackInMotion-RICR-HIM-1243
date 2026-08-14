@@ -29,7 +29,7 @@ const DEFAULTS: Preferences = {
 
 /**
  * Push is on by default the moment a user saves their first location (see
- * AQICard) — this card is where they narrow it (per category) or turn the
+ * AQICard)  this card is where they narrow it (per category) or turn the
  * whole thing off for this device, not where they opt in from scratch.
  */
 export function NotificationPreferences() {
@@ -77,7 +77,7 @@ export function NotificationPreferences() {
       } else {
         const ok = await subscribeToPush();
         if (!ok) {
-          toast.error("Notifications were blocked — enable them in your browser's site settings.");
+          toast.error("Notifications were blocked  enable them in your browser's site settings.");
           return;
         }
         setSubscribedHere(true);

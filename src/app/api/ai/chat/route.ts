@@ -37,20 +37,20 @@ function buildSystemInstruction(
 
   const contextLine = context
     ? `Current air quality at ${context.cityName}: AQI ${context.aqi} (${context.riskLabel}), dominant pollutant ${context.dominantPollutant}. Pollutant levels: ${JSON.stringify(context.pollutants)}.`
-    : "No specific location's air quality is loaded right now — ask the user which city they'd like guidance for, or suggest one of their saved locations below.";
+    : "No specific location's air quality is loaded right now  ask the user which city they'd like guidance for, or suggest one of their saved locations below.";
 
   const savedLocationsLine =
     savedLocations.length > 0
       ? `Their saved locations: ${savedLocations.map((l) => l.name).join(", ")}.`
       : "They haven't saved any locations yet.";
 
-  return `You are BreatheSafe's AI air quality assistant, talking with ${userName ?? "a user"}. You give short, direct, practical answers about air quality, health effects of pollution, and what someone should do given current conditions. You are not a doctor — for medical emergencies, tell the user to seek real medical care.
+  return `You are BreatheSafe's AI air quality assistant, talking with ${userName ?? "a user"}. You give short, direct, practical answers about air quality, health effects of pollution, and what someone should do given current conditions. You are not a doctor  for medical emergencies, tell the user to seek real medical care.
 
 ${contextLine}
 ${savedLocationsLine}
 The user's health profile: ${profile}
 
-Keep answers to 2-4 sentences unless the user asks for more detail. Be warm but concise, like a knowledgeable friend, not a corporate chatbot. Reference the actual AQI number and pollutant when relevant. Address the user by name occasionally, not every message. Never say you'll "try to find" or "simulate" data — if air quality data is given to you above, use it directly; if none is given, just ask for a location.`;
+Keep answers to 2-4 sentences unless the user asks for more detail. Be warm but concise, like a knowledgeable friend, not a corporate chatbot. Reference the actual AQI number and pollutant when relevant. Address the user by name occasionally, not every message. Never say you'll "try to find" or "simulate" data  if air quality data is given to you above, use it directly; if none is given, just ask for a location.`;
 }
 
 async function conditionsToContext(lat: number, lng: number, name: string): Promise<AqiContext> {
@@ -125,7 +125,7 @@ export async function POST(req: Request) {
   }));
 
   // A location named in *this* message always wins, even if a city is
-  // already loaded client-side — otherwise the stale `context` from an
+  // already loaded client-side  otherwise the stale `context` from an
   // earlier search silently overrides every new city the user types.
   let liveContext = await resolveLocationFromMessage(message, savedLocationSummaries);
   if (!liveContext) {
@@ -136,7 +136,7 @@ export async function POST(req: Request) {
       const placeName = (await reverseGeocode(coords.lat, coords.lng).catch(() => null)) ?? "your location";
       liveContext = await conditionsToContext(coords.lat, coords.lng, placeName);
     } catch {
-      // No AQI station nearby, or Google call failed — assistant just
+      // No AQI station nearby, or Google call failed  assistant just
       // proceeds without live location context.
     }
   }
