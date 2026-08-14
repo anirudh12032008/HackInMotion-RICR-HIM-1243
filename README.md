@@ -44,6 +44,12 @@ BreatheSafe closes that last mile. It answers four questions the raw data does n
 ---
 ## Screenshots 
 ![dashboard](<Screenshot 2026-08-14 at 5.29.21 PM.png>)
+<img width="894" height="1004" alt="Screenshot 2026-08-14 at 5 55 16 PM" src="https://github.com/user-attachments/assets/44222143-c05a-421c-8429-e38fa55daf75" />
+<img width="310" height="536" alt="Screenshot 2026-08-14 at 5 56 16 PM" src="https://github.com/user-attachments/assets/fb85aae4-d47f-40a4-8b13-01a851b89a11" />
+<img width="1064" height="826" alt="Screenshot 2026-08-14 at 5 57 24 PM" src="https://github.com/user-attachments/assets/b87c85d9-46b8-4f03-b324-3fd632359f6d" />
+<img width="1082" height="1008" alt="Screenshot 2026-08-14 at 5 58 13 PM" src="https://github.com/user-attachments/assets/a850f0c6-b40c-4164-a018-93d9ced5b3c3" />
+
+<img width="1256" height="954" alt="Screenshot 2026-08-14 at 5 59 33 PM" src="https://github.com/user-attachments/assets/62372949-d86c-4c30-949f-0dd9722bf582" />
 
 ## Feature tour
 
