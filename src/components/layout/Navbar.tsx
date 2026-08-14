@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SidebarNav } from "@/components/layout/Sidebar";
-import { PushToggle } from "@/components/layout/PushToggle";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -105,8 +104,6 @@ export function Navbar() {
             {resolvedTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
         )}
-
-        <PushToggle />
 
         <DropdownMenu>
           <DropdownMenuTrigger
