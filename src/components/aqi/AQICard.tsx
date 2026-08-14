@@ -11,6 +11,7 @@ import { RiskBadge } from "@/components/aqi/RiskBadge";
 import { PollutantBreakdown } from "@/components/aqi/PollutantBreakdown";
 import { HealthGuidance } from "@/components/aqi/HealthGuidance";
 import { PollenWidget } from "@/components/aqi/PollenWidget";
+import { ExposureInsights } from "@/components/aqi/ExposureInsights";
 import type { AqiResult } from "@/components/dashboard/QuickSearch";
 import { UserHealthProfile } from "@/types/index";
 import { pickHealthRecommendation } from "@/lib/health-recommendation";
@@ -96,6 +97,14 @@ export function AQICard({ result }: { result: AqiResult }) {
           <h3 className="mb-3 text-sm font-semibold">Health guidance</h3>
           <HealthGuidance aqi={result.aqi} profile={profile} />
         </div>
+
+        <ExposureInsights
+          aqi={result.aqi}
+          pm25={result.pollutants?.pm25}
+          hourly={result.forecast?.hourly ?? []}
+          profile={profile}
+          cityName={result.city.name.split(",")[0]}
+        />
 
         {recommendation && (
           <div className="rounded-lg border border-primary/20 bg-accent/50 p-4">
