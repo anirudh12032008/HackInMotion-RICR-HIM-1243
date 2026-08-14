@@ -7,7 +7,6 @@ import { Bookmark, BookmarkCheck, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AQIGauge } from "@/components/aqi/AQIGauge";
-import { RiskBadge } from "@/components/aqi/RiskBadge";
 import { PollutantBreakdown } from "@/components/aqi/PollutantBreakdown";
 import { HealthGuidance } from "@/components/aqi/HealthGuidance";
 import { PollenWidget } from "@/components/aqi/PollenWidget";
@@ -82,17 +81,14 @@ export function AQICard({ result }: { result: AqiResult }) {
         </Button>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+        <div>
           <AQIGauge aqi={result.aqi} />
-          <div className="flex-1 space-y-2 text-center sm:text-left">
-            <RiskBadge aqi={result.aqi} />
-            <p className="text-sm text-muted-foreground">
-              Dominant pollutant:{" "}
-              <span className="font-medium text-foreground">
-                {result.dominantPollutant?.toUpperCase()}
-              </span>
-            </p>
-          </div>
+          <p className="mt-5 border-t border-border pt-3 text-sm text-muted-foreground">
+            Dominant pollutant{" "}
+            <span className="font-[family-name:var(--font-display)] font-medium text-foreground">
+              {result.dominantPollutant?.toUpperCase()}
+            </span>
+          </p>
         </div>
 
         <div>

@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CitySearchInput, type CitySearchResult } from "@/components/dashboard/CitySearchInput";
 import {
   sampleRoute,
   sampleAlongPath,
@@ -49,6 +50,8 @@ const ACTIVITIES: { value: ActivityType; label: string }[] = [
 export default function RoutePlannerPage() {
   const [start, setStart] = useState<RoutePoint | null>(null);
   const [end, setEnd] = useState<RoutePoint | null>(null);
+  const [startName, setStartName] = useState<string | null>(null);
+  const [endName, setEndName] = useState<string | null>(null);
   const [samples, setSamples] = useState<RouteSample[]>([]);
   const [roadPath, setRoadPath] = useState<RoutePoint[] | null>(null);
   const [directionsInfo, setDirectionsInfo] = useState<{ distanceKm: number; durationMin: number } | null>(
@@ -60,16 +63,50 @@ export default function RoutePlannerPage() {
   function handleSetPoint(point: RoutePoint) {
     if (!start) {
       setStart(point);
+      setStartName(null);
     } else if (!end) {
       setEnd(point);
+      setEndName(null);
       loadRouteAqi(start, point);
     } else {
       setStart(point);
+      setStartName(null);
       setEnd(null);
+      setEndName(null);
       setSamples([]);
       setRoadPath(null);
       setDirectionsInfo(null);
     }
+  }
+
+  function handleSelectStart(result: CitySearchResult) {
+    const point = { lat: result.lat, lng: result.lng };
+    setStart(point);
+    setStartName(result.name);
+    if (end) loadRouteAqi(point, end);
+  }
+
+  function handleSelectEnd(result: CitySearchResult) {
+    const point = { lat: result.lat, lng: result.lng };
+    setEnd(point);
+    setEndName(result.name);
+    if (start) loadRouteAqi(start, point);
+  }
+
+  function clearStart() {
+    setStart(null);
+    setStartName(null);
+    setSamples([]);
+    setRoadPath(null);
+    setDirectionsInfo(null);
+  }
+
+  function clearEnd() {
+    setEnd(null);
+    setEndName(null);
+    setSamples([]);
+    setRoadPath(null);
+    setDirectionsInfo(null);
   }
 
   async function loadRouteAqi(from: RoutePoint, to: RoutePoint) {
@@ -117,6 +154,8 @@ export default function RoutePlannerPage() {
   function reset() {
     setStart(null);
     setEnd(null);
+    setStartName(null);
+    setEndName(null);
     setSamples([]);
     setRoadPath(null);
     setDirectionsInfo(null);
@@ -177,6 +216,23 @@ export default function RoutePlannerPage() {
             <RotateCcw className="h-4 w-4" />
           </Button>
         </div>
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-2">
+        <CitySearchInput
+          placeholder="Start — search a city or click the map"
+          value={startName}
+          onSelect={handleSelectStart}
+          onClear={clearStart}
+          disabled={loading}
+        />
+        <CitySearchInput
+          placeholder="Destination — search a city or click the map"
+          value={endName}
+          onSelect={handleSelectEnd}
+          onClear={clearEnd}
+          disabled={loading}
+        />
       </div>
 
       {distanceKm !== null && (

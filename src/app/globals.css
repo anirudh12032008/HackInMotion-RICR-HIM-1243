@@ -3,56 +3,74 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Instrument palette.
+ *
+ * The six AQI band colours (green -> maroon) are mandated by the EPA scale and
+ * are the only thing on screen that carries meaning through hue. So the chrome
+ * is deliberately desaturated cool neutral: no brand colour competes with, or
+ * gets mistaken for, a risk reading. Previously `--primary` was a green that
+ * collided with the "Good" band on every button and active nav item.
+ */
 :root {
-  --radius: 0.625rem;
+  --radius: 0.25rem;
 
-  --background: #f7f5f0;
-  --foreground: #14231e;
+  --background: #f4f6f7;
+  --foreground: #0f1519;
   --card: #ffffff;
-  --card-foreground: #14231e;
+  --card-foreground: #0f1519;
   --popover: #ffffff;
-  --popover-foreground: #14231e;
-  --primary: #1f5f4e;
-  --primary-foreground: #f7f5f0;
-  --secondary: #eeece4;
-  --secondary-foreground: #14231e;
-  --muted: #eeece4;
-  --muted-foreground: #6b6558;
-  --accent: #e4ece7;
-  --accent-foreground: #1f5f4e;
+  --popover-foreground: #0f1519;
+  --primary: #1c2b36;
+  --primary-foreground: #f4f6f7;
+  --secondary: #e7ebee;
+  --secondary-foreground: #0f1519;
+  --muted: #e7ebee;
+  --muted-foreground: #5c6a74;
+  --accent: #e7ebee;
+  --accent-foreground: #1c2b36;
   --destructive: #b3432f;
   --destructive-foreground: #ffffff;
-  --border: #e3e0d8;
-  --input: #e3e0d8;
-  --ring: #1f5f4e;
+  --border: #d6dce1;
+  --input: #d6dce1;
+  --ring: #1c2b36;
 
-  --chart-1: #1f5f4e;
-  --chart-2: #22c55e;
-  --chart-3: #eab308;
-  --chart-4: #f97316;
+  /* Charts speak in AQI band colours, never in chrome colours. */
+  --chart-1: #22c55e;
+  --chart-2: #eab308;
+  --chart-3: #f97316;
+  --chart-4: #ef4444;
   --chart-5: #8b5cf6;
+
+  /* Canonical AQI bands, mirrored from src/lib/risk-engine.ts. */
+  --aqi-good: #22c55e;
+  --aqi-moderate: #eab308;
+  --aqi-sensitive: #f97316;
+  --aqi-unhealthy: #ef4444;
+  --aqi-very-unhealthy: #8b5cf6;
+  --aqi-hazardous: #991b1b;
 }
 
 .dark {
-  --background: #101613;
-  --foreground: #e7e4db;
-  --card: #17201c;
-  --card-foreground: #e7e4db;
-  --popover: #17201c;
-  --popover-foreground: #e7e4db;
-  --primary: #4b9c86;
-  --primary-foreground: #0c1512;
-  --secondary: #1c2622;
-  --secondary-foreground: #e7e4db;
-  --muted: #1c2622;
-  --muted-foreground: #9aa39d;
-  --accent: #1d2d27;
-  --accent-foreground: #7fc4b0;
+  --background: #0b0f12;
+  --foreground: #e3e8ec;
+  --card: #12181d;
+  --card-foreground: #e3e8ec;
+  --popover: #12181d;
+  --popover-foreground: #e3e8ec;
+  --primary: #dce3e8;
+  --primary-foreground: #0b0f12;
+  --secondary: #1a2229;
+  --secondary-foreground: #e3e8ec;
+  --muted: #1a2229;
+  --muted-foreground: #8c99a3;
+  --accent: #1a2229;
+  --accent-foreground: #e3e8ec;
   --destructive: #d9694f;
-  --destructive-foreground: #0c1512;
-  --border: #2a332e;
-  --input: #2a332e;
-  --ring: #4b9c86;
+  --destructive-foreground: #0b0f12;
+  --border: #232d35;
+  --input: #232d35;
+  --ring: #8c99a3;
 }
 
 @theme inline {
@@ -94,8 +112,17 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
+  /*
+   * Monospace is the display face, not a decorative serif. Every headline
+   * number in this app is an instrument reading (AQI index, µg/m³, BPM,
+   * timestamps), and mono keeps those digits tabular so a value that ticks
+   * from 99 to 100 doesn't reflow the layout around it.
+   */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-display: var(--font-mono-display), ui-monospace, SFMono-Regular, monospace;
+  --font-mono: var(--font-mono-display), ui-monospace, SFMono-Regular, monospace;
+  /* Editorial serif — landing page headlines only. */
+  --font-editorial: var(--font-editorial-serif), ui-serif, Georgia, serif;
 }
 
 @layer base {
