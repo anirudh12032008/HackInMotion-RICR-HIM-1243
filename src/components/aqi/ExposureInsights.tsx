@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Cigarette, Clock, TrendingDown, TrendingUp, Minus, Wind, Volume2, Watch, X } from "lucide-react";
+import { Cigarette, Clock, TrendingDown, TrendingUp, Minus, Wind, Volume2, VolumeX, Watch, X } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ import {
   type HourPoint,
 } from "@/lib/clean-air-windows";
 import { UserHealthProfile } from "@/types/index";
-import { canSpeak, speak } from "@/lib/utils";
+import { canSpeak, speak, stopSpeak } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import {
   connectHeartRateMonitor,
@@ -63,6 +63,13 @@ function ExposureCard({
   const [heartRate, setHeartRate] = useState<number | null>(null);
   const [wearable, setWearable] = useState<WearableConnection | null>(null);
   const [connecting, setConnecting] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  useEffect(() => {
+    // Stop any in-progress narration when this card unmounts (e.g. a new
+    // city search replaces it) so speech doesn't keep playing over stale text.
+    return () => stopSpeak();
+  }, []);
 
   useEffect(() => {
     // Disconnect the Bluetooth GATT link when this card unmounts (e.g. the
@@ -176,15 +183,36 @@ function ExposureCard({
 
         {canSpeak() && (
           <Button
-            variant="outline"
+            variant={isSpeaking ? "destructive" : "outline"}
             size="sm"
             className="w-full"
-            onClick={() =>
-              speak(`Air quality in ${cityName} is ${aqi}, ${risk.label}. ${exposure.headline}`, locale)
-            }
+            onClick={async () => {
+              if (isSpeaking) {
+                stopSpeak();
+                setIsSpeaking(false);
+                return;
+              }
+              const utterance = await speak(
+                `Air quality in ${cityName} is ${aqi}, ${risk.label}. ${exposure.headline}`,
+                locale
+              );
+              if (!utterance) return;
+              setIsSpeaking(true);
+              utterance.onend = () => setIsSpeaking(false);
+              utterance.onerror = () => setIsSpeaking(false);
+            }}
           >
-            <Volume2 className="mr-2 h-4 w-4" />
-            Read this aloud
+            {isSpeaking ? (
+              <>
+                <VolumeX className="mr-2 h-4 w-4" />
+                Stop reading
+              </>
+            ) : (
+              <>
+                <Volume2 className="mr-2 h-4 w-4" />
+                Read this aloud
+              </>
+            )}
           </Button>
         )}
       </CardContent>
