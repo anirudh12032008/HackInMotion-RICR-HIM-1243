@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Loader2, CalendarCheck, AlertTriangle } from "lucide-react";
+import { Search, Loader2, CalendarCheck, AlertTriangle, Clock } from "lucide-react";
 import {
   LineChart,
   Line,
+  BarChart,
+  Bar,
+  Cell,
   XAxis,
   YAxis,
   Tooltip,
@@ -33,10 +36,16 @@ interface SavedLocationOption {
   city?: string;
 }
 
+interface HourPoint {
+  dateTime: string;
+  aqi: number;
+}
+
 export function ForecastBoard() {
   const [query, setQuery] = useState("");
   const [city, setCity] = useState("");
   const [days, setDays] = useState<ForecastDay[] | null>(null);
+  const [hourly, setHourly] = useState<HourPoint[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [savedLocations, setSavedLocations] = useState<SavedLocationOption[]>([]);
@@ -59,10 +68,12 @@ export function ForecastBoard() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Location not found");
       setDays(extractDailyForecast(data.forecast?.daily));
+      setHourly(data.forecast?.hourly ?? []);
       setCity(data.city.name.split(",")[0]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setDays(null);
+      setHourly([]);
     } finally {
       setLoading(false);
     }
@@ -186,6 +197,51 @@ export function ForecastBoard() {
             })}
           </div>
 
+          {hourly.length > 0 && (
+            <Card>
+              <CardContent className="pt-6">
+                <div className="mb-3 flex items-center gap-2 text-sm font-medium">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  Next {hourly.length} hours
+                </div>
+                <ResponsiveContainer width="100%" height={180}>
+                  <BarChart data={hourly} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" vertical={false} />
+                    <XAxis
+                      dataKey="dateTime"
+                      tickFormatter={formatHour}
+                      tick={{ fontSize: 10 }}
+                      className="fill-muted-foreground"
+                      axisLine={false}
+                      tickLine={false}
+                      interval={Math.max(0, Math.floor(hourly.length / 8) - 1)}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 11 }}
+                      className="fill-muted-foreground"
+                      axisLine={false}
+                      tickLine={false}
+                      width={32}
+                    />
+                    <Tooltip
+                      formatter={(value) => Math.round(Number(value))}
+                      labelFormatter={(label) => formatHourFull(String(label))}
+                    />
+                    <Bar dataKey="aqi" radius={[3, 3, 0, 0]}>
+                      {hourly.map((h) => (
+                        <Cell key={h.dateTime} fill={classifyRisk(h.aqi).color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Bars are colour-coded by risk band — the same 48-hour data behind the clean-air
+                  windows on the dashboard, shown here hour by hour.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
           <Card>
             <CardContent className="pt-6">
               <ResponsiveContainer width="100%" height={220}>
@@ -223,4 +279,16 @@ export function ForecastBoard() {
 
 function formatWeekday(dateStr: string) {
   return new Date(dateStr).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+}
+
+function formatHour(dateTime: string) {
+  return new Date(dateTime).toLocaleTimeString(undefined, { hour: "numeric", hour12: true });
+}
+
+function formatHourFull(dateTime: string) {
+  return new Date(dateTime).toLocaleString(undefined, {
+    weekday: "short",
+    hour: "numeric",
+    hour12: true,
+  });
 }
