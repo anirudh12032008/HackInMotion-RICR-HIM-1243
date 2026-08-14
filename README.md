@@ -426,6 +426,26 @@ Vercel Cron entry for background alerting.
 
 ---
 
+## Future scope
+
+- **Scheduled ingestion pipeline** — replace the opportunistic snapshot pattern (a
+  snapshot is only written when a saved location happens to be viewed) with a proper
+  cron/queue worker, so trend charts fill in on a schedule instead of depending on
+  traffic.
+- **Broader wearable signals** — Web Bluetooth also exposes standard GATT services for
+  SpO2 and skin temperature on many devices, which would sharpen the exposure model
+  further for respiratory-condition users specifically.
+- **School & office fleet accounts** — one health-profile-aware dashboard covering many
+  saved locations at once, so an institution can watch every classroom or building
+  instead of one parent watching one child.
+- **Real road-following route sampling everywhere** — the route planner already decodes
+  the Directions API polyline and samples along it; extending that same real-geometry
+  sampling to the comparison and forecast views is a natural next step.
+- **CDN/edge caching** for the heatmap tile proxy and current-conditions responses, to
+  cut latency and external API spend at higher traffic.
+
+---
+
 ## Documentation
 
 - **[api-documentation.md](api-documentation.md)** — every endpoint, with
