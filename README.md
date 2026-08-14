@@ -349,11 +349,27 @@ Fill in `.env.local`:
 MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/breathsafe
 NEXTAUTH_SECRET=<openssl rand -base64 32>
 NEXTAUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=<google oauth client id>
+GOOGLE_CLIENT_SECRET=<google oauth client secret>
 GOOGLE_API_KEY=<server key>
 GROQ_API_KEY=<groq key>
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=<browser key>
 NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID=<vector map id>
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=<vapid public key>
+VAPID_PRIVATE_KEY=<vapid private key>
+VAPID_SUBJECT=mailto:you@example.com
 ```
+
+| Variable | Purpose |
+| --- | --- |
+| `MONGODB_URI` | MongoDB Atlas (or local) connection string |
+| `NEXTAUTH_SECRET` / `NEXTAUTH_URL` | Session signing + callback base URL |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth app, for "Continue with Google" sign-in |
+| `GOOGLE_API_KEY` | Server-only key for Air Quality, Pollen, Geocoding, Directions |
+| `GROQ_API_KEY` | AI chat assistant (Llama 3.3 70B via Groq) |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Browser-facing Maps JavaScript SDK key |
+| `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` | Vector Map ID for theme-aware, advanced-marker maps |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` / `VAPID_SUBJECT` | Web Push keypair for lock-screen alert notifications — generate once with `npx web-push generate-vapid-keys` |
 
 ### 3. Run
 
@@ -382,7 +398,7 @@ city.
 Deployed on Vercel. To deploy your own:
 
 1. Push to GitHub and import the repo at [vercel.com/new](https://vercel.com/new).
-2. Add all seven environment variables to the Vercel project, setting `NEXTAUTH_URL` to
+2. Add all twelve environment variables to the Vercel project, setting `NEXTAUTH_URL` to
    your production URL.
 3. Add your Vercel domain to the browser key's HTTP-referrer allowlist.
 4. Allow Vercel's egress in MongoDB Atlas → *Network Access* (`0.0.0.0/0` for a demo; a
