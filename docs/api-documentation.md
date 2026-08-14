@@ -72,24 +72,24 @@ GET /api/aqi/current?lat=28.6139&lng=77.2090
 
 ```json
 {
-  "aqi": 121,
-  "dominantPollutant": "pm10",
-  "city": { "name": "Delhi, India", "geo": [28.6139, 77.209] },
-  "updatedAt": "2026-08-14T09:00:00Z",
-  "pollutants": { "pm25": 48, "pm10": 148, "o3": 22, "no2": 31, "so2": 6, "co": 700 },
-  "forecast": {
-    "daily": { "pm25": [{ "day": "2026-08-14", "avg": 118, "min": 84, "max": 163 }] },
-    "hourly": [{ "dateTime": "2026-08-14T09:00:00Z", "aqi": 121 }]
-  },
-  "risk": {
-    "level": "unhealthy_sensitive",
-    "label": "Unhealthy for Sensitive Groups",
-    "color": "#f97316",
-    "bgColor": "#ffedd5",
-    "emoji": "😷",
-    "description": "Sensitive groups may experience health effects..."
-  },
-  "healthRecommendations": { "generalPopulation": "...", "children": "..." }
+"aqi": 121,
+"dominantPollutant": "pm10",
+"city": { "name": "Delhi, India", "geo": [28.6139, 77.209] },
+"updatedAt": "2026-08-14T09:00:00Z",
+"pollutants": { "pm25": 48, "pm10": 148, "o3": 22, "no2": 31, "so2": 6, "co": 700 },
+"forecast": {
+"daily": { "pm25": [{ "day": "2026-08-14", "avg": 118, "min": 84, "max": 163 }] },
+"hourly": [{ "dateTime": "2026-08-14T09:00:00Z", "aqi": 121 }]
+},
+"risk": {
+"level": "unhealthy_sensitive",
+"label": "Unhealthy for Sensitive Groups",
+"color": "#f97316",
+"bgColor": "#ffedd5",
+"emoji": "",
+"description": "Sensitive groups may experience health effects..."
+},
+"healthRecommendations": { "generalPopulation": "...", "children": "..." }
 }
 ```
 
@@ -143,17 +143,17 @@ an hourly snapshot if the last one is stale) and `backfillHistoryIfSparse()` (pu
 
 ```json
 {
-  "locations": [
-    {
-      "_id": "66f...",
-      "name": "Home",
-      "city": "Delhi",
-      "lat": 28.6139,
-      "lng": 77.209,
-      "alertThreshold": 100,
-      "current": { "aqi": 121, "dominantPollutant": "pm10", "risk": { "label": "Unhealthy for Sensitive Groups" } }
-    }
-  ]
+"locations": [
+{
+"_id": "66f...",
+"name": "Home",
+"city": "Delhi",
+"lat": 28.6139,
+"lng": 77.209,
+"alertThreshold": 100,
+"current": { "aqi": 121, "dominantPollutant": "pm10", "risk": { "label": "Unhealthy for Sensitive Groups" } }
+}
+]
 }
 ```
 
@@ -190,19 +190,19 @@ Alerts for the session user, newest first, with `locationId` populated to `{ nam
 
 ```json
 {
-  "alerts": [
-    {
-      "_id": "66f...",
-      "type": "threshold_exceeded",
-      "severity": "warning",
-      "title": "Home: AQI crossed your threshold",
-      "message": "AQI is 121, above your alert threshold of 100. Sensitive groups may experience health effects.",
-      "aqiValue": 121,
-      "read": false,
-      "createdAt": "2026-08-14T09:02:00Z",
-      "locationId": { "name": "Home" }
-    }
-  ]
+"alerts": [
+{
+"_id": "66f...",
+"type": "threshold_exceeded",
+"severity": "warning",
+"title": "Home: AQI crossed your threshold",
+"message": "AQI is 121, above your alert threshold of 100. Sensitive groups may experience health effects.",
+"aqiValue": 121,
+"read": false,
+"createdAt": "2026-08-14T09:02:00Z",
+"locationId": { "name": "Home" }
+}
+]
 }
 ```
 
@@ -245,20 +245,20 @@ guaranteed built before the query runs.
 
 ```json
 {
-  "reports": [
-    {
-      "_id": "66f...",
-      "userName": "Asha",
-      "type": "burning_waste",
-      "severity": "high",
-      "description": "Open waste burning near the market",
-      "lat": 28.61,
-      "lng": 77.2,
-      "upvotes": 4,
-      "hasUpvoted": false,
-      "createdAt": "2026-08-14T08:00:00Z"
-    }
-  ]
+"reports": [
+{
+"_id": "66f...",
+"userName": "Asha",
+"type": "burning_waste",
+"severity": "high",
+"description": "Open waste burning near the market",
+"lat": 28.61,
+"lng": 77.2,
+"upvotes": 4,
+"hasUpvoted": false,
+"createdAt": "2026-08-14T08:00:00Z"
+}
+]
 }
 ```
 
@@ -293,12 +293,12 @@ actual road geometry (not a straight line), and scores each sample.
 
 ```json
 {
-  "path": [[28.61, 77.2], [28.612, 77.203]],
-  "distanceKm": 5.4,
-  "durationMin": 62,
-  "samples": [{ "lat": 28.61, "lng": 77.2, "aqi": 118 }],
-  "worstAqi": 156,
-  "averageAqi": 124
+"path": [[28.61, 77.2], [28.612, 77.203]],
+"distanceKm": 5.4,
+"durationMin": 62,
+"samples": [{ "lat": 28.61, "lng": 77.2, "aqi": 118 }],
+"worstAqi": 156,
+"averageAqi": 124
 }
 ```
 
@@ -325,12 +325,12 @@ banner. Genuine failures still return `502`.
 
 ```json
 {
-  "healthProfile": {
-    "conditions": ["asthma", "children"],
-    "ageGroup": "adult",
-    "activityLevel": "active"
-  },
-  "language": "hi"
+"healthProfile": {
+"conditions": ["asthma", "children"],
+"ageGroup": "adult",
+"activityLevel": "active"
+},
+"language": "hi"
 }
 ```
 
@@ -348,10 +348,10 @@ mask class, inhaled-dose multipliers, and the clean-air-window AQI ceiling.
 
 ```json
 {
-  "message": "should I run this evening?",
-  "history": [{ "role": "user", "text": "hi" }, { "role": "model", "text": "Hi Asha!" }],
-  "context": { "cityName": "Delhi", "aqi": 121, "riskLabel": "...", "dominantPollutant": "pm10", "pollutants": {} },
-  "coords": { "lat": 28.61, "lng": 77.2 }
+"message": "should I run this evening?",
+"history": [{ "role": "user", "text": "hi" }, { "role": "model", "text": "Hi Asha!" }],
+"context": { "cityName": "Delhi", "aqi": 121, "riskLabel": "...", "dominantPollutant": "pm10", "pollutants": {} },
+"coords": { "lat": 28.61, "lng": 77.2 }
 }
 ```
 
