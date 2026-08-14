@@ -5,11 +5,15 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="hidden flex-col justify-between bg-primary p-10 text-primary-foreground lg:flex">
-        <Link href="/" className="font-[family-name:var(--font-display)] text-lg italic">
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-[family-name:var(--font-display)] text-lg font-bold tracking-tight"
+        >
+          <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-[#22c55e]" />
           BreatheSafe
         </Link>
         <Reveal className="space-y-4">
-          <h1 className="font-[family-name:var(--font-display)] text-4xl leading-tight text-balance">
+          <h1 className="font-[family-name:var(--font-display)] text-4xl font-bold leading-tight tracking-tight text-balance">
             Breathe smarter.
             <br />
             Live safer.

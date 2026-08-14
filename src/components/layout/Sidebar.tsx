@@ -57,7 +57,8 @@ export function Sidebar() {
   return (
     <aside className="hidden w-60 shrink-0 border-r bg-card lg:block">
       <div className="flex h-16 items-center border-b px-5">
-        <Link href="/dashboard" className="text-lg font-bold tracking-tight">
+        <Link href="/dashboard" className="flex items-center gap-2 text-lg font-bold tracking-tight">
+          <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-[#22c55e]" />
           BreatheSafe
         </Link>
       </div>
