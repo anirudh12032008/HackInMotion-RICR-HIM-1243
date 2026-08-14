@@ -2,7 +2,7 @@ import Alert from "@/models/Alert";
 import AQISnapshot from "@/models/AQISnapshot";
 import { classifyRisk } from "@/lib/risk-engine";
 import { sendPushToUser } from "@/lib/push";
-import { AlertSeverity } from "@/types/index";
+import type { AlertSeverity } from "@/types/index";
 
 const RAPID_CHANGE_THRESHOLD = 50;
 const ALERT_COOLDOWN_MS = 3 * 60 * 60 * 1000; // avoid spamming the same alert type

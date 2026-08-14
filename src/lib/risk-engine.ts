@@ -1,4 +1,4 @@
-import { ActivityLevel, HealthCondition, RiskLevel, UserHealthProfile } from "@/types/index";
+import type { ActivityLevel, HealthCondition, RiskLevel, UserHealthProfile } from "@/types/index";
 
 export interface RiskClassification {
   level: RiskLevel;

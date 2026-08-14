@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertSeverity, AlertType } from "@/types/index";
+import type { AlertSeverity, AlertType } from "@/types/index";
 import { useTranslation } from "@/lib/i18n";
 
 interface AlertItem {

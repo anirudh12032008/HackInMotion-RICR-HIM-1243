@@ -13,7 +13,7 @@ import { HealthGuidance } from "@/components/aqi/HealthGuidance";
 import { PollenWidget } from "@/components/aqi/PollenWidget";
 import { ExposureInsights } from "@/components/aqi/ExposureInsights";
 import type { AqiResult } from "@/components/dashboard/QuickSearch";
-import { UserHealthProfile } from "@/types/index";
+import type { UserHealthProfile } from "@/types/index";
 import { pickHealthRecommendation } from "@/lib/health-recommendation";
 import { subscribeToPush } from "@/lib/push-client";
 

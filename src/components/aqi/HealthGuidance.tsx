@@ -1,6 +1,6 @@
 import { ShieldAlert, Wind, Activity, DoorOpen } from "lucide-react";
 import { getHealthGuidance } from "@/lib/risk-engine";
-import { UserHealthProfile } from "@/types/index";
+import type { UserHealthProfile } from "@/types/index";
 
 export function HealthGuidance({ aqi, profile }: { aqi: number; profile: UserHealthProfile }) {
   const guidance = getHealthGuidance(aqi, profile);

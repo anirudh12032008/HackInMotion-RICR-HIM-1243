@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 import { requireUserId } from "@/lib/session";
-import { ActivityLevel, AgeGroup, HealthCondition } from "@/types/index";
+import type { ActivityLevel, AgeGroup, HealthCondition } from "@/types/index";
 
 const VALID_CONDITIONS: HealthCondition[] = [
   "asthma",

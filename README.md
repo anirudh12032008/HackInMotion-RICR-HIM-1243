@@ -7,9 +7,20 @@
 An Environmental Risk & Air Quality Monitoring Platform that turns raw pollutant
 telemetry into a decision a person can make in five seconds.
 
-[Architecture](docs/architecture.md) · [API reference](docs/api-documentation.md) · [Deployment](#deployment)
+[Architecture](docs/architecture.md) · [Diagram](architecture-diagram.png) · [API reference](api-documentation.md) · [Deployment](#deployment)
 
 </div>
+
+---
+
+## Team
+
+| | |
+| --- | --- |
+| **Team** | RICR |
+| **Members** | Anirudh Sahu (solo) |
+| **Theme** | Environment & CleanTech |
+| **Problem statement** | Environmental Risk & Air Quality Monitoring Platform |
 
 ---
 
@@ -102,6 +113,25 @@ The parts we're proudest of — none of these are in the problem statement.
 
 - **WHO-guideline framing.** Every reading is also expressed as a multiple of the WHO
   24-hour PM2.5 guideline (15 µg/m³) — the number that actually defines "safe."
+
+---
+
+## Screenshots
+
+<!--
+  TODO before final submission: drop 3-4 PNGs into assets/screenshots/ and swap these
+  placeholders for real ![alt](assets/screenshots/xyz.png) embeds. Good picks: the
+  dashboard with an active AQI card, Exposure Insights (clean-air windows + wearable),
+  the route planner with a scored path, and the Profile notifications card.
+-->
+
+| Dashboard | Exposure Insights |
+| --- | --- |
+| *Screenshot pending* | *Screenshot pending* |
+
+| Route Planner | Notifications |
+| --- | --- |
+| *Screenshot pending* | *Screenshot pending* |
 
 ---
 
@@ -247,7 +277,7 @@ src/
   app/
     (auth)/            login, signup
     (dashboard)/       dashboard, alerts, community, compare, forecast, profile, route-planner
-    api/               route handlers — see docs/api-documentation.md
+    api/               route handlers — see api-documentation.md
     error.tsx          root error boundary
   components/
     aqi/               gauge, risk badge, guidance, pollutants, pollen, exposure insights
@@ -338,11 +368,27 @@ Fill in `.env.local`:
 MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/breathsafe
 NEXTAUTH_SECRET=<openssl rand -base64 32>
 NEXTAUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=<google oauth client id>
+GOOGLE_CLIENT_SECRET=<google oauth client secret>
 GOOGLE_API_KEY=<server key>
 GROQ_API_KEY=<groq key>
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=<browser key>
 NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID=<vector map id>
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=<vapid public key>
+VAPID_PRIVATE_KEY=<vapid private key>
+VAPID_SUBJECT=mailto:you@example.com
 ```
+
+| Variable | Purpose |
+| --- | --- |
+| `MONGODB_URI` | MongoDB Atlas (or local) connection string |
+| `NEXTAUTH_SECRET` / `NEXTAUTH_URL` | Session signing + callback base URL |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth app, for "Continue with Google" sign-in |
+| `GOOGLE_API_KEY` | Server-only key for Air Quality, Pollen, Geocoding, Directions |
+| `GROQ_API_KEY` | AI chat assistant (Llama 3.3 70B via Groq) |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Browser-facing Maps JavaScript SDK key |
+| `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` | Vector Map ID for theme-aware, advanced-marker maps |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` / `VAPID_SUBJECT` | Web Push keypair for lock-screen alert notifications — generate once with `npx web-push generate-vapid-keys` |
 
 ### 3. Run
 
@@ -371,7 +417,7 @@ city.
 Deployed on Vercel. To deploy your own:
 
 1. Push to GitHub and import the repo at [vercel.com/new](https://vercel.com/new).
-2. Add all seven environment variables to the Vercel project, setting `NEXTAUTH_URL` to
+2. Add all twelve environment variables to the Vercel project, setting `NEXTAUTH_URL` to
    your production URL.
 3. Add your Vercel domain to the browser key's HTTP-referrer allowlist.
 4. Allow Vercel's egress in MongoDB Atlas → *Network Access* (`0.0.0.0/0` for a demo; a
@@ -399,9 +445,29 @@ Vercel Cron entry for background alerting.
 
 ---
 
+## Future scope
+
+- **Scheduled ingestion pipeline** — replace the opportunistic snapshot pattern (a
+  snapshot is only written when a saved location happens to be viewed) with a proper
+  cron/queue worker, so trend charts fill in on a schedule instead of depending on
+  traffic.
+- **Broader wearable signals** — Web Bluetooth also exposes standard GATT services for
+  SpO2 and skin temperature on many devices, which would sharpen the exposure model
+  further for respiratory-condition users specifically.
+- **School & office fleet accounts** — one health-profile-aware dashboard covering many
+  saved locations at once, so an institution can watch every classroom or building
+  instead of one parent watching one child.
+- **Real road-following route sampling everywhere** — the route planner already decodes
+  the Directions API polyline and samples along it; extending that same real-geometry
+  sampling to the comparison and forecast views is a natural next step.
+- **CDN/edge caching** for the heatmap tile proxy and current-conditions responses, to
+  cut latency and external API spend at higher traffic.
+
+---
+
 ## Documentation
 
-- **[docs/api-documentation.md](docs/api-documentation.md)** — every endpoint, with
+- **[api-documentation.md](api-documentation.md)** — every endpoint, with
   request/response shapes and status codes
 - **[docs/architecture.md](docs/architecture.md)** — system design, request lifecycles,
   and the architecture diagram source
