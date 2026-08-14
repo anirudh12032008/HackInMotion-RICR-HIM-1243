@@ -122,7 +122,7 @@ function maskForAqi(aqi: number): string | null {
   if (aqi <= 100) return null;
   if (aqi <= 150) return "N95 or KN95 mask recommended outdoors";
   if (aqi <= 200) return "N95/KN95 mask required outdoors";
-  return "N99/P100 mask required — minimize all outdoor exposure";
+  return "N99/P100 mask required  minimize all outdoor exposure";
 }
 
 function exerciseAdviceFor(aqi: number, activityLevel: ActivityLevel, vulnerable: boolean): string {
@@ -136,7 +136,7 @@ function exerciseAdviceFor(aqi: number, activityLevel: ActivityLevel, vulnerable
   }
   if (aqi <= threshold) {
     return activityLevel === "athlete" || activityLevel === "active"
-      ? "Reduce prolonged or intense outdoor exertion — shorten your run or move it indoors."
+      ? "Reduce prolonged or intense outdoor exertion  shorten your run or move it indoors."
       : "Reduce prolonged outdoor exertion.";
   }
   if (aqi <= 200) {
@@ -162,11 +162,11 @@ export function getHealthGuidance(aqi: number, profile: UserHealthProfile): Heal
       ? "Stay indoors as much as possible today."
       : "Reduce prolonged or heavy outdoor exertion.";
   } else if (aqi <= 200) {
-    outdoorActivity = "Avoid prolonged outdoor activity — everyone may be affected.";
+    outdoorActivity = "Avoid prolonged outdoor activity  everyone may be affected.";
   } else if (aqi <= 300) {
     outdoorActivity = "Stay indoors. Avoid outdoor activity entirely.";
   } else {
-    outdoorActivity = "Emergency conditions — remain indoors with windows sealed.";
+    outdoorActivity = "Emergency conditions  remain indoors with windows sealed.";
   }
 
   if (aqi > 100) {
@@ -179,13 +179,13 @@ export function getHealthGuidance(aqi: number, profile: UserHealthProfile): Heal
           precautions.push("Monitor your breathing closely and avoid exertion outdoors.");
           break;
         case "heartDisease":
-          precautions.push("Avoid strenuous activity — poor air quality raises cardiovascular strain.");
+          precautions.push("Avoid strenuous activity  poor air quality raises cardiovascular strain.");
           break;
         case "allergies":
           precautions.push("Consider antihistamines if pollutant levels aggravate symptoms.");
           break;
         case "pregnancy":
-          precautions.push("Limit outdoor exposure — pollution exposure during pregnancy carries added risk.");
+          precautions.push("Limit outdoor exposure  pollution exposure during pregnancy carries added risk.");
           break;
         case "elderly":
           precautions.push("Check in on elderly family members and encourage staying indoors.");
@@ -262,7 +262,7 @@ const POLLUTANT_INFO: Record<string, PollutantAdvice> = {
     name: "O3",
     fullName: "Ground-level Ozone",
     sources: "Reaction of sunlight with vehicle and industrial emissions",
-    healthEffects: "Irritates airways, reduces lung function, worsens asthma — peaks in afternoon heat.",
+    healthEffects: "Irritates airways, reduces lung function, worsens asthma  peaks in afternoon heat.",
     specificAdvice: "Avoid outdoor exercise in the afternoon; ozone levels are typically lower in the morning.",
   },
   no2: {

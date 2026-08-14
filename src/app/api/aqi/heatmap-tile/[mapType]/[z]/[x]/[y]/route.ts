@@ -2,7 +2,7 @@ import { heatmapTileUrl } from "@/lib/google-aqi";
 
 /**
  * Proxies Google's AQI heatmap tiles so the API key (GOOGLE_API_KEY) never
- * reaches the browser — the Maps JS overlay requests tiles from this route
+ * reaches the browser  the Maps JS overlay requests tiles from this route
  * instead of Google's endpoint directly.
  */
 export async function GET(

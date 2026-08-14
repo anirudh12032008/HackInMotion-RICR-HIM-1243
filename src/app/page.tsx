@@ -16,7 +16,7 @@ const features = [
   {
     n: "02",
     title: "Personal risk analysis",
-    description: "Guidance tuned to your health profile — asthma, COPD, pregnancy, and more.",
+    description: "Guidance tuned to your health profile  asthma, COPD, pregnancy, and more.",
   },
   {
     n: "03",
@@ -74,7 +74,7 @@ export default function Home() {
       </header>
 
       <main>
-        {/* Hero — editorial serif, line-by-line reveal, generous air */}
+        {/* Hero  editorial serif, line-by-line reveal, generous air */}
         <section className="mx-auto max-w-5xl px-6 pt-16 pb-20 sm:pt-24 sm:pb-28">
           <Reveal>
             <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
@@ -93,7 +93,7 @@ export default function Home() {
             <div>
               <p className="max-w-md text-balance text-lg text-muted-foreground">
                 A raw pollution number, turned into guidance you can actually act on
-                today — for you, specifically, not the average person outside.
+                today  for you, specifically, not the average person outside.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Magnetic>
@@ -123,19 +123,19 @@ export default function Home() {
               </div>
               <AqiScale aqi={118} className="mt-3" />
               <p className="mt-3 text-xs text-muted-foreground">
-                Every reading ships with the neighbouring bands — not just a colour, the
+                Every reading ships with the neighbouring bands  not just a colour, the
                 whole scale.
               </p>
             </div>
           </Reveal>
         </section>
 
-        {/* Quick search — its own quiet moment, not squeezed beside the hero */}
+        {/* Quick search  its own quiet moment, not squeezed beside the hero */}
         <section id="quick-search" className="border-t border-border bg-secondary/40">
           <div className="mx-auto max-w-2xl px-6 py-16 text-center">
             <Reveal>
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                Try it now — no account needed
+                Try it now  no account needed
               </p>
               <h2 className="mt-3 font-[family-name:var(--font-editorial)] text-3xl italic">
                 Check the air where you are.
@@ -147,7 +147,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Features — numbered rows, each underline draws in as it enters view */}
+        {/* Features  numbered rows, each underline draws in as it enters view */}
         <section className="border-t border-border">
           <div className="mx-auto max-w-5xl px-6 py-20 sm:py-28">
             <Reveal>
@@ -176,7 +176,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* How it works — a spine that draws top to bottom as you scroll */}
+        {/* How it works  a spine that draws top to bottom as you scroll */}
         <section className="border-t border-border">
           <div className="mx-auto max-w-5xl px-6 py-20 sm:py-28">
             <Reveal>

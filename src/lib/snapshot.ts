@@ -33,7 +33,7 @@ export async function maybeStoreSnapshot(locationId: string, conditions: Current
  * empty for weeks. Google's Air Quality history:lookup covers the past 30
  * days of real hourly data, so we backfill one daily snapshot per missing
  * day instead of waiting for real time to accumulate it. Cheap to call
- * repeatedly — no-ops once a location already has decent coverage.
+ * repeatedly  no-ops once a location already has decent coverage.
  */
 export async function backfillHistoryIfSparse(locationId: string, lat: number, lng: number) {
   const since = new Date(Date.now() - HISTORY_WINDOW_DAYS * 24 * 60 * 60 * 1000);
@@ -46,7 +46,7 @@ export async function backfillHistoryIfSparse(locationId: string, lat: number, l
   const existingDays = new Set(existing.map((s) => s.timestamp.toISOString().slice(0, 10)));
 
   // If Google rejects the full 30-day window, fall back to shorter windows
-  // rather than getting nothing — a 7-day chart with real data beats an
+  // rather than getting nothing  a 7-day chart with real data beats an
   // empty 30-day one.
   for (const windowDays of [HISTORY_WINDOW_DAYS, 7, 3]) {
     try {

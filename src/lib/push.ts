@@ -32,7 +32,7 @@ export type NotificationCategory =
  * alert creation never fails because push isn't set up. A subscription
  * that the push service reports as gone (410/404) is pruned so we stop
  * retrying it. `category` is checked against the user's per-category
- * notification preferences — opt-out, not opt-in, so an unset preference
+ * notification preferences  opt-out, not opt-in, so an unset preference
  * (older users, or a category added after they signed up) reads as "on".
  */
 export async function sendPushToUser(userId: string, payload: PushPayload, category: NotificationCategory) {
@@ -69,7 +69,7 @@ const SUMMARY_INTERVAL_MS = 20 * 60 * 60 * 1000; // ~once/day, tolerant of irreg
 
 /**
  * Sends a once-a-day digest across a user's saved locations, throttled by
- * `lastSummaryPushAt` — the same opportunistic pattern AQISnapshot uses for
+ * `lastSummaryPushAt`  the same opportunistic pattern AQISnapshot uses for
  * hourly snapshots (see lib/snapshot.ts), so it needs no cron job.
  */
 export async function maybeSendDailySummary(
@@ -90,7 +90,7 @@ export async function maybeSendDailySummary(
   const body =
     reportable.length === 1
       ? `${worst.name} is at AQI ${worst.currentAqi} (${worst.riskLabel}).`
-      : `${worst.name} is your worst tracked spot today — AQI ${worst.currentAqi} (${worst.riskLabel}). ${reportable.length - 1} other location${reportable.length - 1 === 1 ? "" : "s"} tracked.`;
+      : `${worst.name} is your worst tracked spot today  AQI ${worst.currentAqi} (${worst.riskLabel}). ${reportable.length - 1} other location${reportable.length - 1 === 1 ? "" : "s"} tracked.`;
 
   await sendPushToUser(userId, { title: "Today's air quality", body, url: "/dashboard" }, "dailySummary");
   await User.findByIdAndUpdate(userId, { lastSummaryPushAt: new Date() });

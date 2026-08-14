@@ -131,7 +131,7 @@ export default function RoutePlannerPage() {
       });
       points = sampleAlongPath(data.path);
     } catch {
-      // Directions unavailable (API not enabled, no route found) — fall back
+      // Directions unavailable (API not enabled, no route found)  fall back
       // to straight-line sampling so the feature degrades instead of breaking.
       points = sampleRoute(from, to);
     }
@@ -187,7 +187,7 @@ export default function RoutePlannerPage() {
               ? "Click the map to set a start point."
               : !end
                 ? "Click again to set your destination."
-                : "Route set — click anywhere to start a new one."}
+                : "Route set  click anywhere to start a new one."}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -220,14 +220,14 @@ export default function RoutePlannerPage() {
 
       <div className="grid gap-2 sm:grid-cols-2">
         <CitySearchInput
-          placeholder="Start — search a city or click the map"
+          placeholder="Start  search a city or click the map"
           value={startName}
           onSelect={handleSelectStart}
           onClear={clearStart}
           disabled={loading}
         />
         <CitySearchInput
-          placeholder="Destination — search a city or click the map"
+          placeholder="Destination  search a city or click the map"
           value={endName}
           onSelect={handleSelectEnd}
           onClear={clearEnd}
@@ -261,7 +261,7 @@ export default function RoutePlannerPage() {
           <Clock className="h-4 w-4" />
           <AlertTitle>Best time</AlertTitle>
           <AlertDescription>
-            Air quality tends to improve later in the day or after rain — check back before
+            Air quality tends to improve later in the day or after rain  check back before
             heading out, or move this {activity} indoors for now.
           </AlertDescription>
         </Alert>

@@ -24,7 +24,7 @@ export async function getPushSubscription(): Promise<PushSubscription | null> {
 /**
  * Prompts for notification permission (if not already decided) and
  * registers a Web Push subscription with the server. Silently no-ops if
- * push isn't supported or permission is denied — callers that want to
+ * push isn't supported or permission is denied  callers that want to
  * react to failure should check the return value.
  */
 export async function subscribeToPush(): Promise<boolean> {

@@ -20,18 +20,18 @@ flowchart LR
     classDef db fill:#f4f6f5,stroke:#8b5cf6,stroke-width:2px,color:#111
 ```
 
-| Node | Contents |
-| --- | --- |
-| Next.js Client | Dashboard, map, trends, alerts, compare, route planner, community — plus Web Speech voice alerts |
+| Node               | Contents                                                                                                   |
+| ------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Next.js Client     | Dashboard, map, trends, alerts, compare, route planner, community plus Web Speech voice alerts             |
 | Next.js API Routes | `aqi/*`, `locations`, `alerts`, `community`, `ai/chat`, `route/directions`, and the heatmap-tile key proxy |
-| Google Cloud APIs | Air Quality, Geocoding, Pollen, Directions, Maps JavaScript |
-| Groq LLM | Llama 3.3 70B, grounded with live AQI before every call |
-| NextAuth (JWT) | bcrypt credentials, session on every protected route |
-| MongoDB Atlas | Users, locations, AQI snapshots, alerts, community reports |
+| Google Cloud APIs  | Air Quality, Geocoding, Pollen, Directions, Maps JavaScript                                                |
+| Groq LLM           | Llama 3.3 70B, grounded with live AQI before every call                                                    |
+| NextAuth (JWT)     | bcrypt credentials, session on every protected route                                                       |
+| MongoDB Atlas      | Users, locations, AQI snapshots, alerts, community reports                                                 |
 
 Domain logic (`risk-engine`, `exposure`, `clean-air-windows`, `route-risk`, `alerts`,
 `snapshot`) sits inside the API layer as pure functions with no framework or database
-imports — see "Why domain logic is separated" below.
+imports see "Why domain logic is separated" below.
 
 ## Request lifecycles
 
@@ -39,15 +39,15 @@ imports — see "Why domain logic is separated" below.
 
 1. Client calls `GET /api/aqi/current?city=<name>`.
 2. Handler geocodes the name (Google Geocoding), then fetches current conditions and the
-48-hour forecast **in parallel** (`Promise.all`).
-3. `getCurrentConditions()` reads `data.indexes[]` and runs `pickIndex()` — the fix for the
-inverted-scale bug described in the README — to select the regional index (e.g.
-`usa_epa`) over Google's Universal AQI whenever one exists.
+   48-hour forecast **in parallel** (`Promise.all`).
+3. `getCurrentConditions()` reads `data.indexes[]` and runs `pickIndex()` the fix for the
+   inverted-scale bug described in the README to select the regional index (e.g.
+   `usa_epa`) over Google's Universal AQI whenever one exists.
 4. `classifyRisk(aqi)` maps the number to a six-band classification shared by every visual
-in the app (`src/lib/risk-engine.ts`).
+   in the app (`src/lib/risk-engine.ts`).
 5. Response returns to the client, which renders `AQICard`. That component reads the
-session's `healthProfile` and calls `getHealthGuidance()` and `estimateExposure()`
-client-side — no extra round trip, because the profile already lives in the JWT.
+   session's `healthProfile` and calls `getHealthGuidance()` and `estimateExposure()`
+   client-side no extra round trip, because the profile already lives in the JWT.
 
 ### Saved locations → snapshots → alerts (the loop that builds history)
 
@@ -114,7 +114,7 @@ Groq-->>API: reply
 API-->>U: reply + resolvedContext
 ```
 
-Grounding happens *before* the model is called, not after — the model never receives a
+Grounding happens _before_ the model is called, not after the model never receives a
 prompt without either real data or an explicit instruction to ask for a location, which is
 what eliminates the "let me simulate the data" failure mode.
 
@@ -146,12 +146,12 @@ one file each, without touching a single UI component.
 ## Security notes
 
 - `GOOGLE_API_KEY` (server) never reaches the client; the browser only ever sees
-`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, a separate, referrer-restricted key with Maps
-JavaScript API as its only allowed API.
+  `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, a separate, referrer-restricted key with Maps
+  JavaScript API as its only allowed API.
 - Heatmap tiles are proxied through `/api/aqi/heatmap-tile` specifically so the server key
-is never embedded in a tile URL the browser requests directly.
+  is never embedded in a tile URL the browser requests directly.
 - Every location/alert/profile query filters on the session `userId` at the database layer,
-not just at the route-handler auth check — there is no endpoint that returns another
-user's data by supplying a different ID.
+  not just at the route-handler auth check there is no endpoint that returns another
+  user's data by supplying a different ID.
 - Passwords are bcrypt-hashed; the hash is excluded from every `select()` outside the
-NextAuth `authorize()` callback.
+  NextAuth `authorize()` callback.

@@ -5,13 +5,13 @@ import type { ActivityLevel, AgeGroup, UserHealthProfile } from "@/types/index";
  *
  * Two independent models live here:
  *
- * 1. **Cigarette equivalence** — Berkeley Earth's widely-cited rule of thumb:
+ * 1. **Cigarette equivalence**  Berkeley Earth's widely-cited rule of thumb:
  *    breathing 22 µg/m³ of PM2.5 for 24 hours delivers roughly the same fine
  *    particulate load as smoking one cigarette. It approximates particulate
  *    exposure only (not the tar, nicotine or carcinogens in tobacco smoke),
  *    which is exactly why the UI labels it as an equivalence, not a diagnosis.
  *
- * 2. **Inhaled dose** — the actual mass of PM2.5 entering the lungs, which is
+ * 2. **Inhaled dose**  the actual mass of PM2.5 entering the lungs, which is
  *    what turns "the AQI is the same for everyone" into something personal: a
  *    runner moves ~6x more air per hour than someone at a desk, so the same
  *    city air costs them ~6x the dose.
@@ -39,7 +39,7 @@ const AGE_SUSCEPTIBILITY: Record<AgeGroup, number> = {
  * Approximates minute ventilation from live heart rate when a Bluetooth
  * heart-rate monitor is connected (see lib/wearable.ts), instead of a
  * self-reported activity level. Minute ventilation rises roughly linearly
- * with heart rate between resting and near-maximal exertion — not exact
+ * with heart rate between resting and near-maximal exertion  not exact
  * (real VE also depends on fitness and terrain), but far more personal than
  * a fixed "moderate/active/athlete" bucket. Anchored to the same sedentary
  * and athlete rates already used above, so results stay in the same units
@@ -68,7 +68,7 @@ export interface ExposureEstimate {
   cigarettesPerHourOutdoors: number;
   /** Micrograms of PM2.5 inhaled per hour outdoors at the user's activity level. */
   microgramsPerHour: number;
-  /** Susceptibility-weighted dose — the number we rank personal risk on. */
+  /** Susceptibility-weighted dose  the number we rank personal risk on. */
   effectiveDosePerHour: number;
   /** How many times over the WHO 24-hour guideline (15 µg/m³) this air sits. */
   timesWhoGuideline: number;

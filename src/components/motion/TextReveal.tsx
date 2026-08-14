@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { gsap, ease, prefersReducedMotion } from "@/lib/gsap";
 
 /**
- * Line-by-line clip reveal for a headline — each line rises out from behind a
+ * Line-by-line clip reveal for a headline  each line rises out from behind a
  * mask rather than fading in place, the classic editorial "unveiling" motion.
  * Takes an array of lines instead of arbitrary children so each one can be
  * wrapped in its own overflow-hidden mask.

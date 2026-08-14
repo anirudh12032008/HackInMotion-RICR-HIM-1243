@@ -1,4 +1,4 @@
-// Minimal Web Bluetooth ambient types — not part of TypeScript's DOM lib.
+// Minimal Web Bluetooth ambient types  not part of TypeScript's DOM lib.
 // Covers only what src/lib/wearable.ts uses (heart-rate GATT read path).
 interface BluetoothRemoteGATTCharacteristic extends EventTarget {
   value?: DataView;

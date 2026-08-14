@@ -11,7 +11,7 @@ export interface RouteSample extends RoutePoint {
   aqi: number | null;
 }
 
-// Thresholds above which each activity is "not recommended" — driving is
+// Thresholds above which each activity is "not recommended"  driving is
 // least exposed (windows/AC), jogging is most (sustained heavy breathing).
 const ACTIVITY_THRESHOLDS: Record<ActivityType, number> = {
   jogging: 100,
@@ -22,7 +22,7 @@ const ACTIVITY_THRESHOLDS: Record<ActivityType, number> = {
 
 /**
  * Straight-line interpolation between two points, sampled every ~2km.
- * ponytail: no real road routing (no directions API configured) — a proper
+ * ponytail: no real road routing (no directions API configured)  a proper
  * route would follow roads; swap in a routing provider if that's needed later.
  */
 const MAX_SAMPLES = 8;
@@ -137,7 +137,7 @@ export function getActivityGuidance(activity: ActivityType, avgAqi: number | nul
   if (avgAqi <= threshold) {
     return {
       recommended: true,
-      message: `AQI averages ${avgAqi} along your route (${risk.label}) — reasonable for ${activity}.`,
+      message: `AQI averages ${avgAqi} along your route (${risk.label})  reasonable for ${activity}.`,
     };
   }
 

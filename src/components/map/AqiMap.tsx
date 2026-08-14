@@ -43,7 +43,7 @@ export function AqiMap({
         const data = await res.json();
         if (res.ok) onResult(data);
       } catch {
-        /* transient — the card keeps the previous reading */
+        /* transient  the card keeps the previous reading */
       } finally {
         setLoading(false);
       }

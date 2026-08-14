@@ -12,7 +12,7 @@ const monoDisplay = JetBrains_Mono({
   variable: "--font-mono-display",
   weight: ["400", "500", "700"],
 });
-// Editorial serif reserved for the marketing/landing surface — the product's
+// Editorial serif reserved for the marketing/landing surface  the product's
 // instrument screens (dashboard, readings) stay on the mono display face.
 const editorial = Newsreader({
   subsets: ["latin"],
@@ -22,9 +22,9 @@ const editorial = Newsreader({
 });
 
 export const metadata: Metadata = {
-  title: "BreatheSafe — Breathe smarter. Live safer.",
+  title: "BreatheSafe  Breathe smarter. Live safer.",
   description:
-    "Your personal air quality guardian — real-time AQI, personalized health guidance, forecasts, and community reporting.",
+    "Your personal air quality guardian  real-time AQI, personalized health guidance, forecasts, and community reporting.",
 };
 
 export default function RootLayout({
