@@ -55,7 +55,7 @@ export function AQICard({ result }: { result: AqiResult }) {
       toast.success(`${result.city.name} saved to your locations`);
 
       // First saved location is the natural moment to ask for push
-      // permission — the user has just told us they want to track this
+      // permission  the user has just told us they want to track this
       // place, so alerts about it are obviously wanted, not a cold prompt
       // on first page load.
       subscribeToPush().catch(() => {});
@@ -91,16 +91,6 @@ export function AQICard({ result }: { result: AqiResult }) {
           </p>
         </div>
 
-        <div>
-          <h3 className="mb-3 text-sm font-semibold">Pollutant breakdown</h3>
-          <PollutantBreakdown pollutants={result.pollutants} />
-        </div>
-
-        <div>
-          <h3 className="mb-3 text-sm font-semibold">Health guidance</h3>
-          <HealthGuidance aqi={result.aqi} profile={profile} />
-        </div>
-
         <ExposureInsights
           aqi={result.aqi}
           pm25={result.pollutants?.pm25}
@@ -108,6 +98,16 @@ export function AQICard({ result }: { result: AqiResult }) {
           profile={profile}
           cityName={result.city.name.split(",")[0]}
         />
+
+        <div>
+          <h3 className="mb-3 text-sm font-semibold">Health guidance</h3>
+          <HealthGuidance aqi={result.aqi} profile={profile} />
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-sm font-semibold">Pollutant breakdown</h3>
+          <PollutantBreakdown pollutants={result.pollutants} />
+        </div>
 
         {recommendation && (
           <div className="rounded-lg border border-primary/20 bg-accent/50 p-4">
