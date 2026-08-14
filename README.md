@@ -50,6 +50,10 @@ BreatheSafe closes that last mile. It answers four questions the raw data does n
 <img width="1082" height="1008" alt="Screenshot 2026-08-14 at 5 58 13 PM" src="https://github.com/user-attachments/assets/a850f0c6-b40c-4164-a018-93d9ced5b3c3" />
 
 <img width="1256" height="954" alt="Screenshot 2026-08-14 at 5 59 33 PM" src="https://github.com/user-attachments/assets/62372949-d86c-4c30-949f-0dd9722bf582" />
+<img width="754" height="957" alt="Screenshot 2026-08-14 at 6 01 03 PM" src="https://github.com/user-attachments/assets/b5ea8856-a549-4506-95a9-e0ef8dcb356f" />
+<img width="914" height="837" alt="Screenshot 2026-08-14 at 6 00 38 PM" src="https://github.com/user-attachments/assets/50d7fbbb-084e-4181-8b67-63ce79203d3c" />
+<img width="1155" height="941" alt="Screenshot 2026-08-14 at 6 01 44 PM" src="https://github.com/user-attachments/assets/d3ac78bb-d5a6-425d-b2f1-73cf0b5ba94e" />
+<img width="1216" height="975" alt="Screenshot 2026-08-14 at 6 01 32 PM" src="https://github.com/user-attachments/assets/63e3140a-3b62-4a70-8527-929a9e4fbbce" />
 
 ## Feature tour
 
