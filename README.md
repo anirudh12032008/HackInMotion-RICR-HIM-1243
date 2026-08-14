@@ -17,8 +17,9 @@ telemetry into a decision a person can make in five seconds.
 
 | | |
 | --- | --- |
-| **Team** | RICR |
+| **Team** | RICR-HIM-1243 |
 | **Members** | Anirudh Sahu (solo) |
+| **Live demo** | [hack-in-motion-ricr-him-1243-three.vercel.app](https://hack-in-motion-ricr-him-1243-three.vercel.app/) |
 | **Theme** | Environment & CleanTech |
 | **Problem statement** | Environmental Risk & Air Quality Monitoring Platform |
 
@@ -413,6 +414,8 @@ city.
 ---
 
 ## Deployment
+
+**Live:** [hack-in-motion-ricr-him-1243-three.vercel.app](https://hack-in-motion-ricr-him-1243-three.vercel.app/)
 
 Deployed on Vercel. To deploy your own:
 
