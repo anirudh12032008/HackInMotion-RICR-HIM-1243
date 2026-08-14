@@ -54,7 +54,11 @@ export async function checkAndCreateAlerts({
       aqiValue: aqi,
     });
     created.push(alert);
-    await sendPushToUser(userId, { title: alert.title, body: alert.message, url: "/dashboard/alerts" });
+    await sendPushToUser(
+      userId,
+      { title: alert.title, body: alert.message, url: "/dashboard/alerts" },
+      "thresholdAlerts"
+    );
   }
 
   const previous = await AQISnapshot.findOne({ locationId }).sort({ timestamp: -1 }).skip(1).lean();
@@ -74,7 +78,11 @@ export async function checkAndCreateAlerts({
       aqiValue: aqi,
     });
     created.push(alert);
-    await sendPushToUser(userId, { title: alert.title, body: alert.message, url: "/dashboard/alerts" });
+    await sendPushToUser(
+      userId,
+      { title: alert.title, body: alert.message, url: "/dashboard/alerts" },
+      "rapidChange"
+    );
   }
 
   return created;

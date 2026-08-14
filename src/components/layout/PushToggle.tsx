@@ -29,7 +29,17 @@ export function PushToggle() {
     navigator.serviceWorker.register("/sw.js").then(async (reg) => {
       const existing = await reg.pushManager.getSubscription();
       setSubscribed(Boolean(existing));
+
+      // On by default: if this browser has never been asked and isn't
+      // already subscribed, prompt immediately instead of waiting for a
+      // manual click. If the user dismisses or blocks it, we don't nag —
+      // Notification.permission stays "denied"/"default" and we just don't
+      // ask again until they click the bell themselves.
+      if (!existing && Notification.permission === "default") {
+        subscribe();
+      }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function subscribe() {

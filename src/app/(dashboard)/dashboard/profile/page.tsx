@@ -1,4 +1,5 @@
 import { HealthProfileForm } from "@/components/dashboard/HealthProfileForm";
+import { NotificationPreferences } from "@/components/dashboard/NotificationPreferences";
 
 export default function ProfilePage() {
   return (
@@ -10,6 +11,7 @@ export default function ProfilePage() {
         </p>
       </div>
       <HealthProfileForm />
+      <NotificationPreferences />
     </div>
   );
 }
