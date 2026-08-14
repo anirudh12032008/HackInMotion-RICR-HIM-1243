@@ -81,11 +81,20 @@ export function AqiBarChart({ entries }: { entries: ComparisonEntry[] }) {
 }
 
 export function PollutantRadarChart({ entries }: { entries: ComparisonEntry[] }) {
+  // Pollutants sit on wildly different scales — CO readings (often 500-1000+
+  // µg/m³) are 10-50x every other axis (typically 0-200), so plotting raw
+  // concentrations on one shared radial scale collapses every axis but CO
+  // to the center. Normalize each axis independently to a 0-100 percent of
+  // whichever compared location is worst for that pollutant, so the shape
+  // is actually readable; the tooltip still shows the real concentration.
   const data = POLLUTANT_AXES.map((axis) => {
     const row: Record<string, string | number> = { pollutant: axis.label };
-    for (const entry of entries) {
-      row[entry.name] = entry.pollutants[axis.key] ?? 0;
-    }
+    const rawValues = entries.map((e) => e.pollutants[axis.key] ?? 0);
+    const max = Math.max(...rawValues, 1);
+    entries.forEach((entry, i) => {
+      row[entry.name] = Math.round((rawValues[i] / max) * 100);
+      row[`${entry.name}__raw`] = rawValues[i];
+    });
     return row;
   });
 
@@ -100,11 +109,14 @@ export function PollutantRadarChart({ entries }: { entries: ComparisonEntry[] })
             return (
               <div className="rounded-lg border border-border bg-card px-3 py-2 text-xs shadow-sm">
                 <p className="font-medium">{label}</p>
-                {payload.map((p) => (
-                  <p key={String(p.name)} style={{ color: p.color }}>
-                    {p.name}: {p.value}
-                  </p>
-                ))}
+                {payload.map((p) => {
+                  const raw = (p.payload as Record<string, number>)?.[`${p.name}__raw`];
+                  return (
+                    <p key={String(p.name)} style={{ color: p.color }}>
+                      {p.name}: {raw ?? p.value} µg/m³
+                    </p>
+                  );
+                })}
               </div>
             );
           }}
