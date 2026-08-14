@@ -83,7 +83,7 @@ export function sampleAlongPath(path: RoutePoint[]): RoutePoint[] {
   return samples;
 }
 
-function haversineKm(a: RoutePoint, b: RoutePoint): number {
+export function haversineKm(a: RoutePoint, b: RoutePoint): number {
   const R = 6371;
   const dLat = ((b.lat - a.lat) * Math.PI) / 180;
   const dLng = ((b.lng - a.lng) * Math.PI) / 180;

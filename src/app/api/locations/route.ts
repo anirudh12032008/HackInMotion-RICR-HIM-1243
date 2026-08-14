@@ -6,6 +6,7 @@ import { getCurrentConditions } from "@/lib/google-aqi";
 import { classifyRisk } from "@/lib/risk-engine";
 import { maybeStoreSnapshot, backfillHistoryIfSparse } from "@/lib/snapshot";
 import { checkAndCreateAlerts } from "@/lib/alerts";
+import { maybeSendDailySummary } from "@/lib/push";
 
 export async function GET() {
   const userId = await requireUserId();
@@ -48,6 +49,15 @@ export async function GET() {
         };
       }
     })
+  );
+
+  await maybeSendDailySummary(
+    userId,
+    withAqi.map((l) => ({
+      name: l.name,
+      currentAqi: l.currentAqi,
+      riskLabel: "risk" in l ? l.risk.label : null,
+    }))
   );
 
   return NextResponse.json({ locations: withAqi });

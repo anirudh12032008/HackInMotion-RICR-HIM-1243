@@ -1,8 +1,57 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import CommunityReport from "@/models/CommunityReport";
+import Location from "@/models/Location";
 import { requireUserId } from "@/lib/session";
+import { sendPushToUser } from "@/lib/push";
+import { haversineKm } from "@/lib/route-risk";
 import { CommunityReportSeverity, CommunityReportType } from "@/types/index";
+
+const TYPE_LABELS: Record<CommunityReportType, string> = {
+  smoke: "smoke",
+  burning_waste: "waste burning",
+  industrial_emission: "an industrial emission",
+  dust_storm: "a dust storm",
+  chemical_smell: "a chemical smell",
+  other: "a pollution incident",
+};
+
+const NEARBY_RADIUS_KM = 15;
+
+/**
+ * Pushes to anyone (other than the reporter) whose saved location is within
+ * range of a fresh community report — the whole point of crowd-sourced
+ * reports is that they beat official monitoring stations to it.
+ */
+async function notifyNearbySavedLocations(report: {
+  lat: number;
+  lng: number;
+  type: CommunityReportType;
+  userId: string;
+}) {
+  const locations = await Location.find({ isActive: true, userId: { $ne: report.userId } })
+    .select("userId name lat lng")
+    .lean();
+
+  const notifiedUserIds = new Set<string>();
+  for (const loc of locations) {
+    const userId = loc.userId.toString();
+    if (notifiedUserIds.has(userId)) continue;
+    const distanceKm = haversineKm({ lat: report.lat, lng: report.lng }, { lat: loc.lat, lng: loc.lng });
+    if (distanceKm > NEARBY_RADIUS_KM) continue;
+
+    notifiedUserIds.add(userId);
+    await sendPushToUser(
+      userId,
+      {
+        title: `Report near ${loc.name}`,
+        body: `Someone flagged ${TYPE_LABELS[report.type]} about ${distanceKm.toFixed(1)}km from ${loc.name}.`,
+        url: "/dashboard/community",
+      },
+      "communityNearby"
+    );
+  }
+}
 
 const VALID_TYPES: CommunityReportType[] = [
   "smoke",
@@ -71,6 +120,8 @@ export async function POST(req: Request) {
     description,
     severity,
   });
+
+  await notifyNearbySavedLocations({ lat, lng, type, userId });
 
   return NextResponse.json(report, { status: 201 });
 }
