@@ -166,42 +166,52 @@ export interface HourlyForecast {
   aqi: number;
 }
 
+const FORECAST_HOURS_AHEAD = 48;
+const FORECAST_STEP_HOURS = 3;
+
+/**
+ * The `period` (ranged) form of forecast:lookup returns a 400
+ * INVALID_ARGUMENT "specified time period is not supported" on this
+ * project for every shape tried — any duration, any timestamp format,
+ * even Google's own documented example verbatim, and with `period`
+ * omitted entirely. The singular `dateTime` field (exactly one hour per
+ * request) works. So instead of one ranged call, this fans out one
+ * request per sampled hour, in parallel, tolerating individual failures.
+ */
 export async function getHourlyForecast(lat: number, lng: number): Promise<HourlyForecast[]> {
   assertKey();
 
-  // Google's own documented example always includes an explicit period —
-  // omitting it entirely (the previous attempt) apparently doesn't default
-  // to "any time" the way the Interval sub-object's own optional fields do;
-  // it likely resolves to a zero-length window, which is trivially "not
-  // supported" for a forecast. Matching the doc example's shape/format here.
   const now = new Date();
-  const period = {
-    startTime: now.toISOString(),
-    endTime: new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString(),
-  };
+  now.setUTCMinutes(0, 0, 0); // Google rounds to the previous exact hour anyway
 
-  const { data } = await axios.post(
-    `${AQ_BASE}/forecast:lookup`,
-    {
-      location: { latitude: lat, longitude: lng },
-      period,
-      extraComputations: ["LOCAL_AQI"],
-      languageCode: "en",
-    },
-    { params: { key: API_KEY } }
+  const offsets: number[] = [];
+  for (let h = 0; h <= FORECAST_HOURS_AHEAD; h += FORECAST_STEP_HOURS) offsets.push(h);
+
+  const results = await Promise.allSettled(
+    offsets.map(async (h) => {
+      const dateTime = new Date(now.getTime() + h * 60 * 60 * 1000).toISOString();
+      const { data } = await axios.post(
+        `${AQ_BASE}/forecast:lookup`,
+        {
+          location: { latitude: lat, longitude: lng },
+          dateTime,
+          extraComputations: ["LOCAL_AQI"],
+          languageCode: "en",
+        },
+        { params: { key: API_KEY } }
+      );
+      const entry = (data.hourlyForecasts ?? [])[0] as
+        | { dateTime: string; indexes: AqIndex[] }
+        | undefined;
+      if (!entry || entry.indexes.length === 0) return null;
+      const { index } = pickIndex(entry.indexes);
+      return { dateTime: entry.dateTime, aqi: index.aqi };
+    })
   );
 
-  const hours = (data.hourlyForecasts ?? []) as {
-    dateTime: string;
-    indexes: AqIndex[];
-  }[];
-
-  return hours
-    .map((h) => {
-      if (h.indexes.length === 0) return null;
-      const { index } = pickIndex(h.indexes);
-      return { dateTime: h.dateTime, aqi: index.aqi };
-    })
+  return results
+    .filter((r): r is PromiseFulfilledResult<HourlyForecast | null> => r.status === "fulfilled")
+    .map((r) => r.value)
     .filter((h): h is HourlyForecast => h !== null);
 }
 
