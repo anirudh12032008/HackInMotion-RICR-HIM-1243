@@ -14,7 +14,7 @@ import {
   PollutantRadarChart,
   type ComparisonEntry,
 } from "@/components/charts/ComparisonChart";
-import { Pollutants } from "@/types/index";
+import type { Pollutants } from "@/types/index";
 
 const MAX_LOCATIONS = 4;
 const MIN_LOCATIONS = 2;

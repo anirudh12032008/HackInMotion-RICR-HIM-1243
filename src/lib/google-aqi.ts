@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Pollutants } from "@/types/index";
+import type { Pollutants } from "@/types/index";
 
 const API_KEY = process.env.GOOGLE_API_KEY;
 const AQ_BASE = "https://airquality.googleapis.com/v1";

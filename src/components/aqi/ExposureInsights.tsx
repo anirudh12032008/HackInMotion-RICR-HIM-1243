@@ -14,7 +14,7 @@ import {
   worstHour,
   type HourPoint,
 } from "@/lib/clean-air-windows";
-import { UserHealthProfile } from "@/types/index";
+import type { UserHealthProfile } from "@/types/index";
 import { canSpeak, speak, stopSpeak } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
 import {

@@ -1,4 +1,4 @@
-import { ActivityLevel, AgeGroup, UserHealthProfile } from "@/types/index";
+import type { ActivityLevel, AgeGroup, UserHealthProfile } from "@/types/index";
 
 /**
  * Translates abstract pollutant numbers into consequences a person can feel.
