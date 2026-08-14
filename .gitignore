@@ -37,3 +37,7 @@ next-env.d.ts
 
 # claude code
 .claude/
+
+# hackathon deliverables (local only, not for GitHub)
+/docs/PITCH.md
+/presentation.pptx

@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
-import { Cigarette, Clock, TrendingDown, TrendingUp, Minus, Wind, Volume2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Cigarette, Clock, TrendingDown, TrendingUp, Minus, Wind, Volume2, Watch, X } from "lucide-react";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { classifyRisk } from "@/lib/risk-engine";
@@ -16,6 +17,11 @@ import {
 import { UserHealthProfile } from "@/types/index";
 import { canSpeak, speak } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
+import {
+  connectHeartRateMonitor,
+  isWearableSupported,
+  type WearableConnection,
+} from "@/lib/wearable";
 
 /**
  * The two panels that turn a number into a decision: what this air is costing
@@ -54,7 +60,40 @@ function ExposureCard({
   cityName: string;
 }) {
   const { locale } = useTranslation();
-  const exposure = useMemo(() => estimateExposure(aqi, pm25, profile), [aqi, pm25, profile]);
+  const [heartRate, setHeartRate] = useState<number | null>(null);
+  const [wearable, setWearable] = useState<WearableConnection | null>(null);
+  const [connecting, setConnecting] = useState(false);
+
+  useEffect(() => {
+    // Disconnect the Bluetooth GATT link when this card unmounts (e.g. the
+    // user searches a new city) so the browser doesn't hold a dangling
+    // connection to the device.
+    return () => wearable?.disconnect();
+  }, [wearable]);
+
+  async function toggleWearable() {
+    if (wearable) {
+      wearable.disconnect();
+      setWearable(null);
+      setHeartRate(null);
+      return;
+    }
+    setConnecting(true);
+    try {
+      const connection = await connectHeartRateMonitor(setHeartRate);
+      setWearable(connection);
+      toast.success(`Connected to ${connection.deviceName} — live dose is now heart-rate based.`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't connect to a wearable.");
+    } finally {
+      setConnecting(false);
+    }
+  }
+
+  const exposure = useMemo(
+    () => estimateExposure(aqi, pm25, profile, heartRate ?? undefined),
+    [aqi, pm25, profile, heartRate]
+  );
   const risk = classifyRisk(aqi);
 
   // Cap the drawn icons so hazardous air doesn't render forty cigarettes.
@@ -91,11 +130,49 @@ function ExposureCard({
         </div>
 
         <p className="text-[11px] leading-relaxed text-muted-foreground">
-          Dose is scaled to your <strong>{profile.activityLevel}</strong> activity level and{" "}
-          <strong>{profile.ageGroup}</strong> age group — identical air delivers very different
-          amounts depending on how hard you breathe.
+          {heartRate
+            ? "Dose is scaled to your live heart rate below — this is more personal than a self-reported activity level."
+            : (
+              <>
+                Dose is scaled to your <strong>{profile.activityLevel}</strong> activity level and{" "}
+                <strong>{profile.ageGroup}</strong> age group — identical air delivers very
+                different amounts depending on how hard you breathe.
+              </>
+            )}
           {exposure.estimated && " PM2.5 estimated from AQI (no direct reading for this area)."}
         </p>
+
+        {isWearableSupported() && (
+          <div className="flex items-center justify-between gap-2 rounded-lg border border-border px-3 py-2">
+            <div className="flex items-center gap-2 text-sm">
+              <Watch className="h-4 w-4 text-muted-foreground" />
+              {heartRate ? (
+                <span>
+                  <strong>{heartRate}</strong> bpm live · {wearable?.deviceName}
+                </span>
+              ) : (
+                <span className="text-muted-foreground">No wearable connected</span>
+              )}
+            </div>
+            <Button
+              variant={wearable ? "ghost" : "outline"}
+              size="sm"
+              disabled={connecting}
+              onClick={toggleWearable}
+            >
+              {wearable ? (
+                <>
+                  <X className="mr-1 h-3.5 w-3.5" />
+                  Disconnect
+                </>
+              ) : connecting ? (
+                "Connecting…"
+              ) : (
+                "Connect wearable"
+              )}
+            </Button>
+          </div>
+        )}
 
         {canSpeak() && (
           <Button

@@ -35,6 +35,25 @@ const AGE_SUSCEPTIBILITY: Record<AgeGroup, number> = {
   senior: 1.3,
 };
 
+/**
+ * Approximates minute ventilation from live heart rate when a Bluetooth
+ * heart-rate monitor is connected (see lib/wearable.ts), instead of a
+ * self-reported activity level. Minute ventilation rises roughly linearly
+ * with heart rate between resting and near-maximal exertion — not exact
+ * (real VE also depends on fitness and terrain), but far more personal than
+ * a fixed "moderate/active/athlete" bucket. Anchored to the same sedentary
+ * and athlete rates already used above, so results stay in the same units
+ * and don't jump discontinuously when a wearable connects or disconnects.
+ */
+const RESTING_HR_BPM = 70;
+const MAX_EXERTION_HR_BPM = 180;
+
+function breathingRateFromHeartRate(bpm: number): number {
+  const t = Math.min(1, Math.max(0, (bpm - RESTING_HR_BPM) / (MAX_EXERTION_HR_BPM - RESTING_HR_BPM)));
+  const { sedentary, athlete } = BREATHING_RATE_M3_PER_HOUR;
+  return sedentary + t * (athlete - sedentary);
+}
+
 const PM25_PER_CIGARETTE = 22; // µg/m³ sustained for 24 h
 const WHO_24H_GUIDELINE = 15; // µg/m³
 
@@ -84,11 +103,15 @@ export function pm25FromAqi(aqi: number): number {
 export function estimateExposure(
   aqi: number,
   pm25: number | undefined,
-  profile: UserHealthProfile
+  profile: UserHealthProfile,
+  liveHeartRateBpm?: number
 ): ExposureEstimate {
   const reported = typeof pm25 === "number" && pm25 > 0;
   const concentration = reported ? pm25! : pm25FromAqi(aqi);
-  const breathingRate = BREATHING_RATE_M3_PER_HOUR[profile.activityLevel] ?? 0.7;
+  const breathingRate =
+    typeof liveHeartRateBpm === "number"
+      ? breathingRateFromHeartRate(liveHeartRateBpm)
+      : BREATHING_RATE_M3_PER_HOUR[profile.activityLevel] ?? 0.7;
   const susceptibility = AGE_SUSCEPTIBILITY[profile.ageGroup] ?? 1;
 
   const cigarettesPerDay = concentration / PM25_PER_CIGARETTE;
