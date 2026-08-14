@@ -116,6 +116,25 @@ The parts we're proudest of — none of these are in the problem statement.
 
 ---
 
+## Screenshots
+
+<!--
+  TODO before final submission: drop 3-4 PNGs into assets/screenshots/ and swap these
+  placeholders for real ![alt](assets/screenshots/xyz.png) embeds. Good picks: the
+  dashboard with an active AQI card, Exposure Insights (clean-air windows + wearable),
+  the route planner with a scored path, and the Profile notifications card.
+-->
+
+| Dashboard | Exposure Insights |
+| --- | --- |
+| *Screenshot pending* | *Screenshot pending* |
+
+| Route Planner | Notifications |
+| --- | --- |
+| *Screenshot pending* | *Screenshot pending* |
+
+---
+
 ## The data source, and why
 
 **Google Maps Platform — Air Quality API** is the primary source, alongside the Pollen,
