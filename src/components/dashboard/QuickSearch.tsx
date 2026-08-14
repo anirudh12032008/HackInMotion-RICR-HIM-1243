@@ -69,7 +69,12 @@ export function QuickSearch({ onResult }: { onResult: (result: AqiResult) => voi
       () => {
         setLoading(false);
         setError("Unable to access your location");
-      }
+      },
+      // Without a timeout this can hang far longer than a click should —
+      // some browsers take a long time to get a GPS/Wi-Fi fix, or never
+      // resolve at all on a flaky sensor. A recent cached fix is fine for
+      // an AQI lookup, so reuse one instead of always forcing a fresh read.
+      { timeout: 8000, maximumAge: 300_000 }
     );
   }
 
