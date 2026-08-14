@@ -1,13 +1,13 @@
 <div align="center">
 
-# 🌬️ BreatheSafe
+# BreatheSafe
 
 **Because the air we breathe should be something we can see, understand, and act on.**
 
 An Environmental Risk & Air Quality Monitoring Platform that turns raw pollutant
 telemetry into a decision a person can make in five seconds.
 
-[Architecture](docs/architecture.md) · [API reference](docs/api-documentation.md) · [Deployment](#-deployment)
+[Architecture](docs/architecture.md) · [API reference](docs/api-documentation.md) · [Deployment](#deployment)
 
 </div>
 
@@ -31,81 +31,81 @@ BreatheSafe closes that last mile. It answers four questions the raw data does n
 
 ---
 
-## ✨ Feature tour
+## Feature tour
 
 ### Core platform
 
-| | Feature | Where |
-| --- | --- | --- |
-| 🔐 | **Secure accounts** — bcrypt-hashed credentials, JWT sessions, every query scoped to `userId` | `/login`, `/signup` |
-| 🔎 | **Search anywhere** — by city name (Geocoding API), by map click, or by device geolocation with reverse-geocoded display names | `/dashboard` |
-| 🧠 | **Risk classification engine** — a documented six-band model over the US EPA 0–500 scale | `src/lib/risk-engine.ts` |
-| 🫁 | **Personalised guidance** — advice branches on conditions (asthma, COPD, heart disease, allergies, pregnancy), age group, and activity level | `src/components/aqi/HealthGuidance.tsx` |
-| 📍 | **Saved locations** — home, work, a child's school; each with its own alert threshold, all at a glance | `/dashboard` |
-| 📈 | **Historical trends** — 7/30-day charts, backfilled from Google's history API on first load, then kept fresh by opportunistic hourly snapshots | `/dashboard` |
-| 🔔 | **Alerts** — threshold crossings *and* rapid-change detection, with a 3-hour per-type cooldown so the feed stays trustworthy | `/dashboard/alerts` |
-| 🗄️ | **Persistence** — MongoDB via Mongoose: users, locations, snapshots, alerts, community reports | `src/models/` |
-| 📱 | **Responsive, calm UI** — Tailwind + shadcn/Base UI, dark mode, GSAP reveals, skeleton loaders, colour-coded everywhere | throughout |
-| 🛟 | **Graceful degradation** — typed error classes, retry affordances on every fetch, an offline banner, and a root error boundary | `src/app/error.tsx` |
+| Feature | Where |
+| --- | --- |
+| **Secure accounts** — bcrypt-hashed credentials, JWT sessions, every query scoped to `userId` | `/login`, `/signup` |
+| **Search anywhere** — by city name (Geocoding API), by map click, or by device geolocation with reverse-geocoded display names | `/dashboard` |
+| **Risk classification engine** — a documented six-band model over the US EPA 0–500 scale | `src/lib/risk-engine.ts` |
+| **Personalised guidance** — advice branches on conditions (asthma, COPD, heart disease, allergies, pregnancy), age group, and activity level | `src/components/aqi/HealthGuidance.tsx` |
+| **Saved locations** — home, work, a child's school; each with its own alert threshold, all at a glance | `/dashboard` |
+| **Historical trends** — 7/30-day charts, backfilled from Google's history API on first load, then kept fresh by opportunistic hourly snapshots | `/dashboard` |
+| **Alerts** — threshold crossings *and* rapid-change detection, with a 3-hour per-type cooldown so the feed stays trustworthy | `/dashboard/alerts` |
+| **Persistence** — MongoDB via Mongoose: users, locations, snapshots, alerts, community reports | `src/models/` |
+| **Responsive, calm UI** — Tailwind + shadcn/Base UI, dark mode, GSAP reveals, skeleton loaders, colour-coded everywhere | throughout |
+| **Graceful degradation** — typed error classes, retry affordances on every fetch, an offline banner, and a root error boundary | `src/app/error.tsx` |
 
 ### Challenge features — all six, implemented
 
-| | Feature | Detail |
-| --- | --- | --- |
-| 🏃 | **Route risk planner** | Real road geometry from the Directions API, decoded polyline sampled at intervals, each sample scored — "is this jog safe *right now*" |
-| 👥 | **Community reporting** | Geo-indexed (`2dsphere`) reports of smoke, waste burning, industrial emissions; `$nearSphere` radius queries, upvotes, 24-hour TTL expiry |
-| 🔮 | **48-hour forecast** | Hourly predictions from the Air Quality API, grouped into days *and* preserved hourly for window-finding |
-| 🌐 | **Multi-language + voice** | English/Hindi UI, and Web Speech API narration of alerts and conditions in the user's locale |
-| ⚖️ | **Comparison mode** | Side-by-side multi-city comparison on a shared axis |
-| ⌚ | **Simulated wearable integration** | Activity level and age group drive a physiological breathing-rate model that personalises inhaled dose (below) |
+| Feature | Detail |
+| --- | --- |
+| **Route risk planner** | Real road geometry from the Directions API, decoded polyline sampled at intervals, each sample scored — "is this jog safe *right now*" |
+| **Community reporting** | Geo-indexed (`2dsphere`) reports of smoke, waste burning, industrial emissions; `$nearSphere` radius queries, upvotes, 24-hour TTL expiry |
+| **48-hour forecast** | Hourly predictions from the Air Quality API, grouped into days *and* preserved hourly for window-finding |
+| **Multi-language + voice** | English/Hindi UI, and Web Speech API narration of alerts and conditions in the user's locale |
+| **Comparison mode** | Side-by-side multi-city comparison on a shared axis |
+| **Simulated wearable integration** | Activity level and age group drive a physiological breathing-rate model that personalises inhaled dose (below) |
 
 ### Beyond the brief
 
 The parts we're proudest of — none of these are in the problem statement.
 
-- **🚬 Cigarette equivalence.** Berkeley Earth's rule of thumb (22 µg/m³ of PM2.5 for
-  24 h ≈ one cigarette), rendered as an actual row of cigarette icons. It converts an
-  abstract index into the most viscerally understood health unit there is. When Google
-  reports an index without a PM2.5 concentration, we back one out of the AQI using the
-  EPA's piecewise-linear breakpoints and label the result as estimated.
-  → `src/lib/exposure.ts`
+- **Cigarette equivalence.** Berkeley Earth's rule of thumb (22 µg/m³ of PM2.5 for 24 h ≈
+  one cigarette), rendered as an actual row of cigarette icons. It converts an abstract
+  index into the most viscerally understood health unit there is. When Google reports an
+  index without a PM2.5 concentration, we back one out of the AQI using the EPA's
+  piecewise-linear breakpoints and label the result as estimated.
+  See `src/lib/exposure.ts`.
 
-- **🫀 Personal inhaled dose.** The AQI is identical for everyone on the same street;
-  the *dose* is not. A runner moves ~2.6 m³ of air per hour, someone at a desk ~0.42 m³.
-  We multiply concentration by activity-specific minute ventilation and weight the
-  result by age susceptibility (children 1.6×, seniors 1.3×) to produce an effective
-  dose per hour. This is the "simulated wearable/health data" challenge, built on a real
-  physiological model rather than a fake step counter.
-  → `src/lib/exposure.ts`
+- **Personal inhaled dose.** The AQI is identical for everyone on the same street; the
+  *dose* is not. A runner moves ~2.6 m³ of air per hour, someone at a desk ~0.42 m³. We
+  multiply concentration by activity-specific minute ventilation and weight the result by
+  age susceptibility (children 1.6×, seniors 1.3×) to produce an effective dose per hour.
+  This is the "simulated wearable/health data" challenge, built on a real physiological
+  model rather than a fake step counter.
+  See `src/lib/exposure.ts`.
 
-- **🕐 Clean-air windows.** Every other product collapses the hourly forecast into a
-  daily average and says "avoid outdoor activity today." But AQI swings two or three
-  risk bands within a single day, so that advice is usually wrong. We scan the 48 hourly
-  points for contiguous runs below a **personal** ceiling (100 for vulnerable users and
-  athletes, 150 otherwise) and surface the best three as *"Tomorrow, 6 AM – 9 AM · 3h
-  clear · peaks at AQI 88."* Actionable instead of prohibitive.
-  → `src/lib/clean-air-windows.ts`
+- **Clean-air windows.** Every other product collapses the hourly forecast into a daily
+  average and says "avoid outdoor activity today." But AQI swings two or three risk bands
+  within a single day, so that advice is usually wrong. We scan the 48 hourly points for
+  contiguous runs below a **personal** ceiling (100 for vulnerable users and athletes, 150
+  otherwise) and surface the best three as *"Tomorrow, 6 AM – 9 AM · 3h clear · peaks at
+  AQI 88."* Actionable instead of prohibitive.
+  See `src/lib/clean-air-windows.ts`.
 
-- **🤖 A grounded AI assistant.** Groq (`llama-3.3-70b-versatile`) with every request
+- **A grounded AI assistant.** Groq (`llama-3.3-70b-versatile`) with every request
   enriched by the user's name, health profile, saved locations, browser geolocation, and
   live AQI. If the user names a city mid-conversation, the server resolves it against
   saved locations or geocodes it and fetches real conditions *before* calling the model —
   the system prompt explicitly forbids simulating data.
-  → `src/app/api/ai/chat/route.ts`
+  See `src/app/api/ai/chat/route.ts`.
 
-- **🗺️ Official Google AQI heatmap tiles**, proxied server-side so the API key never
-  reaches the browser, overlaid on theme-aware vector maps.
-  → `src/app/api/aqi/heatmap-tile/[mapType]/[z]/[x]/[y]/route.ts`
+- **Official Google AQI heatmap tiles**, proxied server-side so the API key never reaches
+  the browser, overlaid on theme-aware vector maps.
+  See `src/app/api/aqi/heatmap-tile/[mapType]/[z]/[x]/[y]/route.ts`.
 
-- **🌼 Pollen forecasts** (tree/grass/weed) alongside AQI, with genuine coverage gaps
-  handled as an expected empty state rather than an error.
+- **Pollen forecasts** (tree/grass/weed) alongside AQI, with genuine coverage gaps handled
+  as an expected empty state rather than an error.
 
-- **📊 WHO-guideline framing.** Every reading is also expressed as a multiple of the WHO
+- **WHO-guideline framing.** Every reading is also expressed as a multiple of the WHO
   24-hour PM2.5 guideline (15 µg/m³) — the number that actually defines "safe."
 
 ---
 
-## 🌍 The data source, and why
+## The data source, and why
 
 **Google Maps Platform — Air Quality API** is the primary source, alongside the Pollen,
 Geocoding, and Directions APIs from the same platform.
@@ -117,7 +117,7 @@ Geocoding, and Directions APIs from the same platform.
 | **OpenAQ** | Excellent open raw sensor data, but station-level only: large coverage holes between monitors, no forecast, no health guidance. We'd have had to build interpolation ourselves. |
 | **WAQI / AQICN** | What we originally built on. Good station coverage and free, but the token model is per-station, historical data is thin, and forecast payloads are inconsistent across regions. |
 | **IQAir** | High quality with good forecasts, but historical endpoints sit behind a commercial enterprise tier. |
-| **Google Air Quality API** ✅ | **Chosen.** |
+| **Google Air Quality API** | **Chosen.** |
 
 ### Why Google won
 
@@ -136,7 +136,7 @@ Geocoding, and Directions APIs from the same platform.
 6. **One platform, one bill.** Air Quality, Pollen, Geocoding, and Directions share
    credentials and quota.
 
-### ⚠️ The scale trap that would have shipped a dangerous bug
+### The scale trap that would have shipped a dangerous bug
 
 Google returns **two indices** for most locations, and they run in **opposite directions**:
 
@@ -168,7 +168,7 @@ app on the US EPA 0–500 scale because it matches our risk-engine thresholds ex
 
 ---
 
-## 🧮 The risk classification engine
+## The risk classification engine
 
 The technical core. Two stages: **classify**, then **personalise**.
 
@@ -180,12 +180,12 @@ reference bands, and the map legend, so a colour always means exactly one thing.
 
 | AQI | Level | Colour |
 | --- | --- | --- |
-| 0–50 | Good | 🟢 `#22c55e` |
-| 51–100 | Moderate | 🟡 `#eab308` |
-| 101–150 | Unhealthy for Sensitive Groups | 🟠 `#f97316` |
-| 151–200 | Unhealthy | 🔴 `#ef4444` |
-| 201–300 | Very Unhealthy | 🟣 `#8b5cf6` |
-| 301+ | Hazardous | 🟤 `#991b1b` |
+| 0–50 | Good | `#22c55e` |
+| 51–100 | Moderate | `#eab308` |
+| 101–150 | Unhealthy for Sensitive Groups | `#f97316` |
+| 151–200 | Unhealthy | `#ef4444` |
+| 201–300 | Very Unhealthy | `#8b5cf6` |
+| 301+ | Hazardous | `#991b1b` |
 
 ### Stage 2 — Personalisation
 
@@ -209,62 +209,34 @@ when it's genuinely safe to step outside.
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
-flowchart TB
-    subgraph Client["Browser — Next.js App Router"]
-        UI["Dashboard · Map · Trends · Alerts<br/>Compare · Route · Community"]
-        SW["Web Speech API<br/>voice alerts"]
-    end
+flowchart LR
+    A[Next.js Client]:::client --> B[Next.js API Routes]:::api
+    A --> D[Google Cloud APIs]:::google
+    B --> D
+    B --> C[Groq LLM]:::llm
+    B --> E[NextAuth JWT]:::auth
+    B --> F[(MongoDB Atlas)]:::db
+    C --> F
 
-    subgraph Server["Next.js Route Handlers"]
-        AUTH["NextAuth<br/>credentials + JWT"]
-        AQ["/api/aqi/*"]
-        LOC["/api/locations"]
-        AL["/api/alerts"]
-        COM["/api/community"]
-        AI["/api/ai/chat"]
-        TILE["/api/aqi/heatmap-tile<br/>key proxy"]
-    end
-
-    subgraph Logic["Domain logic — pure, testable"]
-        RISK["risk-engine"]
-        EXP["exposure"]
-        WIN["clean-air-windows"]
-        ROUTE["route-risk"]
-        ALERTS["alerts"]
-        SNAP["snapshot"]
-    end
-
-    subgraph External["Third-party"]
-        G["Google Maps Platform<br/>Air Quality · Pollen<br/>Geocoding · Directions · Maps JS"]
-        GROQ["Groq<br/>llama-3.3-70b"]
-    end
-
-    DB[("MongoDB Atlas<br/>users · locations · snapshots<br/>alerts · reports")]
-
-    UI --> AUTH
-    UI --> AQ
-    UI --> LOC
-    UI --> AL
-    UI --> COM
-    UI --> AI
-    UI --> SW
-    UI -.tiles.-> TILE --> G
-    AQ --> G
-    AI --> GROQ
-    AI --> AQ
-    AQ --> RISK
-    AQ --> EXP
-    AQ --> WIN
-    LOC --> SNAP --> DB
-    LOC --> ALERTS --> DB
-    AUTH --> DB
-    AL --> DB
-    COM --> DB
-    ROUTE --> G
+    classDef client fill:#f4f6f5,stroke:#22c55e,stroke-width:2px,color:#111
+    classDef api fill:#f4f6f5,stroke:#eab308,stroke-width:2px,color:#111
+    classDef google fill:#f4f6f5,stroke:#f97316,stroke-width:2px,color:#111
+    classDef llm fill:#f4f6f5,stroke:#ef4444,stroke-width:2px,color:#111
+    classDef auth fill:#f4f6f5,stroke:#991b1b,stroke-width:2px,color:#111
+    classDef db fill:#f4f6f5,stroke:#8b5cf6,stroke-width:2px,color:#111
 ```
+
+| Layer | Role |
+| --- | --- |
+| Next.js Client | React UI — dashboard, maps, charts |
+| Next.js API Routes | ~20 auth-scoped endpoints: `aqi`, `locations`, `alerts`, `community`, `ai/chat` |
+| Google Cloud APIs | Air Quality, Geocoding, Pollen, Directions |
+| Groq LLM | Llama 3.3 70B — grounded chat assistant |
+| NextAuth (JWT) | bcrypt credentials, server-side session on every route |
+| MongoDB Atlas | `User`, `Location`, `AQISnapshot`, `Alert`, `CommunityReport` (2dsphere geo-index, TTL expiry, compound history index) |
 
 Full write-up, request lifecycles, and data flow: **[docs/architecture.md](docs/architecture.md)**.
 
@@ -272,23 +244,21 @@ Full write-up, request lifecycles, and data flow: **[docs/architecture.md](docs/
 
 ```
 src/
-├── app/
-│   ├── (auth)/            login, signup
-│   ├── (dashboard)/       dashboard, alerts, community, compare,
-│   │                      forecast, profile, route-planner
-│   ├── api/               route handlers — see docs/api-documentation.md
-│   └── error.tsx          root error boundary
-├── components/
-│   ├── aqi/               gauge, risk badge, guidance, pollutants,
-│   │                      pollen, exposure insights
-│   ├── charts/            trend + comparison (Recharts)
-│   ├── dashboard/         search, saved locations, alerts feed, AI assistant
-│   ├── map/               Google Maps, heatmap overlay, route planner
-│   ├── motion/            GSAP reveal + magnetic primitives
-│   └── ui/                shadcn / Base UI primitives
-├── lib/                   domain logic + API clients
-├── models/                Mongoose schemas
-└── types/                 shared domain types
+  app/
+    (auth)/            login, signup
+    (dashboard)/       dashboard, alerts, community, compare, forecast, profile, route-planner
+    api/               route handlers — see docs/api-documentation.md
+    error.tsx          root error boundary
+  components/
+    aqi/               gauge, risk badge, guidance, pollutants, pollen, exposure insights
+    charts/            trend + comparison (Recharts)
+    dashboard/         search, saved locations, alerts feed, AI assistant
+    map/               Google Maps, heatmap overlay, route planner
+    motion/            GSAP reveal + magnetic primitives
+    ui/                shadcn / Base UI primitives
+  lib/                 domain logic + API clients
+  models/              Mongoose schemas
+  types/               shared domain types
 ```
 
 ### Data model
@@ -303,7 +273,7 @@ src/
 
 ---
 
-## 🛡️ Error handling
+## Error handling
 
 Never a blank screen. Every failure mode has a designed state:
 
@@ -321,7 +291,7 @@ Never a blank screen. Every failure mode has a designed state:
 
 ---
 
-## 🚀 Getting started
+## Getting started
 
 ### Prerequisites
 
@@ -396,7 +366,7 @@ city.
 
 ---
 
-## ☁️ Deployment
+## Deployment
 
 Deployed on Vercel. To deploy your own:
 
@@ -413,7 +383,7 @@ Vercel Cron entry for background alerting.
 
 ---
 
-## 🧱 Tech stack
+## Tech stack
 
 | Layer | Choice | Why |
 | --- | --- | --- |
@@ -429,7 +399,7 @@ Vercel Cron entry for background alerting.
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 - **[docs/api-documentation.md](docs/api-documentation.md)** — every endpoint, with
   request/response shapes and status codes
@@ -439,7 +409,7 @@ Vercel Cron entry for background alerting.
 
 ---
 
-## 📄 License
+## License
 
 Built for HackInMotion. Air quality data © Google. Cigarette-equivalence model after
 Berkeley Earth. AQI bands after the US EPA.
