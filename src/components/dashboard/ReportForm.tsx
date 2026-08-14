@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { CommunityReportSeverity, CommunityReportType } from "@/types/index";
+import type { CommunityReportSeverity, CommunityReportType } from "@/types/index";
 
 const TYPES: { value: CommunityReportType; label: string; icon: typeof Flame }[] = [
   { value: "smoke", label: "Smoke", icon: Wind },

@@ -1,5 +1,5 @@
 import { classifyRisk } from "@/lib/risk-engine";
-import { UserHealthProfile } from "@/types/index";
+import type { UserHealthProfile } from "@/types/index";
 
 /**
  * Google's forecast endpoint returns 48 hourly points, but the rest of the app

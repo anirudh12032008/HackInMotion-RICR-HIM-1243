@@ -1,7 +1,7 @@
 "use client";
 
 import { APIProvider, Map, AdvancedMarker, InfoWindow } from "@vis.gl/react-google-maps";
-import { CommunityReportType } from "@/types/index";
+import type { CommunityReportType } from "@/types/index";
 import {
   MAPS_KEY,
   MAP_ID,

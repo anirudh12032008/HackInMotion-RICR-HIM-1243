@@ -1,4 +1,4 @@
-import { Pollutants } from "@/types/index";
+import type { Pollutants } from "@/types/index";
 
 const LABELS: Record<keyof Pollutants, string> = {
   pm25: "PM2.5",

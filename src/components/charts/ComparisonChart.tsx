@@ -15,7 +15,7 @@ import {
   Legend,
 } from "recharts";
 import { classifyRisk } from "@/lib/risk-engine";
-import { Pollutants } from "@/types/index";
+import type { Pollutants } from "@/types/index";
 
 export interface ComparisonEntry {
   key: string;

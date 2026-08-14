@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ActivityLevel, AgeGroup, HealthCondition } from "@/types/index";
+import type { ActivityLevel, AgeGroup, HealthCondition } from "@/types/index";
 
 const CONDITIONS: { value: HealthCondition; label: string }[] = [
   { value: "asthma", label: "Asthma" },

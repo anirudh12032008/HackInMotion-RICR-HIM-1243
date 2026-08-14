@@ -1,4 +1,4 @@
-import { UserHealthProfile } from "@/types/index";
+import type { UserHealthProfile } from "@/types/index";
 
 declare module "next-auth" {
   interface User {

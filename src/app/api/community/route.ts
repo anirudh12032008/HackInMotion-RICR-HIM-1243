@@ -5,7 +5,7 @@ import Location from "@/models/Location";
 import { requireUserId } from "@/lib/session";
 import { sendPushToUser } from "@/lib/push";
 import { haversineKm } from "@/lib/route-risk";
-import { CommunityReportSeverity, CommunityReportType } from "@/types/index";
+import type { CommunityReportSeverity, CommunityReportType } from "@/types/index";
 
 const TYPE_LABELS: Record<CommunityReportType, string> = {
   smoke: "smoke",
