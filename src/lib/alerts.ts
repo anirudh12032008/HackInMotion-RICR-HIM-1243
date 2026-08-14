@@ -1,6 +1,7 @@
 import Alert from "@/models/Alert";
 import AQISnapshot from "@/models/AQISnapshot";
 import { classifyRisk } from "@/lib/risk-engine";
+import { sendPushToUser } from "@/lib/push";
 import { AlertSeverity } from "@/types/index";
 
 const RAPID_CHANGE_THRESHOLD = 50;
@@ -53,6 +54,7 @@ export async function checkAndCreateAlerts({
       aqiValue: aqi,
     });
     created.push(alert);
+    await sendPushToUser(userId, { title: alert.title, body: alert.message, url: "/dashboard/alerts" });
   }
 
   const previous = await AQISnapshot.findOne({ locationId }).sort({ timestamp: -1 }).skip(1).lean();
@@ -72,6 +74,7 @@ export async function checkAndCreateAlerts({
       aqiValue: aqi,
     });
     created.push(alert);
+    await sendPushToUser(userId, { title: alert.title, body: alert.message, url: "/dashboard/alerts" });
   }
 
   return created;
