@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, Send, X, Loader2, Bot } from "lucide-react";
+import { Send, X, Loader2, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { classifyRisk } from "@/lib/risk-engine";
@@ -97,7 +97,7 @@ export function AiAssistant({ result }: { result: AqiResult | null }) {
         onClick={() => setOpen((o) => !o)}
         className="fixed bottom-6 right-6 z-40 h-14 w-14 rounded-full shadow-lg"
       >
-        {open ? <X className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />}
+        {open ? <X className="h-5 w-5" /> : <Bot className="h-6 w-6" />}
       </Button>
 
       {open && (
