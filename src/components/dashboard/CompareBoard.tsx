@@ -226,7 +226,7 @@ export function CompareBoard() {
                   <AqiBarChart entries={entries} />
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="bg-background">
                 <CardHeader>
                   <CardTitle className="text-base">Pollutant profile</CardTitle>
                 </CardHeader>
