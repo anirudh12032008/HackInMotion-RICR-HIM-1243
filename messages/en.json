@@ -27,7 +27,12 @@
     "searchPlaceholder": "Search a city...",
     "useMyLocation": "Use my location",
     "saveLocation": "Save location",
-    "saved": "Saved"
+    "saved": "Saved",
+    "updated": "Updated",
+    "dominantPollutant": "Dominant pollutant",
+    "pollutantBreakdown": "Pollutant breakdown",
+    "fromGoogle": "From Google Air Quality",
+    "saveFailed": "Failed to save location"
   },
   "guidance": {
     "title": "Health guidance",
@@ -49,5 +54,27 @@
     "retry": "Retry",
     "cancel": "Cancel",
     "submit": "Submit"
+  },
+  "exposure": {
+    "title": "What this air costs you",
+    "more": "more",
+    "pm25": "PM2.5",
+    "inhaledPerHour": "Inhaled / hr",
+    "ugOutdoors": "µg outdoors",
+    "whoLimit": "WHO limit",
+    "overGuideline": "over guideline",
+    "doseLive": "Dose is scaled to your live heart rate below — this is more personal than a self-reported activity level.",
+    "doseScaledPre": "Dose is scaled to your",
+    "doseScaledMid": "activity level and",
+    "doseScaledPost": "age group — identical air delivers very different amounts depending on how hard you breathe.",
+    "estimatedNote": " PM2.5 estimated from AQI (no direct reading for this area).",
+    "noWearable": "No wearable connected",
+    "bpmLive": "bpm live",
+    "connecting": "Connecting…",
+    "connectWearable": "Connect wearable",
+    "disconnect": "Disconnect",
+    "wearableError": "Couldn't connect to a wearable.",
+    "readAloud": "Read this aloud",
+    "stopReading": "Stop reading"
   }
 }

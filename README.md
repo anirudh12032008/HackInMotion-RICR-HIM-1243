@@ -1,11 +1,36 @@
 <div align="center">
 
+<img src="src/app/icon.svg" width="76" alt="BreatheSafe logo" />
+
 # BreatheSafe
 
 **Because the air we breathe should be something we can see, understand, and act on.**
 
 An Environmental Risk & Air Quality Monitoring Platform that turns raw pollutant
 telemetry into a decision a person can make in five seconds.
+
+<a href="https://hack-in-motion-ricr-him-1243-three.vercel.app/">
+  <img alt="Live demo" src="https://img.shields.io/badge/live_demo-breathesafe-22c55e?style=for-the-badge&logo=vercel&logoColor=white" />
+</a>
+
+![Next.js](https://img.shields.io/badge/Next.js_14-000000?style=flat-square&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)
+![Tailwind](https://img.shields.io/badge/Tailwind-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
+![Google Air Quality](https://img.shields.io/badge/Google_Air_Quality-4285F4?style=flat-square&logo=googlemaps&logoColor=white)
+![Groq](https://img.shields.io/badge/Groq_Llama_3.3_70B-F55036?style=flat-square&logo=meta&logoColor=white)
+![Web Push](https://img.shields.io/badge/Web_Push-EAB308?style=flat-square&logo=googlechrome&logoColor=white)
+![Web Bluetooth](https://img.shields.io/badge/Web_Bluetooth-0082FC?style=flat-square&logo=bluetooth&logoColor=white)
+![i18n](https://img.shields.io/badge/EN_·_हिन्दी-8B5CF6?style=flat-square&logo=googletranslate&logoColor=white)
+
+**The risk bands this app reasons over**
+
+<img src="https://img.shields.io/badge/0–50-Good-22c55e?style=flat-square" />
+<img src="https://img.shields.io/badge/51–100-Moderate-eab308?style=flat-square" />
+<img src="https://img.shields.io/badge/101–150-Sensitive-f97316?style=flat-square" />
+<img src="https://img.shields.io/badge/151–200-Unhealthy-ef4444?style=flat-square" />
+<img src="https://img.shields.io/badge/201–300-Very_Unhealthy-8b5cf6?style=flat-square" />
+<img src="https://img.shields.io/badge/301+-Hazardous-991b1b?style=flat-square" />
 
 [Architecture](docs/architecture.md) · [Diagram](architecture-diagram.png) · [API reference](api-documentation.md) · [Deployment](#deployment)
 

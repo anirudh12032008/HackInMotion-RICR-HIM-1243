@@ -70,7 +70,7 @@ function ExposureCard({
   profile: UserHealthProfile;
   cityName: string;
 }) {
-  const { locale } = useTranslation();
+  const { locale, t } = useTranslation();
   const [heartRate, setHeartRate] = useState<number | null>(null);
   const [wearable, setWearable] = useState<WearableConnection | null>(null);
   const [connecting, setConnecting] = useState(false);
@@ -102,7 +102,7 @@ function ExposureCard({
       setWearable(connection);
       toast.success(`Connected to ${connection.deviceName}  live dose is now heart-rate based.`);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Couldn't connect to a wearable.");
+      toast.error(err instanceof Error ? err.message : t("exposure.wearableError"));
     } finally {
       setConnecting(false);
     }
@@ -122,7 +122,7 @@ function ExposureCard({
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <Cigarette className="h-4 w-4" style={{ color: risk.color }} />
-          What this air costs you
+          {t("exposure.title")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -135,33 +135,37 @@ function ExposureCard({
             ))}
             {exposure.cigarettesPerDay > 20 && (
               <span className="text-xs text-muted-foreground">
-                +{Math.round(exposure.cigarettesPerDay) - 20} more
+                +{Math.round(exposure.cigarettesPerDay) - 20} {t("exposure.more")}
               </span>
             )}
           </div>
         )}
 
         <div className="grid grid-cols-3 gap-3 border-t border-border pt-3">
-          <Metric label="PM2.5" value={`${exposure.pm25}`} unit="µg/m³" />
-          <Metric label="Inhaled / hr" value={`${exposure.microgramsPerHour}`} unit="µg outdoors" />
+          <Metric label={t("exposure.pm25")} value={`${exposure.pm25}`} unit="µg/m³" />
           <Metric
-            label="WHO limit"
+            label={t("exposure.inhaledPerHour")}
+            value={`${exposure.microgramsPerHour}`}
+            unit={t("exposure.ugOutdoors")}
+          />
+          <Metric
+            label={t("exposure.whoLimit")}
             value={`${exposure.timesWhoGuideline}×`}
-            unit="over guideline"
+            unit={t("exposure.overGuideline")}
           />
         </div>
 
         <p className="text-[11px] leading-relaxed text-muted-foreground">
           {heartRate ? (
-            "Dose is scaled to your live heart rate below  this is more personal than a self-reported activity level."
+            t("exposure.doseLive")
           ) : (
             <>
-              Dose is scaled to your <strong>{profile.activityLevel}</strong> activity level and{" "}
-              <strong>{profile.ageGroup}</strong> age group identical air delivers very different
-              amounts depending on how hard you breathe.
+              {t("exposure.doseScaledPre")} <strong>{profile.activityLevel}</strong>{" "}
+              {t("exposure.doseScaledMid")} <strong>{profile.ageGroup}</strong>{" "}
+              {t("exposure.doseScaledPost")}
             </>
           )}
-          {exposure.estimated && " PM2.5 estimated from AQI (no direct reading for this area)."}
+          {exposure.estimated && t("exposure.estimatedNote")}
         </p>
 
         {isWearableSupported() && (
@@ -170,10 +174,10 @@ function ExposureCard({
               <Watch className="h-4 w-4 text-muted-foreground" />
               {heartRate ? (
                 <span>
-                  <strong>{heartRate}</strong> bpm live · {wearable?.deviceName}
+                  <strong>{heartRate}</strong> {t("exposure.bpmLive")} · {wearable?.deviceName}
                 </span>
               ) : (
-                <span className="text-muted-foreground">No wearable connected</span>
+                <span className="text-muted-foreground">{t("exposure.noWearable")}</span>
               )}
             </div>
             <Button
@@ -185,12 +189,12 @@ function ExposureCard({
               {wearable ? (
                 <>
                   <X className="mr-1 h-3.5 w-3.5" />
-                  Disconnect
+                  {t("exposure.disconnect")}
                 </>
               ) : connecting ? (
-                "Connecting…"
+                t("exposure.connecting")
               ) : (
-                "Connect wearable"
+                t("exposure.connectWearable")
               )}
             </Button>
           </div>
@@ -220,12 +224,12 @@ function ExposureCard({
             {isSpeaking ? (
               <>
                 <VolumeX className="mr-2 h-4 w-4" />
-                Stop reading
+                {t("exposure.stopReading")}
               </>
             ) : (
               <>
                 <Volume2 className="mr-2 h-4 w-4" />
-                Read this aloud
+                {t("exposure.readAloud")}
               </>
             )}
           </Button>
