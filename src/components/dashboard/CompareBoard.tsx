@@ -59,7 +59,10 @@ export function CompareBoard() {
     const cities = searchParams.get("cities");
     if (!cities) return;
 
-    const list = cities.split(",").filter(Boolean).slice(0, MAX_LOCATIONS);
+    // "|" not "," a location's display name can itself contain commas
+    // (e.g. "Bhopal, Madhya Pradesh, India"), which would otherwise get
+    // split into multiple bogus entries.
+    const list = cities.split("|").filter(Boolean).slice(0, MAX_LOCATIONS);
     if (list.length === 0) return;
 
     setLoading(true);
@@ -83,7 +86,7 @@ export function CompareBoard() {
 
   function syncUrl(next: ComparisonEntry[]) {
     const params = new URLSearchParams();
-    if (next.length > 0) params.set("cities", next.map((e) => e.key).join(","));
+    if (next.length > 0) params.set("cities", next.map((e) => e.key).join("|"));
     router.replace(`/dashboard/compare${params.toString() ? `?${params}` : ""}`, { scroll: false });
   }
 
