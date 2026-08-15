@@ -15,7 +15,8 @@ export async function POST(req: Request) {
     const directions = await getDirections(start, end, mode);
     return NextResponse.json(directions);
   } catch (err) {
-    const message = err instanceof GoogleDirectionsError ? err.message : "Failed to fetch directions";
+    const message =
+      err instanceof GoogleDirectionsError ? err.message : "Failed to fetch directions";
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }

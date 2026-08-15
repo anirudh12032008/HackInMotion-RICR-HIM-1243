@@ -54,7 +54,7 @@ export function CitySearchInput({
       try {
         const res = await fetch(`/api/aqi/search?q=${encodeURIComponent(query.trim())}`);
         const data = await res.json();
-        setResults(res.ok ? data.results ?? [] : []);
+        setResults(res.ok ? (data.results ?? []) : []);
       } catch {
         setResults([]);
       } finally {

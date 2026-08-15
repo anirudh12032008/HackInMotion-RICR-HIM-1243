@@ -12,7 +12,14 @@ const CommunityReportSchema = new Schema(
     },
     type: {
       type: String,
-      enum: ["smoke", "burning_waste", "industrial_emission", "dust_storm", "chemical_smell", "other"],
+      enum: [
+        "smoke",
+        "burning_waste",
+        "industrial_emission",
+        "dust_storm",
+        "chemical_smell",
+        "other",
+      ],
       required: true,
     },
     description: { type: String, maxlength: 500 },

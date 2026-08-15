@@ -54,11 +54,13 @@ export async function searchPlaces(query: string): Promise<GeocodedPlace[]> {
     params: { address: query, key: API_KEY },
   });
   if (data.status !== "OK") return [];
-  return data.results.map((r: { formatted_address: string; geometry: { location: { lat: number; lng: number } } }) => ({
-    name: r.formatted_address,
-    lat: r.geometry.location.lat,
-    lng: r.geometry.location.lng,
-  }));
+  return data.results.map(
+    (r: { formatted_address: string; geometry: { location: { lat: number; lng: number } } }) => ({
+      name: r.formatted_address,
+      lat: r.geometry.location.lat,
+      lng: r.geometry.location.lng,
+    })
+  );
 }
 
 // Google's index codes -> our Pollutants keys, when concentration data is present.
@@ -201,8 +203,7 @@ export async function getHourlyForecast(lat: number, lng: number): Promise<Hourl
         { params: { key: API_KEY } }
       );
       const entry = (data.hourlyForecasts ?? [])[0] as
-        | { dateTime: string; indexes: AqIndex[] }
-        | undefined;
+        { dateTime: string; indexes: AqIndex[] } | undefined;
       if (!entry || entry.indexes.length === 0) return null;
       const { index } = pickIndex(entry.indexes);
       return { dateTime: entry.dateTime, aqi: index.aqi };
@@ -254,7 +255,11 @@ const MAX_HISTORY_PAGES = 8;
  * opportunistically (once/hour, only when a saved location happens to be
  * viewed), so a brand-new location's chart would stay empty for weeks.
  */
-export async function getHistoricalDailyAqi(lat: number, lng: number, days = 30): Promise<HistoricalDay[]> {
+export async function getHistoricalDailyAqi(
+  lat: number,
+  lng: number,
+  days = 30
+): Promise<HistoricalDay[]> {
   assertKey();
 
   // "hours" is a plain integer (1-720) and mutually exclusive with "period"

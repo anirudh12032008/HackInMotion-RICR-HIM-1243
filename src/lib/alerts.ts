@@ -43,7 +43,10 @@ export async function checkAndCreateAlerts({
 }) {
   const created = [];
 
-  if (aqi >= alertThreshold && !(await alreadyAlertedRecently(userId, locationId, "threshold_exceeded"))) {
+  if (
+    aqi >= alertThreshold &&
+    !(await alreadyAlertedRecently(userId, locationId, "threshold_exceeded"))
+  ) {
     const alert = await Alert.create({
       userId,
       locationId,

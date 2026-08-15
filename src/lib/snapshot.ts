@@ -1,6 +1,6 @@
 import { isAxiosError } from "axios";
 import AQISnapshot from "@/models/AQISnapshot";
-import type { CurrentConditions} from "@/lib/google-aqi";
+import type { CurrentConditions } from "@/lib/google-aqi";
 import { getHistoricalDailyAqi } from "@/lib/google-aqi";
 
 const SNAPSHOT_INTERVAL_MS = 60 * 60 * 1000; // 1 hour

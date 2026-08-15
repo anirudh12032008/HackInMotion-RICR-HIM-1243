@@ -3,7 +3,13 @@
 import { useRef } from "react";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
 
-export function Magnetic({ children, className }: { children: React.ReactNode; className?: string }) {
+export function Magnetic({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
 
   function handleMove(e: React.MouseEvent<HTMLDivElement>) {
@@ -20,12 +26,7 @@ export function Magnetic({ children, className }: { children: React.ReactNode; c
   }
 
   return (
-    <div
-      ref={ref}
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
-      className={className}
-    >
+    <div ref={ref} onMouseMove={handleMove} onMouseLeave={handleLeave} className={className}>
       {children}
     </div>
   );

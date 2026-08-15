@@ -12,7 +12,12 @@ function urlBase64ToUint8Array(base64: string) {
 }
 
 export function isPushSupported() {
-  return Boolean(VAPID_PUBLIC_KEY) && typeof navigator !== "undefined" && "serviceWorker" in navigator && "PushManager" in window;
+  return (
+    Boolean(VAPID_PUBLIC_KEY) &&
+    typeof navigator !== "undefined" &&
+    "serviceWorker" in navigator &&
+    "PushManager" in window
+  );
 }
 
 export async function getPushSubscription(): Promise<PushSubscription | null> {

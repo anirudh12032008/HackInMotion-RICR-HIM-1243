@@ -8,13 +8,34 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BellRing, BellOff } from "lucide-react";
-import { isPushSupported, getPushSubscription, subscribeToPush, unsubscribeFromPush } from "@/lib/push-client";
+import {
+  isPushSupported,
+  getPushSubscription,
+  subscribeToPush,
+  unsubscribeFromPush,
+} from "@/lib/push-client";
 
 const CATEGORIES = [
-  { key: "thresholdAlerts", label: "Threshold alerts", desc: "A saved location crosses your AQI alert threshold." },
-  { key: "rapidChange", label: "Rapid change alerts", desc: "Air quality jumps or drops fast at a saved location." },
-  { key: "dailySummary", label: "Daily summary", desc: "A once-a-day digest of your worst tracked location." },
-  { key: "communityNearby", label: "Community reports nearby", desc: "Someone reports smoke, burning, or industrial emissions near a saved location." },
+  {
+    key: "thresholdAlerts",
+    label: "Threshold alerts",
+    desc: "A saved location crosses your AQI alert threshold.",
+  },
+  {
+    key: "rapidChange",
+    label: "Rapid change alerts",
+    desc: "Air quality jumps or drops fast at a saved location.",
+  },
+  {
+    key: "dailySummary",
+    label: "Daily summary",
+    desc: "A once-a-day digest of your worst tracked location.",
+  },
+  {
+    key: "communityNearby",
+    label: "Community reports nearby",
+    desc: "Someone reports smoke, burning, or industrial emissions near a saved location.",
+  },
 ] as const;
 
 type PreferenceKey = (typeof CATEGORIES)[number]["key"];

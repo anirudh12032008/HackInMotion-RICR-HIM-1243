@@ -42,7 +42,9 @@ BreatheSafe closes that last mile. It answers four questions the raw data does n
 | _Is this getting better or worse?_ | 30-day trend charts backfilled from real history, plus a short-term hourly trend call                  |
 
 ---
-## Screenshots 
+
+## Screenshots
+
 ![dashboard](<Screenshot 2026-08-14 at 5.29.21 PM.png>)
 <img width="894" height="1004" alt="Screenshot 2026-08-14 at 5 55 16 PM" src="https://github.com/user-attachments/assets/44222143-c05a-421c-8429-e38fa55daf75" />
 <img width="310" height="536" alt="Screenshot 2026-08-14 at 5 56 16 PM" src="https://github.com/user-attachments/assets/fb85aae4-d47f-40a4-8b13-01a851b89a11" />

@@ -20,7 +20,8 @@ export function Reveal({ children, className, stagger, delay = 0 }: RevealProps)
 
     const targets = stagger ? Array.from(el.children) : el;
     const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-    const alreadyVisible = !viewportHeight || el.getBoundingClientRect().top < viewportHeight * 0.85;
+    const alreadyVisible =
+      !viewportHeight || el.getBoundingClientRect().top < viewportHeight * 0.85;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(

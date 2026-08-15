@@ -1,11 +1,5 @@
 export type HealthCondition =
-  | "asthma"
-  | "copd"
-  | "heartDisease"
-  | "allergies"
-  | "pregnancy"
-  | "elderly"
-  | "children";
+  "asthma" | "copd" | "heartDisease" | "allergies" | "pregnancy" | "elderly" | "children";
 
 export type AgeGroup = "child" | "adult" | "senior";
 
@@ -18,12 +12,7 @@ export interface UserHealthProfile {
 }
 
 export type RiskLevel =
-  | "good"
-  | "moderate"
-  | "unhealthy_sensitive"
-  | "unhealthy"
-  | "very_unhealthy"
-  | "hazardous";
+  "good" | "moderate" | "unhealthy_sensitive" | "unhealthy" | "very_unhealthy" | "hazardous";
 
 export interface Pollutants {
   pm25?: number;
@@ -38,11 +27,6 @@ export type AlertType = "threshold_exceeded" | "rapid_change" | "forecast_warnin
 export type AlertSeverity = "info" | "warning" | "danger" | "emergency";
 
 export type CommunityReportType =
-  | "smoke"
-  | "burning_waste"
-  | "industrial_emission"
-  | "dust_storm"
-  | "chemical_smell"
-  | "other";
+  "smoke" | "burning_waste" | "industrial_emission" | "dust_storm" | "chemical_smell" | "other";
 
 export type CommunityReportSeverity = "low" | "medium" | "high";

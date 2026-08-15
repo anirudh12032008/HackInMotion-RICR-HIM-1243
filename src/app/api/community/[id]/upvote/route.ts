@@ -16,7 +16,9 @@ export async function PUT(_req: Request, { params }: { params: { id: string } })
   const hasUpvoted = report.upvotes.some((id: { toString(): string }) => id.toString() === userId);
 
   if (hasUpvoted) {
-    report.upvotes = report.upvotes.filter((id: { toString(): string }) => id.toString() !== userId);
+    report.upvotes = report.upvotes.filter(
+      (id: { toString(): string }) => id.toString() !== userId
+    );
   } else {
     report.upvotes.push(userId);
   }

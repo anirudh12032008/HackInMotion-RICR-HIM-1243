@@ -40,7 +40,8 @@ const RISK_TABLE: { max: number; classification: RiskClassification }[] = [
       color: "#f97316",
       bgColor: "#ffedd5",
       emoji: "😷",
-      description: "Sensitive groups may experience health effects. The general public is less likely to be affected.",
+      description:
+        "Sensitive groups may experience health effects. The general public is less likely to be affected.",
     },
   },
   {
@@ -51,7 +52,8 @@ const RISK_TABLE: { max: number; classification: RiskClassification }[] = [
       color: "#ef4444",
       bgColor: "#fee2e2",
       emoji: "⚠️",
-      description: "Everyone may begin to experience health effects; sensitive groups may experience more serious effects.",
+      description:
+        "Everyone may begin to experience health effects; sensitive groups may experience more serious effects.",
     },
   },
   {
@@ -73,7 +75,8 @@ const RISK_TABLE: { max: number; classification: RiskClassification }[] = [
       color: "#991b1b",
       bgColor: "#fecaca",
       emoji: "☠️",
-      description: "Health warning of emergency conditions: everyone is more likely to be affected.",
+      description:
+        "Health warning of emergency conditions: everyone is more likely to be affected.",
     },
   },
 ];
@@ -112,9 +115,7 @@ const CONDITION_LABELS: Record<HealthCondition, string> = {
 
 function isVulnerable(profile: UserHealthProfile): boolean {
   return (
-    profile.conditions.length > 0 ||
-    profile.ageGroup === "child" ||
-    profile.ageGroup === "senior"
+    profile.conditions.length > 0 || profile.ageGroup === "child" || profile.ageGroup === "senior"
   );
 }
 
@@ -179,13 +180,17 @@ export function getHealthGuidance(aqi: number, profile: UserHealthProfile): Heal
           precautions.push("Monitor your breathing closely and avoid exertion outdoors.");
           break;
         case "heartDisease":
-          precautions.push("Avoid strenuous activity  poor air quality raises cardiovascular strain.");
+          precautions.push(
+            "Avoid strenuous activity  poor air quality raises cardiovascular strain."
+          );
           break;
         case "allergies":
           precautions.push("Consider antihistamines if pollutant levels aggravate symptoms.");
           break;
         case "pregnancy":
-          precautions.push("Limit outdoor exposure  pollution exposure during pregnancy carries added risk.");
+          precautions.push(
+            "Limit outdoor exposure  pollution exposure during pregnancy carries added risk."
+          );
           break;
         case "elderly":
           precautions.push("Check in on elderly family members and encourage staying indoors.");
@@ -201,7 +206,9 @@ export function getHealthGuidance(aqi: number, profile: UserHealthProfile): Heal
     recommendations.push("Run an air purifier indoors if you have one.");
   }
   if (aqi > 100) {
-    recommendations.push(`Check on any household members with ${describeConditions(profile.conditions)}.`);
+    recommendations.push(
+      `Check on any household members with ${describeConditions(profile.conditions)}.`
+    );
   }
   if (vulnerable && aqi > 100 && recommendations.length === 0) {
     recommendations.push("Keep windows closed and monitor local air quality updates.");
@@ -248,7 +255,8 @@ const POLLUTANT_INFO: Record<string, PollutantAdvice> = {
     name: "PM2.5",
     fullName: "Fine Particulate Matter",
     sources: "Vehicle exhaust, wildfires, industrial combustion, dust",
-    healthEffects: "Penetrates deep into lungs and bloodstream; linked to respiratory and cardiovascular issues.",
+    healthEffects:
+      "Penetrates deep into lungs and bloodstream; linked to respiratory and cardiovascular issues.",
     specificAdvice: "Wear a well-fitted N95 mask outdoors; use a HEPA air purifier indoors.",
   },
   pm10: {
@@ -262,8 +270,10 @@ const POLLUTANT_INFO: Record<string, PollutantAdvice> = {
     name: "O3",
     fullName: "Ground-level Ozone",
     sources: "Reaction of sunlight with vehicle and industrial emissions",
-    healthEffects: "Irritates airways, reduces lung function, worsens asthma  peaks in afternoon heat.",
-    specificAdvice: "Avoid outdoor exercise in the afternoon; ozone levels are typically lower in the morning.",
+    healthEffects:
+      "Irritates airways, reduces lung function, worsens asthma  peaks in afternoon heat.",
+    specificAdvice:
+      "Avoid outdoor exercise in the afternoon; ozone levels are typically lower in the morning.",
   },
   no2: {
     name: "NO2",
@@ -276,7 +286,8 @@ const POLLUTANT_INFO: Record<string, PollutantAdvice> = {
     name: "SO2",
     fullName: "Sulfur Dioxide",
     sources: "Fossil fuel combustion, industrial processes, volcanic activity",
-    healthEffects: "Irritates the respiratory tract; can trigger bronchoconstriction in asthmatics.",
+    healthEffects:
+      "Irritates the respiratory tract; can trigger bronchoconstriction in asthmatics.",
     specificAdvice: "People with asthma should keep rescue medication on hand.",
   },
   co: {

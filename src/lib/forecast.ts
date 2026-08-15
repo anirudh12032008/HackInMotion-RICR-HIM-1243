@@ -30,5 +30,7 @@ export function getBestDay(days: ForecastDay[]) {
 }
 
 export function hasUnhealthyDay(days: ForecastDay[]) {
-  return days.some((d) => classifyRisk(d.avg).level !== "good" && classifyRisk(d.avg).level !== "moderate");
+  return days.some(
+    (d) => classifyRisk(d.avg).level !== "good" && classifyRisk(d.avg).level !== "moderate"
+  );
 }

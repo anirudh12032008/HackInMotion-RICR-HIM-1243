@@ -49,7 +49,10 @@ const RESTING_HR_BPM = 70;
 const MAX_EXERTION_HR_BPM = 180;
 
 function breathingRateFromHeartRate(bpm: number): number {
-  const t = Math.min(1, Math.max(0, (bpm - RESTING_HR_BPM) / (MAX_EXERTION_HR_BPM - RESTING_HR_BPM)));
+  const t = Math.min(
+    1,
+    Math.max(0, (bpm - RESTING_HR_BPM) / (MAX_EXERTION_HR_BPM - RESTING_HR_BPM))
+  );
   const { sedentary, athlete } = BREATHING_RATE_M3_PER_HOUR;
   return sedentary + t * (athlete - sedentary);
 }
@@ -111,7 +114,7 @@ export function estimateExposure(
   const breathingRate =
     typeof liveHeartRateBpm === "number"
       ? breathingRateFromHeartRate(liveHeartRateBpm)
-      : BREATHING_RATE_M3_PER_HOUR[profile.activityLevel] ?? 0.7;
+      : (BREATHING_RATE_M3_PER_HOUR[profile.activityLevel] ?? 0.7);
   const susceptibility = AGE_SUSCEPTIBILITY[profile.ageGroup] ?? 1;
 
   const cigarettesPerDay = concentration / PM25_PER_CIGARETTE;

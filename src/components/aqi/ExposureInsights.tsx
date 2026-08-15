@@ -1,7 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Cigarette, Clock, TrendingDown, TrendingUp, Minus, Wind, Volume2, VolumeX, Watch, X } from "lucide-react";
+import {
+  Cigarette,
+  Clock,
+  TrendingDown,
+  TrendingUp,
+  Minus,
+  Wind,
+  Volume2,
+  VolumeX,
+  Watch,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -133,19 +144,23 @@ function ExposureCard({
         <div className="grid grid-cols-3 gap-3 border-t border-border pt-3">
           <Metric label="PM2.5" value={`${exposure.pm25}`} unit="µg/m³" />
           <Metric label="Inhaled / hr" value={`${exposure.microgramsPerHour}`} unit="µg outdoors" />
-          <Metric label="WHO limit" value={`${exposure.timesWhoGuideline}×`} unit="over guideline" />
+          <Metric
+            label="WHO limit"
+            value={`${exposure.timesWhoGuideline}×`}
+            unit="over guideline"
+          />
         </div>
 
         <p className="text-[11px] leading-relaxed text-muted-foreground">
-          {heartRate
-            ? "Dose is scaled to your live heart rate below  this is more personal than a self-reported activity level."
-            : (
-              <>
-                Dose is scaled to your <strong>{profile.activityLevel}</strong> activity level and{" "}
-                <strong>{profile.ageGroup}</strong> age group  identical air delivers very
-                different amounts depending on how hard you breathe.
-              </>
-            )}
+          {heartRate ? (
+            "Dose is scaled to your live heart rate below  this is more personal than a self-reported activity level."
+          ) : (
+            <>
+              Dose is scaled to your <strong>{profile.activityLevel}</strong> activity level and{" "}
+              <strong>{profile.ageGroup}</strong> age group identical air delivers very different
+              amounts depending on how hard you breathe.
+            </>
+          )}
           {exposure.estimated && " PM2.5 estimated from AQI (no direct reading for this area)."}
         </p>
 
@@ -235,9 +250,17 @@ function CleanAirWindowsCard({
   const peak = useMemo(() => worstHour(hourly), [hourly]);
 
   const TrendIcon =
-    trend.direction === "improving" ? TrendingDown : trend.direction === "worsening" ? TrendingUp : Minus;
+    trend.direction === "improving"
+      ? TrendingDown
+      : trend.direction === "worsening"
+        ? TrendingUp
+        : Minus;
   const trendColor =
-    trend.direction === "improving" ? "#22c55e" : trend.direction === "worsening" ? "#ef4444" : undefined;
+    trend.direction === "improving"
+      ? "#22c55e"
+      : trend.direction === "worsening"
+        ? "#ef4444"
+        : undefined;
 
   return (
     <Card>

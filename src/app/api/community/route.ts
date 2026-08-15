@@ -37,7 +37,10 @@ async function notifyNearbySavedLocations(report: {
   for (const loc of locations) {
     const userId = loc.userId.toString();
     if (notifiedUserIds.has(userId)) continue;
-    const distanceKm = haversineKm({ lat: report.lat, lng: report.lng }, { lat: loc.lat, lng: loc.lng });
+    const distanceKm = haversineKm(
+      { lat: report.lat, lng: report.lng },
+      { lat: loc.lat, lng: loc.lng }
+    );
     if (distanceKm > NEARBY_RADIUS_KM) continue;
 
     notifiedUserIds.add(userId);
@@ -103,11 +106,19 @@ export async function POST(req: Request) {
   const body = await req.json();
   const { lat, lng, type, description, severity, userName } = body;
 
-  if (lat === undefined || lng === undefined || !VALID_TYPES.includes(type) || !VALID_SEVERITIES.includes(severity)) {
+  if (
+    lat === undefined ||
+    lng === undefined ||
+    !VALID_TYPES.includes(type) ||
+    !VALID_SEVERITIES.includes(severity)
+  ) {
     return NextResponse.json({ error: "Missing or invalid fields" }, { status: 400 });
   }
   if (description && description.length > 500) {
-    return NextResponse.json({ error: "Description must be under 500 characters" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Description must be under 500 characters" },
+      { status: 400 }
+    );
   }
 
   await connectDB();

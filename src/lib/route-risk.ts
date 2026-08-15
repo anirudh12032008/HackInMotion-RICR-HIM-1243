@@ -27,7 +27,11 @@ const ACTIVITY_THRESHOLDS: Record<ActivityType, number> = {
  */
 const MAX_SAMPLES = 8;
 
-export function sampleRoute(start: RoutePoint, end: RoutePoint, waypoints: RoutePoint[] = []): RoutePoint[] {
+export function sampleRoute(
+  start: RoutePoint,
+  end: RoutePoint,
+  waypoints: RoutePoint[] = []
+): RoutePoint[] {
   const path = [start, ...waypoints, end];
   const samples: RoutePoint[] = [];
 
@@ -90,8 +94,7 @@ export function haversineKm(a: RoutePoint, b: RoutePoint): number {
   const lat1 = (a.lat * Math.PI) / 180;
   const lat2 = (b.lat * Math.PI) / 180;
 
-  const h =
-    Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 

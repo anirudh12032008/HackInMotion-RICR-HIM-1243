@@ -135,7 +135,9 @@ export function ReportForm({
               maxLength={500}
               rows={3}
             />
-            <p className="mt-1 text-right text-xs text-muted-foreground">{description.length}/500</p>
+            <p className="mt-1 text-right text-xs text-muted-foreground">
+              {description.length}/500
+            </p>
           </div>
         </div>
 

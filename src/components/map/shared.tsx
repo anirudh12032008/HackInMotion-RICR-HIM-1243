@@ -44,8 +44,7 @@ export function AqiHeatmapOverlay({
     if (!map || !window.google) return;
 
     const overlay = new window.google.maps.ImageMapType({
-      getTileUrl: (coord, zoom) =>
-        `/api/aqi/heatmap-tile/${mapType}/${zoom}/${coord.x}/${coord.y}`,
+      getTileUrl: (coord, zoom) => `/api/aqi/heatmap-tile/${mapType}/${zoom}/${coord.x}/${coord.y}`,
       tileSize: new window.google.maps.Size(256, 256),
       opacity,
       name: "AQI",
