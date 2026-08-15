@@ -44,6 +44,7 @@ BreatheSafe closes that last mile. It answers four questions the raw data does n
 ---
 
 ## Screenshots
+<img width="974" height="1050" alt="Screenshot 2026-08-15 at 10 09 45 AM" src="https://github.com/user-attachments/assets/30770f90-0d7d-4154-a02d-b37cb1f7dcd1" />
 
 <img width="894" height="1004" alt="Screenshot 2026-08-14 at 5 55 16 PM" src="https://github.com/user-attachments/assets/44222143-c05a-421c-8429-e38fa55daf75" />
 <img width="310" height="536" alt="Screenshot 2026-08-14 at 5 56 16 PM" src="https://github.com/user-attachments/assets/fb85aae4-d47f-40a4-8b13-01a851b89a11" />
@@ -55,7 +56,8 @@ BreatheSafe closes that last mile. It answers four questions the raw data does n
 <img width="914" height="837" alt="Screenshot 2026-08-14 at 6 00 38 PM" src="https://github.com/user-attachments/assets/50d7fbbb-084e-4181-8b67-63ce79203d3c" />
 <img width="1155" height="941" alt="Screenshot 2026-08-14 at 6 01 44 PM" src="https://github.com/user-attachments/assets/d3ac78bb-d5a6-425d-b2f1-73cf0b5ba94e" />
 <img width="1216" height="975" alt="Screenshot 2026-08-14 at 6 01 32 PM" src="https://github.com/user-attachments/assets/63e3140a-3b62-4a70-8527-929a9e4fbbce" />
-![ai chat](image.png)
+
+<img width="370" height="471" alt="Screenshot 2026-08-15 at 7 33 26 AM" src="https://github.com/user-attachments/assets/6d8945e9-bb00-4fd2-b68d-660358e62d20" />
 
 ## Feature tour
 
