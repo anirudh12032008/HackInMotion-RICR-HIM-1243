@@ -8,12 +8,14 @@ import { SavedLocations } from "@/components/dashboard/SavedLocations";
 import { ProfilePrompt } from "@/components/dashboard/ProfilePrompt";
 import { AiAssistant } from "@/components/dashboard/AiAssistant";
 import { Reveal } from "@/components/motion/Reveal";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/lib/i18n";
 
 export default function DashboardPage() {
   const { t } = useTranslation();
   const [result, setResult] = useState<AqiResult | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [searching, setSearching] = useState(false);
 
   function handleResult(r: AqiResult) {
     setResult(r);
@@ -37,7 +39,14 @@ export default function DashboardPage() {
 
       <ProfilePrompt />
 
-      <QuickSearch onResult={handleResult} />
+      <QuickSearch onResult={handleResult} onLoadingChange={setSearching} />
+
+      {searching && !result && (
+        <div className="space-y-4">
+          <Skeleton className="h-64 w-full rounded-xl" />
+          <Skeleton className="h-48 w-full rounded-xl" />
+        </div>
+      )}
 
       {result && <AqiMap result={result} onResult={handleResult} />}
 

@@ -35,14 +35,25 @@ export interface AqiResult {
   } | null;
 }
 
-export function QuickSearch({ onResult }: { onResult: (result: AqiResult) => void }) {
+export function QuickSearch({
+  onResult,
+  onLoadingChange,
+}: {
+  onResult: (result: AqiResult) => void;
+  onLoadingChange?: (loading: boolean) => void;
+}) {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [lastUrl, setLastUrl] = useState<string | null>(null);
 
+  function setLoadingState(value: boolean) {
+    setLoading(value);
+    onLoadingChange?.(value);
+  }
+
   async function fetchAndEmit(url: string) {
-    setLoading(true);
+    setLoadingState(true);
     setError("");
     setLastUrl(url);
     try {
@@ -53,7 +64,7 @@ export function QuickSearch({ onResult }: { onResult: (result: AqiResult) => voi
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
-      setLoading(false);
+      setLoadingState(false);
     }
   }
 
@@ -68,13 +79,13 @@ export function QuickSearch({ onResult }: { onResult: (result: AqiResult) => voi
       setError("Geolocation is not supported by your browser");
       return;
     }
-    setLoading(true);
+    setLoadingState(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         fetchAndEmit(`/api/aqi/current?lat=${pos.coords.latitude}&lng=${pos.coords.longitude}`);
       },
       () => {
-        setLoading(false);
+        setLoadingState(false);
         setError("Unable to access your location");
       },
       // Without a timeout this can hang far longer than a click should —
