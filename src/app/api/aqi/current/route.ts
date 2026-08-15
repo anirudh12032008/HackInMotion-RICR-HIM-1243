@@ -9,8 +9,16 @@ import {
 } from "@/lib/google-aqi";
 import { classifyRisk } from "@/lib/risk-engine";
 import { isAxiosError } from "axios";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 
+// Security: this endpoint is intentionally public (powers the landing-page
+// demo search), so it's protected with per-IP rate limiting instead of auth
+// to stop it being used to burn the server's Google API quota/key.
 export async function GET(req: Request) {
+  if (!rateLimit(`aqi-current:${getClientIp(req)}`, 20, 60_000)) {
+    return NextResponse.json({ error: "Too many requests, please slow down" }, { status: 429 });
+  }
+
   const { searchParams } = new URL(req.url);
   const city = searchParams.get("city");
   const lat = searchParams.get("lat");
