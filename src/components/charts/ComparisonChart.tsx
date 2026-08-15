@@ -10,7 +10,6 @@ import {
   Cell,
   RadarChart,
   Radar,
-  PolarGrid,
   PolarAngleAxis,
   Legend,
 } from "recharts";
@@ -25,7 +24,10 @@ export interface ComparisonEntry {
   pollutants: Pollutants;
 }
 
-const SERIES_COLORS = ["#1f5f4e", "#b3432f", "#8b5cf6", "#eab308"];
+// Bright/saturated so the radar lines stay visible against the dark-theme
+// PolarGrid  the previous muted tones (#1f5f4e, #b3432f) had too little
+// contrast on a near-black card and read as an empty gray hexagon.
+const SERIES_COLORS = ["#22c55e", "#ef4444", "#8b5cf6", "#eab308"];
 
 const POLLUTANT_AXES: { key: keyof Pollutants; label: string }[] = [
   { key: "pm25", label: "PM2.5" },
@@ -98,10 +100,16 @@ export function PollutantRadarChart({ entries }: { entries: ComparisonEntry[] })
     return row;
   });
 
+  // Recharts' ResponsiveContainer can leave the Radar polygons using a stale
+  // width from a previous render after the container resizes (e.g. a card
+  // being added/removed reflows the grid), while PolarGrid remeasures
+  // correctly  the two end up with different centers. Remounting on entry
+  // change avoids the stale internal state entirely.
+  const chartKey = entries.map((e) => e.key).join("|");
+
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ResponsiveContainer key={chartKey} width="100%" height={280} debounce={1}>
       <RadarChart data={data} outerRadius="70%">
-        <PolarGrid className="stroke-border" />
         <PolarAngleAxis
           dataKey="pollutant"
           tick={{ fontSize: 11 }}
@@ -132,8 +140,9 @@ export function PollutantRadarChart({ entries }: { entries: ComparisonEntry[] })
             name={entry.name}
             dataKey={entry.name}
             stroke={SERIES_COLORS[i % SERIES_COLORS.length]}
-            fill={SERIES_COLORS[i % SERIES_COLORS.length]}
-            fillOpacity={0.15}
+            strokeWidth={2}
+            fill="none"
+            dot={{ r: 3, fill: SERIES_COLORS[i % SERIES_COLORS.length], strokeWidth: 0 }}
           />
         ))}
       </RadarChart>
