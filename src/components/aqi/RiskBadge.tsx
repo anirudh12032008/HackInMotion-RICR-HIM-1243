@@ -15,7 +15,11 @@ export function RiskBadge({ aqi, className }: { aqi: number; className?: string 
       )}
       style={{ backgroundColor: risk.bgColor, color: risk.color }}
     >
-      <span aria-hidden className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: risk.color }} />
+      <span
+        aria-hidden
+        className="h-1.5 w-1.5 rounded-full"
+        style={{ backgroundColor: risk.color }}
+      />
       {t(`risk.${risk.level}`)}
     </span>
   );

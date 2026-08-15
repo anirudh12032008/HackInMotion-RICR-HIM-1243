@@ -135,7 +135,11 @@ export function shortTermTrend(hourly: HourPoint[]): {
   summary: string;
 } {
   if (hourly.length < 6) {
-    return { direction: "steady", deltaAqi: 0, summary: "Not enough forecast data to call a trend." };
+    return {
+      direction: "steady",
+      deltaAqi: 0,
+      summary: "Not enough forecast data to call a trend.",
+    };
   }
   const sorted = [...hourly].sort((a, b) => a.dateTime.localeCompare(b.dateTime));
   const window = Math.min(6, Math.floor(sorted.length / 2));
@@ -146,7 +150,11 @@ export function shortTermTrend(hourly: HourPoint[]): {
   const delta = Math.round(later - soon);
 
   if (Math.abs(delta) < 10) {
-    return { direction: "steady", deltaAqi: delta, summary: "Air quality should hold roughly steady." };
+    return {
+      direction: "steady",
+      deltaAqi: delta,
+      summary: "Air quality should hold roughly steady.",
+    };
   }
   if (delta < 0) {
     return {

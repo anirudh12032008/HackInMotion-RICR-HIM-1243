@@ -170,7 +170,12 @@ export function AiAssistant({ result }: { result: AqiResult | null }) {
               className="h-9 text-sm"
               disabled={loading}
             />
-            <Button type="submit" size="icon" className="h-9 w-9 shrink-0" disabled={loading || !input.trim()}>
+            <Button
+              type="submit"
+              size="icon"
+              className="h-9 w-9 shrink-0"
+              disabled={loading || !input.trim()}
+            >
               <Send className="h-4 w-4" />
             </Button>
           </form>

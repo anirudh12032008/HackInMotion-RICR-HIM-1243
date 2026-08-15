@@ -54,9 +54,10 @@ export default function RoutePlannerPage() {
   const [endName, setEndName] = useState<string | null>(null);
   const [samples, setSamples] = useState<RouteSample[]>([]);
   const [roadPath, setRoadPath] = useState<RoutePoint[] | null>(null);
-  const [directionsInfo, setDirectionsInfo] = useState<{ distanceKm: number; durationMin: number } | null>(
-    null
-  );
+  const [directionsInfo, setDirectionsInfo] = useState<{
+    distanceKm: number;
+    durationMin: number;
+  } | null>(null);
   const [activity, setActivity] = useState<ActivityType>("jogging");
   const [loading, setLoading] = useState(false);
 
@@ -243,7 +244,8 @@ export default function RoutePlannerPage() {
             {directionsInfo ? "" : " (straight-line)"}
           </span>
           <span className="inline-flex items-center gap-1">
-            <Clock className="h-3.5 w-3.5" />~{directionsInfo?.durationMin ?? durationMin} min {activity}
+            <Clock className="h-3.5 w-3.5" />~{directionsInfo?.durationMin ?? durationMin} min{" "}
+            {activity}
           </span>
         </div>
       )}
@@ -251,7 +253,9 @@ export default function RoutePlannerPage() {
       {(loading || avgAqi !== null) && (
         <Alert variant={guidance.recommended ? "default" : "destructive"}>
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4" />}
-          <AlertTitle>{loading ? "Checking air quality along your route..." : "Route risk"}</AlertTitle>
+          <AlertTitle>
+            {loading ? "Checking air quality along your route..." : "Route risk"}
+          </AlertTitle>
           {!loading && <AlertDescription>{guidance.message}</AlertDescription>}
         </Alert>
       )}
@@ -261,8 +265,8 @@ export default function RoutePlannerPage() {
           <Clock className="h-4 w-4" />
           <AlertTitle>Best time</AlertTitle>
           <AlertDescription>
-            Air quality tends to improve later in the day or after rain  check back before
-            heading out, or move this {activity} indoors for now.
+            Air quality tends to improve later in the day or after rain check back before heading
+            out, or move this {activity} indoors for now.
           </AlertDescription>
         </Alert>
       )}

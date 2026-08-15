@@ -21,10 +21,7 @@ export interface PushPayload {
 }
 
 export type NotificationCategory =
-  | "thresholdAlerts"
-  | "rapidChange"
-  | "dailySummary"
-  | "communityNearby";
+  "thresholdAlerts" | "rapidChange" | "dailySummary" | "communityNearby";
 
 /**
  * Sends a lock-screen push notification to every browser a user has
@@ -35,7 +32,11 @@ export type NotificationCategory =
  * notification preferences  opt-out, not opt-in, so an unset preference
  * (older users, or a category added after they signed up) reads as "on".
  */
-export async function sendPushToUser(userId: string, payload: PushPayload, category: NotificationCategory) {
+export async function sendPushToUser(
+  userId: string,
+  payload: PushPayload,
+  category: NotificationCategory
+) {
   if (!ensureConfigured()) return;
 
   const user = await User.findById(userId).select("pushSubscriptions notificationPreferences");
@@ -45,17 +46,19 @@ export async function sendPushToUser(userId: string, payload: PushPayload, categ
   const stale: string[] = [];
 
   await Promise.all(
-    user.pushSubscriptions.map(async (sub: { endpoint: string; keys: { p256dh: string; auth: string } }) => {
-      try {
-        await webpush.sendNotification(
-          { endpoint: sub.endpoint, keys: sub.keys },
-          JSON.stringify(payload)
-        );
-      } catch (err: unknown) {
-        const statusCode = (err as { statusCode?: number }).statusCode;
-        if (statusCode === 404 || statusCode === 410) stale.push(sub.endpoint);
+    user.pushSubscriptions.map(
+      async (sub: { endpoint: string; keys: { p256dh: string; auth: string } }) => {
+        try {
+          await webpush.sendNotification(
+            { endpoint: sub.endpoint, keys: sub.keys },
+            JSON.stringify(payload)
+          );
+        } catch (err: unknown) {
+          const statusCode = (err as { statusCode?: number }).statusCode;
+          if (statusCode === 404 || statusCode === 410) stale.push(sub.endpoint);
+        }
       }
-    })
+    )
   );
 
   if (stale.length > 0) {
@@ -79,10 +82,15 @@ export async function maybeSendDailySummary(
   const reportable = locations.filter((l) => l.currentAqi !== null);
   if (reportable.length === 0) return;
 
-  const user = await User.findById(userId).select("pushSubscriptions notificationPreferences lastSummaryPushAt");
+  const user = await User.findById(userId).select(
+    "pushSubscriptions notificationPreferences lastSummaryPushAt"
+  );
   if (!user || user.pushSubscriptions.length === 0) return;
   if (user.notificationPreferences?.dailySummary === false) return;
-  if (user.lastSummaryPushAt && Date.now() - new Date(user.lastSummaryPushAt).getTime() < SUMMARY_INTERVAL_MS) {
+  if (
+    user.lastSummaryPushAt &&
+    Date.now() - new Date(user.lastSummaryPushAt).getTime() < SUMMARY_INTERVAL_MS
+  ) {
     return;
   }
 
@@ -92,6 +100,10 @@ export async function maybeSendDailySummary(
       ? `${worst.name} is at AQI ${worst.currentAqi} (${worst.riskLabel}).`
       : `${worst.name} is your worst tracked spot today  AQI ${worst.currentAqi} (${worst.riskLabel}). ${reportable.length - 1} other location${reportable.length - 1 === 1 ? "" : "s"} tracked.`;
 
-  await sendPushToUser(userId, { title: "Today's air quality", body, url: "/dashboard" }, "dailySummary");
+  await sendPushToUser(
+    userId,
+    { title: "Today's air quality", body, url: "/dashboard" },
+    "dailySummary"
+  );
   await User.findByIdAndUpdate(userId, { lastSummaryPushAt: new Date() });
 }

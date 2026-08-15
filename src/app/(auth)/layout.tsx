@@ -19,8 +19,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             Live safer.
           </h1>
           <p className="max-w-md text-sm text-primary-foreground/75">
-            Real-time air quality, personalized health guidance, and smart alerts —
-            your personal air quality guardian.
+            Real-time air quality, personalized health guidance, and smart alerts — your personal
+            air quality guardian.
           </p>
         </Reveal>
         <p className="text-sm text-primary-foreground/60">

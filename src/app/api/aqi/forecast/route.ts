@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { geocodeCity, getHourlyForecast, groupForecastByDay, GoogleAqiError } from "@/lib/google-aqi";
+import {
+  geocodeCity,
+  getHourlyForecast,
+  groupForecastByDay,
+  GoogleAqiError,
+} from "@/lib/google-aqi";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

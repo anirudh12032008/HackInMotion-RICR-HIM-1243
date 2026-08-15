@@ -33,7 +33,9 @@ function buildSystemInstruction(
   healthProfile: unknown,
   savedLocations: SavedLocationSummary[]
 ) {
-  const profile = JSON.stringify(healthProfile ?? { conditions: [], ageGroup: "adult", activityLevel: "moderate" });
+  const profile = JSON.stringify(
+    healthProfile ?? { conditions: [], ageGroup: "adult", activityLevel: "moderate" }
+  );
 
   const contextLine = context
     ? `Current air quality at ${context.cityName}: AQI ${context.aqi} (${context.riskLabel}), dominant pollutant ${context.dominantPollutant}. Pollutant levels: ${JSON.stringify(context.pollutants)}.`
@@ -71,7 +73,8 @@ async function resolveLocationFromMessage(
 ): Promise<AqiContext | null> {
   const lower = message.toLowerCase();
   const matched = savedLocations.find(
-    (loc) => lower.includes(loc.name.toLowerCase()) || (loc.city && lower.includes(loc.city.toLowerCase()))
+    (loc) =>
+      lower.includes(loc.name.toLowerCase()) || (loc.city && lower.includes(loc.city.toLowerCase()))
   );
   if (matched) {
     try {
@@ -133,7 +136,8 @@ export async function POST(req: Request) {
   }
   if (!liveContext && coords) {
     try {
-      const placeName = (await reverseGeocode(coords.lat, coords.lng).catch(() => null)) ?? "your location";
+      const placeName =
+        (await reverseGeocode(coords.lat, coords.lng).catch(() => null)) ?? "your location";
       liveContext = await conditionsToContext(coords.lat, coords.lng, placeName);
     } catch {
       // No AQI station nearby, or Google call failed  assistant just
@@ -142,7 +146,12 @@ export async function POST(req: Request) {
   }
 
   const trimmedHistory = Array.isArray(history) ? history.slice(-MAX_HISTORY) : [];
-  const systemInstruction = buildSystemInstruction(liveContext, user?.name, user?.healthProfile, savedLocationSummaries);
+  const systemInstruction = buildSystemInstruction(
+    liveContext,
+    user?.name,
+    user?.healthProfile,
+    savedLocationSummaries
+  );
 
   try {
     const reply = await askGroq(systemInstruction, [
@@ -153,7 +162,8 @@ export async function POST(req: Request) {
   } catch (err) {
     const detail = isAxiosError(err) ? JSON.stringify(err.response?.data) : String(err);
     console.error("Groq chat failed:", detail);
-    const errorMessage = err instanceof GroqError ? err.message : "The AI assistant is unavailable right now";
+    const errorMessage =
+      err instanceof GroqError ? err.message : "The AI assistant is unavailable right now";
     return NextResponse.json({ error: errorMessage }, { status: 502 });
   }
 }

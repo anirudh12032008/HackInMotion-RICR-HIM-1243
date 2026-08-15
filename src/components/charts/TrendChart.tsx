@@ -45,7 +45,13 @@ const BANDS = [
   { from: 200, to: 300, color: "#8b5cf6" },
 ];
 
-function TooltipContent({ active, payload }: { active?: boolean; payload?: { payload: Snapshot }[] }) {
+function TooltipContent({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: { payload: Snapshot }[];
+}) {
   if (!active || !payload?.length) return null;
   const point = payload[0].payload;
   const risk = classifyRisk(point.aqi);
@@ -142,7 +148,7 @@ export function TrendChart({ locationId }: { locationId: string }) {
         <Skeleton className="h-56 w-full rounded-lg" />
       ) : !snapshots || snapshots.length === 0 ? (
         <div className="flex h-56 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
-          Tracking started  check back later for trends.
+          Tracking started check back later for trends.
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={224}>
@@ -160,7 +166,9 @@ export function TrendChart({ locationId }: { locationId: string }) {
             ))}
             <XAxis
               dataKey="timestamp"
-              tickFormatter={(v) => new Date(v).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+              tickFormatter={(v) =>
+                new Date(v).toLocaleDateString(undefined, { month: "short", day: "numeric" })
+              }
               tick={{ fontSize: 11 }}
               className="fill-muted-foreground"
               axisLine={false}
@@ -204,7 +212,15 @@ function avg(nums: number[]) {
   return nums.reduce((a, b) => a + b, 0) / (nums.length || 1);
 }
 
-function StatTile({ label, value, valueColor }: { label: string; value: number; valueColor?: string }) {
+function StatTile({
+  label,
+  value,
+  valueColor,
+}: {
+  label: string;
+  value: number;
+  valueColor?: string;
+}) {
   return (
     <div className="rounded-lg border border-border py-2">
       <p className="font-[family-name:var(--font-display)] text-xl" style={{ color: valueColor }}>

@@ -59,7 +59,8 @@ export async function GET(req: Request) {
       healthRecommendations: conditions.healthRecommendations ?? null,
     });
   } catch (err) {
-    const message = err instanceof GoogleAqiError ? err.message : "Failed to fetch air quality data";
+    const message =
+      err instanceof GoogleAqiError ? err.message : "Failed to fetch air quality data";
     return NextResponse.json({ error: message }, { status: 502 });
   }
 }

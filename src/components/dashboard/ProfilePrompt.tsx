@@ -34,7 +34,12 @@ export function ProfilePrompt() {
           </AlertDescription>
         </div>
       </div>
-      <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" onClick={() => setDismissed(true)}>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-6 w-6 shrink-0"
+        onClick={() => setDismissed(true)}
+      >
         <X className="h-3.5 w-3.5" />
       </Button>
     </Alert>

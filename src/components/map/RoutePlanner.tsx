@@ -58,12 +58,7 @@ export function RoutePlanner({
           <MapClickListener onClick={handleClick} />
 
           {roadPath && roadPath.length > 1 ? (
-            <Polyline
-              path={roadPath}
-              strokeColor="#1f5f4e"
-              strokeOpacity={0.9}
-              strokeWeight={4}
-            />
+            <Polyline path={roadPath} strokeColor="#1f5f4e" strokeOpacity={0.9} strokeWeight={4} />
           ) : (
             start &&
             end && (

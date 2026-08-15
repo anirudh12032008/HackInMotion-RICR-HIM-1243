@@ -119,10 +119,8 @@
    * from 99 to 100 doesn't reflow the layout around it.
    */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display:
-    var(--font-mono-display), ui-monospace, SFMono-Regular, monospace;
-  --font-mono:
-    var(--font-mono-display), ui-monospace, SFMono-Regular, monospace;
+  --font-display: var(--font-mono-display), ui-monospace, SFMono-Regular, monospace;
+  --font-mono: var(--font-mono-display), ui-monospace, SFMono-Regular, monospace;
   /* Editorial serif  landing page headlines only. */
   --font-editorial: var(--font-editorial-serif), ui-serif, Georgia, serif;
 }

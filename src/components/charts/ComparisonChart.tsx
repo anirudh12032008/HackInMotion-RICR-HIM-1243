@@ -102,7 +102,11 @@ export function PollutantRadarChart({ entries }: { entries: ComparisonEntry[] })
     <ResponsiveContainer width="100%" height={280}>
       <RadarChart data={data} outerRadius="70%">
         <PolarGrid className="stroke-border" />
-        <PolarAngleAxis dataKey="pollutant" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
+        <PolarAngleAxis
+          dataKey="pollutant"
+          tick={{ fontSize: 11 }}
+          className="fill-muted-foreground"
+        />
         <Tooltip
           content={({ active, payload, label }) => {
             if (!active || !payload?.length) return null;

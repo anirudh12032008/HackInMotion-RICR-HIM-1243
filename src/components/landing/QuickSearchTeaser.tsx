@@ -67,9 +67,7 @@ export function QuickSearchTeaser() {
       )}
 
       {result && risk && (
-        <div
-          className="mt-4 flex items-center justify-between rounded-lg border border-border px-5 py-4"
-        >
+        <div className="mt-4 flex items-center justify-between rounded-lg border border-border px-5 py-4">
           <div>
             <p className="text-sm font-medium">{result.city.name}</p>
             <p className="text-xs text-muted-foreground">{risk.label}</p>

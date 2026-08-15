@@ -112,7 +112,9 @@ export function CommunityMap({
             >
               <div className="space-y-1 text-sm">
                 <p className="font-medium">{TYPE_LABELS[active.type]}</p>
-                {active.description && <p className="text-muted-foreground">{active.description}</p>}
+                {active.description && (
+                  <p className="text-muted-foreground">{active.description}</p>
+                )}
                 <p className="text-xs text-muted-foreground">
                   {active.severity} severity · {active.upvotes.length} upvotes
                 </p>

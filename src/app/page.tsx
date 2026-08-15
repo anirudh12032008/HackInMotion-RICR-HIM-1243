@@ -92,8 +92,8 @@ export default function Home() {
           <Reveal delay={0.5} className="mt-8 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
               <p className="max-w-md text-balance text-lg text-muted-foreground">
-                A raw pollution number, turned into guidance you can actually act on
-                today  for you, specifically, not the average person outside.
+                A raw pollution number, turned into guidance you can actually act on today for you,
+                specifically, not the average person outside.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Magnetic>
@@ -123,8 +123,7 @@ export default function Home() {
               </div>
               <AqiScale aqi={118} className="mt-3" />
               <p className="mt-3 text-xs text-muted-foreground">
-                Every reading ships with the neighbouring bands  not just a colour, the
-                whole scale.
+                Every reading ships with the neighbouring bands not just a colour, the whole scale.
               </p>
             </div>
           </Reveal>
@@ -135,7 +134,7 @@ export default function Home() {
           <div className="mx-auto max-w-2xl px-6 py-16 text-center">
             <Reveal>
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                Try it now  no account needed
+                Try it now no account needed
               </p>
               <h2 className="mt-3 font-[family-name:var(--font-editorial)] text-3xl italic">
                 Check the air where you are.

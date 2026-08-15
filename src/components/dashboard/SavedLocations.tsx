@@ -106,7 +106,9 @@ export function SavedLocations({
           key={loc._id}
           onClick={() => selectLocation(loc)}
           className={
-            onSelect ? "cursor-pointer transition-shadow hover:ring-2 hover:ring-ring/40" : undefined
+            onSelect
+              ? "cursor-pointer transition-shadow hover:ring-2 hover:ring-ring/40"
+              : undefined
           }
         >
           <CardHeader className="flex-row items-start justify-between space-y-0">
@@ -154,7 +156,10 @@ export function SavedLocations({
               </p>
             )}
             {expanded === loc._id && (
-              <div className="mt-4 border-t border-border pt-4" onClick={(e) => e.stopPropagation()}>
+              <div
+                className="mt-4 border-t border-border pt-4"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <TrendChart locationId={loc._id} />
               </div>
             )}

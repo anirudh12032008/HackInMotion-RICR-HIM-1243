@@ -2,7 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { AlertTriangle, Bell, CheckCheck, Info, ShieldAlert, Siren, Volume2, VolumeX } from "lucide-react";
+import {
+  AlertTriangle,
+  Bell,
+  CheckCheck,
+  Info,
+  ShieldAlert,
+  Siren,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import { canSpeak, speak, stopSpeak } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -198,7 +207,11 @@ export function AlertsFeed() {
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7"
-                      aria-label={speakingId === a._id ? `Stop reading: ${a.title}` : `Read alert aloud: ${a.title}`}
+                      aria-label={
+                        speakingId === a._id
+                          ? `Stop reading: ${a.title}`
+                          : `Read alert aloud: ${a.title}`
+                      }
                       onClick={() => speakAlert(a)}
                     >
                       {speakingId === a._id ? (
@@ -209,7 +222,12 @@ export function AlertsFeed() {
                     </Button>
                   )}
                   {!a.read && (
-                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => markRead(a._id)}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 text-xs"
+                      onClick={() => markRead(a._id)}
+                    >
                       {t("alertsPage.markRead")}
                     </Button>
                   )}

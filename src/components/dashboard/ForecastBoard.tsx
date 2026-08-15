@@ -28,7 +28,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { RiskBadge } from "@/components/aqi/RiskBadge";
 import { classifyRisk } from "@/lib/risk-engine";
-import { extractDailyForecast, getBestDay, hasUnhealthyDay, type ForecastDay } from "@/lib/forecast";
+import {
+  extractDailyForecast,
+  getBestDay,
+  hasUnhealthyDay,
+  type ForecastDay,
+} from "@/lib/forecast";
 
 interface SavedLocationOption {
   _id: string;
@@ -206,7 +211,11 @@ export function ForecastBoard() {
                 </div>
                 <ResponsiveContainer width="100%" height={180}>
                   <BarChart data={hourly} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" vertical={false} />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      className="stroke-border"
+                      vertical={false}
+                    />
                     <XAxis
                       dataKey="dateTime"
                       tickFormatter={formatHour}
@@ -278,7 +287,11 @@ export function ForecastBoard() {
 }
 
 function formatWeekday(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+  return new Date(dateStr).toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
 }
 
 function formatHour(dateTime: string) {
