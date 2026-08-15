@@ -562,7 +562,27 @@
             src="dashboard.png"
             alt="BreatheSafe dashboard showing Delhi at AQI 115"
             style="width: 100%; height: 100%; object-fit: cover; object-position: top"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
           />
+          <!-- Shown only if dashboard.png is missing, so a absent file degrades to a
+               deliberate-looking panel instead of the browser's broken-image icon. -->
+          <div
+            style="
+              display: none;
+              width: 100%;
+              height: 100%;
+              align-items: center;
+              justify-content: center;
+              text-align: center;
+              color: var(--faint);
+              font-size: 14px;
+              line-height: 1.6;
+            "
+          >
+            save the dashboard screenshot as<br /><strong style="color: var(--dim)"
+              >docs/dashboard.png</strong
+            >
+          </div>
         </div>
       </div>
       <span class="num">07</span>

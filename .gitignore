@@ -41,4 +41,6 @@ next-env.d.ts
 
 # hackathon deliverables (local only, not for GitHub)
 /docs/PITCH.md
-/presentation.pptx
+
+# raw per-slide screenshots used to build presentation.pptx — fully embedded there
+/docs/deck-slides/
