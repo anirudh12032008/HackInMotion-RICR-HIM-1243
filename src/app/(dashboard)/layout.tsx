@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Navbar } from "@/components/layout/Navbar";
 import { OfflineBanner } from "@/components/layout/OfflineBanner";
+import { AiAssistant } from "@/components/dashboard/AiAssistant";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions);
@@ -20,6 +21,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <Navbar />
         <main className="flex-1 bg-background p-4 sm:p-6">{children}</main>
       </div>
+      <AiAssistant result={null} />
     </div>
   );
 }

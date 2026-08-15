@@ -6,7 +6,6 @@ import { AQICard } from "@/components/aqi/AQICard";
 import { AqiMap } from "@/components/map/AqiMap";
 import { SavedLocations } from "@/components/dashboard/SavedLocations";
 import { ProfilePrompt } from "@/components/dashboard/ProfilePrompt";
-import { AiAssistant } from "@/components/dashboard/AiAssistant";
 import { Reveal } from "@/components/motion/Reveal";
 import { useTranslation } from "@/lib/i18n";
 
@@ -47,8 +46,6 @@ export default function DashboardPage() {
         <h2 className="mb-3 text-lg font-semibold">{t("dashboard.savedLocations")}</h2>
         <SavedLocations refreshKey={refreshKey} onSelect={handleSelectSaved} />
       </div>
-
-      <AiAssistant result={result} />
     </Reveal>
   );
 }
