@@ -63,6 +63,7 @@ BreatheSafe closes that last mile. It answers four questions the raw data does n
 | Feature                                                                                                                                      | Where                                   |
 | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
 | **Secure accounts** bcrypt-hashed credentials, JWT sessions, every query scoped to `userId`                                                  | `/login`, `/signup`                     |
+| **Rate-limited public routes** the demo search and map tiles stay public by design, so they're capped per-IP instead of auth-gated           | `src/lib/rate-limit.ts`                 |
 | **Search anywhere** by city name (Geocoding API), by map click, or by device geolocation with reverse-geocoded display names                 | `/dashboard`                            |
 | **Risk classification engine** a documented six-band model over the US EPA 0–500 scale                                                       | `src/lib/risk-engine.ts`                |
 | **Personalised guidance** advice branches on conditions (asthma, COPD, heart disease, allergies, pregnancy), age group, and activity level   | `src/components/aqi/HealthGuidance.tsx` |
@@ -111,11 +112,12 @@ The parts we're proudest of none of these are in the problem statement.
   AQI 88."_ Actionable instead of prohibitive.
   See `src/lib/clean-air-windows.ts`.
 
-- **A grounded AI assistant.** Groq (`llama-3.3-70b-versatile`) with every request
-  enriched by the user's name, health profile, saved locations, browser geolocation, and
-  live AQI. If the user names a city mid-conversation, the server resolves it against
-  saved locations or geocodes it and fetches real conditions _before_ calling the model —
-  the system prompt explicitly forbids simulating data.
+- **A grounded AI assistant, everywhere in the app.** A floating bot-icon widget mounted
+  in the dashboard layout, not one page — Groq (`llama-3.3-70b-versatile`) with every
+  request enriched by the user's name, health profile, saved locations, browser
+  geolocation, and live AQI. If the user names a city mid-conversation, the server
+  resolves it against saved locations or geocodes it and fetches real conditions
+  _before_ calling the model — the system prompt explicitly forbids simulating data.
   See `src/app/api/ai/chat/route.ts`.
 
 - **Official Google AQI heatmap tiles**, proxied server-side so the API key never reaches
