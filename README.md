@@ -22,6 +22,9 @@ telemetry into a decision a person can make in five seconds.
 ![Web Push](https://img.shields.io/badge/Web_Push-EAB308?style=flat-square&logo=googlechrome&logoColor=white)
 ![Web Bluetooth](https://img.shields.io/badge/Web_Bluetooth-0082FC?style=flat-square&logo=bluetooth&logoColor=white)
 ![i18n](https://img.shields.io/badge/EN_·_हिन्दी-8B5CF6?style=flat-square&logo=googletranslate&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)
+![Self-hostable](https://img.shields.io/badge/self--hostable-yes-22c55e?style=flat-square&logo=docker&logoColor=white)
+![No paywall](https://img.shields.io/badge/paywall-none-22c55e?style=flat-square)
 
 **The risk bands this app reasons over**
 
@@ -50,6 +53,30 @@ telemetry into a decision a person can make in five seconds.
 
 ---
 
+## An open-source alternative
+
+Personalised air-quality guidance is mostly sold, not shared. The consumer apps in this
+space (IQAir/AirVisual, Plume Labs, Airly and similar) run freemium — the map is free,
+while the parts that make it actionable tend to sit behind a subscription or a commercial
+API contract, and none of them publish their risk model. BreezoMeter, the best-known
+personalised-exposure API, was acquired by Google and is now sold through Google Cloud.
+
+BreatheSafe is the free, self-hostable counterpart:
+
+|                            | Typical commercial app                    | BreatheSafe                                                            |
+| -------------------------- | ----------------------------------------- | ---------------------------------------------------------------------- |
+| **Cost to run**            | Subscription or metered API contract      | Free — MIT licensed, runs on provider free tiers                       |
+| **Risk model**             | Proprietary, unpublished                  | Documented and auditable in `src/lib/risk-engine.ts` and `exposure.ts` |
+| **Health personalisation** | Usually a premium tier, if offered at all | Core feature — conditions, age group, activity level                   |
+| **Your location history**  | Held on someone else's servers            | Your own MongoDB instance                                              |
+| **Self-hosting**           | Not offered                               | Clone, add your own API keys, deploy                                   |
+| **Extending it**           | Feature requests                          | Fork it                                                                |
+
+The honest caveat: "free" means _this application_ is free and its source is open. It still
+calls Google's Air Quality, Geocoding, Pollen and Directions APIs, which have their own
+free tiers and then their own pricing. Self-hosting means bringing your own keys — you own
+the bill and the data, rather than renting both.
+
 ## Why this exists
 
 Air quality data is public, but it isn't _usable_. It arrives as µg/m³ of PM2.5 across
@@ -69,6 +96,7 @@ BreatheSafe closes that last mile. It answers four questions the raw data does n
 ---
 
 ## Screenshots
+
 <img width="974" height="1050" alt="Screenshot 2026-08-15 at 10 09 45 AM" src="https://github.com/user-attachments/assets/30770f90-0d7d-4154-a02d-b37cb1f7dcd1" />
 
 <img width="894" height="1004" alt="Screenshot 2026-08-14 at 5 55 16 PM" src="https://github.com/user-attachments/assets/44222143-c05a-421c-8429-e38fa55daf75" />
