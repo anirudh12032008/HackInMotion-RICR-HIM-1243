@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>BreatheSafe — Grand Finale Deck</title>
+    <style>
+      :root {
+        --bg: #0b0f0e;
+        --card: #141917;
+        --fg: #ffffff;
+        --muted: #d1d5db;
+        --dim: #6b7280;
+        --faint: #4b5563;
+        --good: #22c55e;
+        --mod: #eab308;
+        --poor: #f97316;
+        --bad: #ef4444;
+        --vbad: #8b5cf6;
+        --haz: #991b1b;
+        --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+        --sans: "Inter", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: #050807;
+        font-family: var(--sans);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 28px;
+        padding: 28px 0 60px;
+      }
+      .slide {
+        position: relative;
+        width: 1280px;
+        height: 720px;
+        background: var(--bg);
+        color: var(--fg);
+        overflow: hidden;
+        padding: 58px 64px 56px;
+        display: flex;
+        flex-direction: column;
+      }
+      .eyebrow {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      h1 {
+        font-family: var(--serif);
+        font-size: 60px;
+        font-weight: 600;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+      }
+      h2 {
+        font-family: var(--serif);
+        font-size: 40px;
+        font-weight: 600;
+        line-height: 1.12;
+        letter-spacing: -0.015em;
+        margin-top: 14px;
+      }
+      .kicker {
+        font-family: var(--serif);
+        font-size: 26px;
+        font-weight: 600;
+        margin-top: auto;
+      }
+      .src {
+        position: absolute;
+        left: 64px;
+        bottom: 30px;
+        font-size: 11.5px;
+        color: var(--dim);
+      }
+      .num {
+        position: absolute;
+        right: 40px;
+        bottom: 28px;
+        font-size: 11px;
+        color: var(--faint);
+        letter-spacing: 0.08em;
+      }
+      .body {
+        flex: 1;
+        display: flex;
+        min-height: 0;
+      }
+      .smog::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(120% 70% at 78% 12%, rgba(249, 115, 22, 0.22), transparent 62%),
+          radial-gradient(90% 60% at 10% 100%, rgba(153, 27, 27, 0.18), transparent 60%);
+      }
+      .clean::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(120% 70% at 78% 14%, rgba(34, 197, 94, 0.2), transparent 62%),
+          radial-gradient(90% 60% at 8% 100%, rgba(2, 132, 199, 0.16), transparent 60%);
+      }
+      .stats {
+        display: flex;
+        gap: 26px;
+        width: 100%;
+        align-items: stretch;
+      }
+      .stat {
+        flex: 1;
+        background: var(--card);
+        border-radius: 14px;
+        padding: 30px 28px 26px;
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+      }
+      .stat .n {
+        font-family: var(--serif);
+        font-size: 82px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: -0.03em;
+      }
+      .stat .t {
+        margin-top: 14px;
+        font-size: 12px;
+        color: var(--dim);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .stat .l {
+        margin-top: auto;
+        padding-top: 16px;
+        font-size: 15px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .note {
+        margin-top: 22px;
+        font-size: 15px;
+        color: var(--dim);
+      }
+      .rows {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .row {
+        display: flex;
+        gap: 18px;
+        align-items: baseline;
+      }
+      .dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        flex: none;
+        transform: translateY(-3px);
+      }
+      .row .h {
+        font-size: 23px;
+        font-weight: 650;
+      }
+      .row .s {
+        font-size: 15px;
+        color: var(--dim);
+        margin-top: 3px;
+      }
+      .cards {
+        display: flex;
+        gap: 22px;
+        width: 100%;
+      }
+      .c {
+        flex: 1;
+        background: var(--card);
+        border-radius: 14px;
+        padding: 26px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .c .ch {
+        font-size: 19px;
+        font-weight: 650;
+      }
+      .c .cb {
+        font-size: 15px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .cards.tall .c {
+        min-height: 232px;
+        justify-content: center;
+      }
+      .c .tag {
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+      .skyline {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 200px;
+        opacity: 0.75;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .slide > *:not(.skyline) {
+        position: relative;
+        z-index: 1;
+      }
+      .giant {
+        font-family: var(--serif);
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        line-height: 0.85;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 01 TITLE -->
+    <section class="slide smog" style="justify-content: center">
+      <div style="display: flex; gap: 10px; margin-bottom: 40px">
+        <span class="dot" style="background: var(--good)"></span>
+        <span class="dot" style="background: var(--mod)"></span>
+        <span class="dot" style="background: var(--poor)"></span>
+        <span class="dot" style="background: var(--bad)"></span>
+        <span class="dot" style="background: var(--vbad)"></span>
+        <span class="dot" style="background: var(--haz)"></span>
+      </div>
+      <h1 style="font-size: 96px">BreatheSafe</h1>
+      <p style="font-size: 25px; color: var(--muted); margin-top: 22px; max-width: 760px">
+        Personal air-quality intelligence, not a city-wide number.
+      </p>
+      <div style="margin-top: auto; font-size: 14px; color: var(--dim)">
+        Team RICR-HIM-1243 · Anirudh Sahu · Environment &amp; CleanTech
+      </div>
+      <div style="font-size: 13px; color: var(--good); margin-top: 8px">
+        hack-in-motion-ricr-him-1243-three.vercel.app
+      </div>
+      <svg class="skyline" viewBox="0 0 1280 300" preserveAspectRatio="none" height="300">
+        <defs>
+          <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f97316" stop-opacity="0.16" />
+            <stop offset="100%" stop-color="#0b0f0e" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="1280" height="300" fill="url(#haze)" />
+        <g fill="#151b19">
+          <rect x="20" y="150" width="70" height="150" /><rect
+            x="100"
+            y="196"
+            width="46"
+            height="104"
+          /><rect x="156" y="120" width="58" height="180" /><rect
+            x="224"
+            y="176"
+            width="80"
+            height="124"
+          /><rect x="314" y="96" width="52" height="204" /><rect
+            x="376"
+            y="164"
+            width="66"
+            height="136"
+          /><rect x="452" y="132" width="44" height="168" /><rect
+            x="506"
+            y="188"
+            width="74"
+            height="112"
+          /><rect x="590" y="108" width="60" height="192" /><rect
+            x="660"
+            y="170"
+            width="50"
+            height="130"
+          /><rect x="720" y="140" width="78" height="160" /><rect
+            x="808"
+            y="192"
+            width="54"
+            height="108"
+          /><rect x="872" y="124" width="64" height="176" /><rect
+            x="946"
+            y="180"
+            width="46"
+            height="120"
+          /><rect x="1002" y="152" width="72" height="148" /><rect
+            x="1084"
+            y="196"
+            width="52"
+            height="104"
+          /><rect x="1146" y="136" width="60" height="164" /><rect
+            x="1216"
+            y="184"
+            width="54"
+            height="116"
+          />
+        </g>
+      </svg>
+      <span class="num">01</span>
+    </section>
+
+    <!-- 02 PROBLEM -->
+    <section class="slide">
+      <span class="eyebrow" style="color: var(--bad)">The problem</span>
+      <h2>Air pollution is India's quietest emergency.</h2>
+      <div class="body" style="align-items: center">
+        <div class="stats">
+          <div class="stat">
+            <div class="n" style="color: var(--bad)">2M</div>
+            <div class="t">2023</div>
+            <div class="l">deaths in India, up 43% since 2000</div>
+          </div>
+          <div class="stat">
+            <div class="n" style="color: var(--poor)">10×</div>
+            <div class="t">186 vs 17 per 100,000</div>
+            <div class="l">the death rate of wealthy nations</div>
+          </div>
+          <div class="stat">
+            <div class="n" style="color: var(--mod)">75%</div>
+            <div class="t">Every single day</div>
+            <div class="l">of Indians breathe air above the WHO PM2.5 limit</div>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: flex-end; gap: 26px; margin-top: 20px">
+        <p class="note" style="flex: 1; margin: 0">
+          Nearly 9 in 10 of those deaths are non-communicable — heart disease, lung cancer,
+          dementia. Five states each passed 100,000.
+        </p>
+        <svg width="330" height="86" viewBox="0 0 330 86" style="flex: none">
+          <defs>
+            <linearGradient id="rise" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ef4444" stop-opacity="0.42" />
+              <stop offset="100%" stop-color="#ef4444" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <path d="M0 62 C 90 58, 150 44, 210 32 S 300 10, 330 6 L330 86 L0 86 Z" fill="url(#rise)" />
+          <path
+            d="M0 62 C 90 58, 150 44, 210 32 S 300 10, 330 6"
+            stroke="#ef4444"
+            stroke-width="2"
+            fill="none"
+          />
+          <circle cx="330" cy="6" r="3.5" fill="#ef4444" />
+          <text x="0" y="82" fill="#6b7280" font-size="10" font-family="Inter, Arial">2000</text>
+          <text x="300" y="82" fill="#6b7280" font-size="10" font-family="Inter, Arial">2023</text>
+        </svg>
+      </div>
+      <span class="src">Source: State of Global Air 2025 — Health Effects Institute &amp; IHME</span>
+      <span class="num">02</span>
+    </section>
+
+    <!-- 03 HUMAN COST -->
+    <section class="slide smog">
+      <span class="eyebrow" style="color: var(--poor)">The human cost</span>
+      <h2>It lands hardest on the people<br />least able to absorb it.</h2>
+      <div class="body" style="align-items: center">
+        <div class="stats">
+          <div class="stat">
+            <div class="n" style="color: var(--bad)">88M</div>
+            <div class="t">Asthma + COPD</div>
+            <div class="l">Indians for whom a bad-air hour is an inhaler, or an admission</div>
+          </div>
+          <div class="stat">
+            <div class="n" style="color: var(--poor)">6%</div>
+            <div class="t">of GDP, 2024</div>
+            <div class="l">$260bn in revenue and 1.3bn workdays, gone to PM2.5</div>
+          </div>
+          <div class="stat">
+            <div class="n" style="color: var(--haz)">488</div>
+            <div class="t">Delhi · Nov 2025</div>
+            <div class="l">24-hour AQI. Schools shut. A city told to stay indoors.</div>
+          </div>
+        </div>
+      </div>
+      <p class="note">India carries 43% of the world's asthma deaths.</p>
+      <span class="src"
+        >Sources: Lancet Respiratory Medicine 2024 · Clean Air Fund 2024 · CPCB / GRAP-III, Nov
+        2025</span
+      >
+      <span class="num">03</span>
+    </section>
+
+    <!-- 04 THE GAP -->
+    <section class="slide">
+      <span class="eyebrow" style="color: var(--poor)">The gap</span>
+      <h2>The data already exists.<br />It still isn't saving anyone.</h2>
+      <div class="body" style="align-items: center; gap: 40px">
+        <div style="flex: none; width: 430px">
+          <div class="giant" style="font-size: 210px; color: var(--poor)">154</div>
+          <div style="font-size: 15px; color: var(--dim); margin-top: 18px">
+            one reading · 2 pm · one city
+          </div>
+          <svg width="400" height="104" viewBox="0 0 400 104" style="margin-top: 22px">
+            <line x1="0" y1="46" x2="400" y2="46" stroke="#2b3733" stroke-dasharray="3 4" />
+            <path
+              d="M0 74 C 40 78, 60 84, 96 82 S 150 40, 196 26 S 250 18, 286 34 S 340 66, 400 72"
+              stroke="#f97316"
+              stroke-width="2.5"
+              fill="none"
+            />
+            <circle cx="196" cy="26" r="5" fill="#f97316" />
+            <text x="0" y="98" fill="#6b7280" font-size="10.5" font-family="Inter, Arial">6 am</text>
+            <text x="180" y="98" fill="#9ca3af" font-size="10.5" font-family="Inter, Arial">
+              2 pm
+            </text>
+            <text x="368" y="98" fill="#6b7280" font-size="10.5" font-family="Inter, Arial">
+              11 pm
+            </text>
+            <text x="330" y="42" fill="#4b5563" font-size="10.5" font-family="Inter, Arial">
+              daily avg
+            </text>
+          </svg>
+        </div>
+        <svg width="90" height="260" style="flex: none">
+          <path d="M0 130 C 45 130, 45 34, 90 34" stroke="#2b3733" stroke-width="1.5" fill="none" />
+          <path
+            d="M0 130 C 45 130, 45 130, 90 130"
+            stroke="#2b3733"
+            stroke-width="1.5"
+            fill="none"
+          />
+          <path
+            d="M0 130 C 45 130, 45 226, 90 226"
+            stroke="#2b3733"
+            stroke-width="1.5"
+            fill="none"
+          />
+        </svg>
+        <div class="rows" style="flex: 1; gap: 42px">
+          <div class="row">
+            <span class="dot" style="background: var(--good)"></span>
+            <div>
+              <div class="h">A runner</div>
+              <div class="s">gets the same advice</div>
+            </div>
+          </div>
+          <div class="row">
+            <span class="dot" style="background: var(--mod)"></span>
+            <div>
+              <div class="h">Someone with COPD</div>
+              <div class="s">gets the same advice</div>
+            </div>
+          </div>
+          <div class="row">
+            <span class="dot" style="background: var(--bad)"></span>
+            <div>
+              <div class="h">A seven-year-old with asthma</div>
+              <div class="s">gets the same advice</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="kicker">Nobody can act on a measurement.</p>
+      <span class="num">04</span>
+    </section>
+
+    <!-- 05 SOLUTION -->
+    <section class="slide clean">
+      <span class="eyebrow" style="color: var(--good)">The solution</span>
+      <h2>The same number.<br />Three different answers.</h2>
+      <div class="body" style="align-items: center; gap: 34px">
+        <div style="flex: none; width: 200px">
+          <div class="giant" style="font-size: 108px; color: var(--faint)">154</div>
+          <div style="font-size: 13.5px; color: var(--dim); margin-top: 14px; line-height: 1.5">
+            same city<br />same minute
+          </div>
+        </div>
+        <div style="flex: none; color: #374151; font-size: 34px">→</div>
+        <div class="cards tall">
+          <div class="c">
+            <span class="tag" style="color: var(--good)">Runner, healthy</span>
+            <div class="ch">Ease off the pace</div>
+            <div class="cb">Your clean-air window opens at 6 am.</div>
+          </div>
+          <div class="c">
+            <span class="tag" style="color: var(--mod)">COPD, age 68</span>
+            <div class="ch">Stay in today</div>
+            <div class="cb">N95 if you must step out. Windows closed.</div>
+          </div>
+          <div class="c">
+            <span class="tag" style="color: var(--bad)">Child with asthma</span>
+            <div class="ch">Skip outdoor sports</div>
+            <div class="cb">Inhaler within reach. Three cigarettes' worth today.</div>
+          </div>
+        </div>
+      </div>
+      <p class="kicker">Same data. Scored against who you actually are.</p>
+      <span class="num">05</span>
+    </section>
+
+    <!-- 06 BEYOND THE BRIEF -->
+    <section class="slide">
+      <span class="eyebrow" style="color: var(--good)">Beyond the brief</span>
+      <h2>Real hardware. Real push.<br />Not simulated.</h2>
+      <div class="body" style="align-items: center">
+        <div class="cards tall">
+          <div class="c" style="padding: 34px 30px; gap: 14px">
+            <span class="tag" style="color: var(--good)">Web Push · Service Worker · VAPID</span>
+            <div class="ch" style="font-size: 25px">It reaches your lock screen</div>
+            <div class="cb">
+              Fires with the tab closed — not an in-app toast. Four categories, on by default, each
+              one switchable off.
+            </div>
+          </div>
+          <div class="c" style="padding: 34px 30px; gap: 14px">
+            <span class="tag" style="color: var(--mod)">Web Bluetooth · GATT Heart Rate</span>
+            <div class="ch" style="font-size: 25px">It reads your actual heart rate</div>
+            <div class="cb">
+              The same standard profile chest straps broadcast. Live BPM replaces self-reported
+              activity in the dose math.
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="kicker" style="font-size: 22px; color: var(--muted)">
+        Native browser standards. No vendor SDK, no app store, nothing proprietary.
+      </p>
+      <span class="num">06</span>
+    </section>
+
+    <!-- 07 DEMO -->
+    <section class="slide">
+      <span class="eyebrow" style="color: var(--good)">Live demo</span>
+      <h2>Let's look at it live.</h2>
+      <div class="body" style="align-items: center; gap: 46px">
+        <div class="rows" style="flex: none; width: 470px; gap: 17px">
+          <div class="row">
+            <span class="dot" style="background: var(--good)"></span>
+            <div class="h" style="font-size: 19px">Search Delhi — live CPCB-scale data</div>
+          </div>
+          <div class="row">
+            <span class="dot" style="background: var(--good)"></span>
+            <div class="h" style="font-size: 19px">Exposure — cigarettes, dose, clean windows</div>
+          </div>
+          <div class="row">
+            <span class="dot" style="background: var(--mod)"></span>
+            <div class="h" style="font-size: 19px">Route planner — real roads, scored</div>
+          </div>
+          <div class="row">
+            <span class="dot" style="background: var(--mod)"></span>
+            <div class="h" style="font-size: 19px">AI assistant — live AQI per message</div>
+          </div>
+          <div class="row">
+            <span class="dot" style="background: var(--poor)"></span>
+            <div class="h" style="font-size: 19px">Community map — geo-indexed, push notified</div>
+          </div>
+          <div class="row">
+            <span class="dot" style="background: var(--poor)"></span>
+            <div class="h" style="font-size: 19px">Push settings — four categories, opt out</div>
+          </div>
+        </div>
+        <!--
+          Save the dashboard screenshot as docs/dashboard.png (same folder as this file).
+          object-position: top keeps the AQI ring and heatmap in frame — the screenshot is
+          taller than the panel, so the bottom is what gets cropped, not the hero content.
+        -->
+        <div
+          style="
+            flex: 1;
+            align-self: stretch;
+            border-radius: 14px;
+            background: var(--card);
+            overflow: hidden;
+          "
+        >
+          <img
+            src="dashboard.png"
+            alt="BreatheSafe dashboard showing Delhi at AQI 115"
+            style="width: 100%; height: 100%; object-fit: cover; object-position: top"
+          />
+        </div>
+      </div>
+      <span class="num">07</span>
+    </section>
+
+    <!-- 08 UNDER THE HOOD -->
+    <section class="slide">
+      <span class="eyebrow" style="color: var(--good)">Under the hood</span>
+      <h2>Deterministic health logic. One deploy.</h2>
+      <div class="body" style="flex-direction: column; justify-content: center; gap: 34px">
+        <div class="cards">
+          <div class="c" style="gap: 8px">
+            <span class="tag" style="color: var(--good)">01 · Live reading</span>
+            <div class="cb">Google Air Quality returns India's own CPCB index</div>
+          </div>
+          <div class="c" style="gap: 8px">
+            <span class="tag" style="color: var(--mod)">02 · Classification</span>
+            <div class="cb">Six EPA-style bands across 0–500, each with its own guidance</div>
+          </div>
+          <div class="c" style="gap: 8px">
+            <span class="tag" style="color: var(--poor)">03 · Personal overlay</span>
+            <div class="cb">Health profile shifts mask, exercise and window advice</div>
+          </div>
+          <div class="c" style="gap: 8px">
+            <span class="tag" style="color: var(--bad)">04 · Exposure math</span>
+            <div class="cb">Cigarette equivalence and inhaled dose, by breathing rate and age</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 22px; font-size: 14.5px; color: var(--muted); line-height: 1.55">
+          <div style="flex: 1">
+            <strong style="color: var(--fg)">Health guidance is not AI.</strong> An auditable rules
+            engine that can never hallucinate a mask recommendation.
+          </div>
+          <div style="flex: 1">
+            <strong style="color: var(--fg)">The chat assistant is.</strong> Llama 3.3 70B on Groq,
+            grounded on server-fetched live AQI.
+          </div>
+          <div style="flex: 1">
+            <strong style="color: var(--fg)">One Next.js deploy.</strong> ~20 API routes, userId
+            resolved server-side, MongoDB 2dsphere + 24h TTL.
+          </div>
+        </div>
+      </div>
+      <span class="num">08</span>
+    </section>
+
+    <!-- 09 IMPACT -->
+    <section class="slide clean">
+      <span class="eyebrow" style="color: var(--good)">Real-world impact</span>
+      <h2>Built to run at scale — not just to demo well.</h2>
+      <div class="body" style="align-items: center">
+        <div class="stats">
+          <div class="stat">
+            <div class="n" style="color: var(--good)">≈0</div>
+            <div class="t">Marginal cost</div>
+            <div class="l">per user on free tiers — a city's population before a funding round</div>
+          </div>
+          <div class="stat">
+            <div class="n" style="color: #7dd3fc">88M</div>
+            <div class="t">The wedge</div>
+            <div class="l">
+              the people a flat city number serves worst — and no mainstream app, including SAMEER,
+              personalises to them
+            </div>
+          </div>
+          <div class="stat">
+            <div class="n" style="color: var(--mod)">3</div>
+            <div class="t">What's next</div>
+            <div class="l">
+              cron ingestion · SpO2 over the same Bluetooth stack · school &amp; office fleet
+              accounts
+            </div>
+          </div>
+        </div>
+      </div>
+      <span class="num">09</span>
+    </section>
+
+    <!-- 10 CLOSE -->
+    <section class="slide clean" style="justify-content: center">
+      <h1 style="font-size: 68px; max-width: 1000px">
+        A number isn't a decision.<br />BreatheSafe turns it into one.
+      </h1>
+      <p style="font-size: 22px; color: var(--muted); margin-top: 30px">
+        Questions — technical or otherwise.
+      </p>
+      <div style="margin-top: auto; font-size: 14px; color: var(--dim)">
+        Anirudh Sahu ·
+        <span style="color: var(--good)">hack-in-motion-ricr-him-1243-three.vercel.app</span>
+      </div>
+      <svg class="skyline" viewBox="0 0 1280 300" preserveAspectRatio="none" height="300">
+        <defs>
+          <linearGradient id="dawn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#22c55e" stop-opacity="0.14" />
+            <stop offset="100%" stop-color="#0b0f0e" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="1280" height="300" fill="url(#dawn)" />
+        <g fill="#141c18">
+          <rect x="20" y="150" width="70" height="150" /><rect
+            x="100"
+            y="196"
+            width="46"
+            height="104"
+          /><rect x="156" y="120" width="58" height="180" /><rect
+            x="224"
+            y="176"
+            width="80"
+            height="124"
+          /><rect x="314" y="96" width="52" height="204" /><rect
+            x="376"
+            y="164"
+            width="66"
+            height="136"
+          /><rect x="452" y="132" width="44" height="168" /><rect
+            x="506"
+            y="188"
+            width="74"
+            height="112"
+          /><rect x="590" y="108" width="60" height="192" /><rect
+            x="660"
+            y="170"
+            width="50"
+            height="130"
+          /><rect x="720" y="140" width="78" height="160" /><rect
+            x="808"
+            y="192"
+            width="54"
+            height="108"
+          /><rect x="872" y="124" width="64" height="176" /><rect
+            x="946"
+            y="180"
+            width="46"
+            height="120"
+          /><rect x="1002" y="152" width="72" height="148" /><rect
+            x="1084"
+            y="196"
+            width="52"
+            height="104"
+          /><rect x="1146" y="136" width="60" height="164" /><rect
+            x="1216"
+            y="184"
+            width="54"
+            height="116"
+          />
+        </g>
+      </svg>
+      <span class="num">10</span>
+    </section>
+  </body>
+</html>
