@@ -10,7 +10,6 @@ import {
   Cell,
   RadarChart,
   Radar,
-  PolarGrid,
   PolarAngleAxis,
   Legend,
 } from "recharts";
@@ -111,7 +110,6 @@ export function PollutantRadarChart({ entries }: { entries: ComparisonEntry[] })
   return (
     <ResponsiveContainer key={chartKey} width="100%" height={280} debounce={1}>
       <RadarChart data={data} outerRadius="70%">
-        <PolarGrid className="stroke-border" />
         <PolarAngleAxis
           dataKey="pollutant"
           tick={{ fontSize: 11 }}
