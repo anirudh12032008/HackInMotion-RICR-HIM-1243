@@ -10,6 +10,7 @@ import { AQIGauge } from "@/components/aqi/AQIGauge";
 import { PollutantBreakdown } from "@/components/aqi/PollutantBreakdown";
 import { HealthGuidance } from "@/components/aqi/HealthGuidance";
 import { PollenWidget } from "@/components/aqi/PollenWidget";
+import { useTranslation } from "@/lib/i18n";
 import { ExposureInsights } from "@/components/aqi/ExposureInsights";
 import type { AqiResult } from "@/components/dashboard/QuickSearch";
 import type { UserHealthProfile } from "@/types/index";
@@ -24,6 +25,7 @@ const DEFAULT_PROFILE: UserHealthProfile = {
 
 export function AQICard({ result }: { result: AqiResult }) {
   const { data: session } = useSession();
+  const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -49,7 +51,7 @@ export function AQICard({ result }: { result: AqiResult }) {
       });
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error ?? "Failed to save location");
+        throw new Error(data.error ?? t("dashboard.saveFailed"));
       }
       setSaved(true);
       toast.success(`${result.city.name} saved to your locations`);
@@ -60,7 +62,7 @@ export function AQICard({ result }: { result: AqiResult }) {
       // on first page load.
       subscribeToPush().catch(() => {});
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save location");
+      toast.error(err instanceof Error ? err.message : t("dashboard.saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -72,7 +74,7 @@ export function AQICard({ result }: { result: AqiResult }) {
         <div>
           <CardTitle>{result.city.name}</CardTitle>
           <p className="text-xs text-muted-foreground">
-            Updated {new Date(result.updatedAt).toLocaleString()}
+            {t("dashboard.updated")} {new Date(result.updatedAt).toLocaleString()}
           </p>
         </div>
         <Button variant="outline" size="sm" onClick={saveLocation} disabled={saving || saved}>
@@ -84,7 +86,7 @@ export function AQICard({ result }: { result: AqiResult }) {
         <div>
           <AQIGauge aqi={result.aqi} />
           <p className="mt-5 border-t border-border pt-3 text-sm text-muted-foreground">
-            Dominant pollutant{" "}
+            {t("dashboard.dominantPollutant")}{" "}
             <span className="font-[family-name:var(--font-display)] font-medium text-foreground">
               {result.dominantPollutant?.toUpperCase()}
             </span>
@@ -105,7 +107,7 @@ export function AQICard({ result }: { result: AqiResult }) {
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-semibold">Pollutant breakdown</h3>
+          <h3 className="mb-3 text-sm font-semibold">{t("dashboard.pollutantBreakdown")}</h3>
           <PollutantBreakdown pollutants={result.pollutants} />
         </div>
 
@@ -113,7 +115,7 @@ export function AQICard({ result }: { result: AqiResult }) {
           <div className="rounded-lg border border-primary/20 bg-accent/50 p-4">
             <div className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-primary">
               <Sparkles className="h-3.5 w-3.5" />
-              From Google Air Quality
+              {t("dashboard.fromGoogle")}
             </div>
             <p className="text-sm">{recommendation.text}</p>
           </div>

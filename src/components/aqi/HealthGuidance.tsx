@@ -1,9 +1,13 @@
+"use client";
+
 import { ShieldAlert, Wind, Activity, DoorOpen } from "lucide-react";
 import { getHealthGuidance } from "@/lib/risk-engine";
+import { useTranslation } from "@/lib/i18n";
 import type { UserHealthProfile } from "@/types/index";
 
 export function HealthGuidance({ aqi, profile }: { aqi: number; profile: UserHealthProfile }) {
   const guidance = getHealthGuidance(aqi, profile);
+  const { t } = useTranslation();
 
   return (
     <div className="space-y-4">
@@ -13,14 +17,14 @@ export function HealthGuidance({ aqi, profile }: { aqi: number; profile: UserHea
         <div className="flex items-start gap-2 rounded-lg border p-3">
           <Activity className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
           <div>
-            <p className="text-xs font-semibold text-muted-foreground">Exercise</p>
+            <p className="text-xs font-semibold text-muted-foreground">{t("guidance.exercise")}</p>
             <p className="text-sm">{guidance.exerciseAdvice}</p>
           </div>
         </div>
         <div className="flex items-start gap-2 rounded-lg border p-3">
           <DoorOpen className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
           <div>
-            <p className="text-xs font-semibold text-muted-foreground">Windows</p>
+            <p className="text-xs font-semibold text-muted-foreground">{t("guidance.windows")}</p>
             <p className="text-sm">{guidance.windowAdvice}</p>
           </div>
         </div>
@@ -50,7 +54,9 @@ export function HealthGuidance({ aqi, profile }: { aqi: number; profile: UserHea
       )}
 
       <div>
-        <p className="mb-1.5 text-xs font-semibold text-muted-foreground">Recommendations</p>
+        <p className="mb-1.5 text-xs font-semibold text-muted-foreground">
+          {t("guidance.recommendations")}
+        </p>
         <ul className="space-y-1 text-sm">
           {guidance.recommendations.map((r, i) => (
             <li key={i} className="flex gap-2">
