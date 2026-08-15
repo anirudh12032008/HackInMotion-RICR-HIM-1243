@@ -55,6 +55,7 @@ BreatheSafe closes that last mile. It answers four questions the raw data does n
 <img width="914" height="837" alt="Screenshot 2026-08-14 at 6 00 38 PM" src="https://github.com/user-attachments/assets/50d7fbbb-084e-4181-8b67-63ce79203d3c" />
 <img width="1155" height="941" alt="Screenshot 2026-08-14 at 6 01 44 PM" src="https://github.com/user-attachments/assets/d3ac78bb-d5a6-425d-b2f1-73cf0b5ba94e" />
 <img width="1216" height="975" alt="Screenshot 2026-08-14 at 6 01 32 PM" src="https://github.com/user-attachments/assets/63e3140a-3b62-4a70-8527-929a9e4fbbce" />
+![ai chat](image.png)
 
 ## Feature tour
 
