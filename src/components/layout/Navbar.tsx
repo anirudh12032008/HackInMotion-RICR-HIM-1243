@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SidebarNav } from "@/components/layout/Sidebar";
+import { Logo } from "@/components/layout/Logo";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -85,7 +86,10 @@ export function Navbar() {
             <SidebarNav onNavigate={() => setOpen(false)} />
           </SheetContent>
         </Sheet>
-        <span className="text-sm font-medium text-muted-foreground lg:hidden">BreatheSafe</span>
+        <span className="flex items-center gap-2 text-sm font-medium text-muted-foreground lg:hidden">
+          <Logo className="h-5 w-5 text-[#22c55e]" />
+          BreatheSafe
+        </span>
       </div>
 
       <div className="flex items-center gap-2">

@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
 import { isAxiosError } from "axios";
 import { getPollenForecast, GooglePollenError } from "@/lib/google-pollen";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
+// Public alongside the other pre-login data routes, so it carries the same per-IP cap.
+// Proxies Google's paid Pollen API; nothing user-scoped is read or returned here.
 export async function GET(req: Request) {
+  if (!rateLimit(`pollen:${getClientIp(req)}`, 20, 60_000)) {
+    return NextResponse.json({ error: "Too many requests. Try again shortly." }, { status: 429 });
+  }
+
   const { searchParams } = new URL(req.url);
   const lat = Number(searchParams.get("lat"));
   const lng = Number(searchParams.get("lng"));

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, BarChart3, CloudSun, Route, Users, Bell, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n";
+import { Logo } from "@/components/layout/Logo";
 
 const links = [
   { href: "/dashboard", key: "nav.dashboard", icon: LayoutDashboard },
@@ -53,7 +54,7 @@ export function Sidebar() {
           href="/dashboard"
           className="flex items-center gap-2 text-lg font-bold tracking-tight"
         >
-          <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-[#22c55e]" />
+          <Logo className="h-6 w-6 text-[#22c55e]" />
           BreatheSafe
         </Link>
       </div>

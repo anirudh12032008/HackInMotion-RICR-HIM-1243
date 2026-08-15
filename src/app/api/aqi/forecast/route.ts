@@ -5,8 +5,15 @@ import {
   groupForecastByDay,
   GoogleAqiError,
 } from "@/lib/google-aqi";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
+// Same reasoning as /api/aqi/current: public so the pre-login demo works, capped per IP
+// because each call fans out to two paid Google endpoints (geocode + 48h forecast).
 export async function GET(req: Request) {
+  if (!rateLimit(`aqi-forecast:${getClientIp(req)}`, 20, 60_000)) {
+    return NextResponse.json({ error: "Too many requests. Try again shortly." }, { status: 429 });
+  }
+
   const { searchParams } = new URL(req.url);
   const city = searchParams.get("city");
 
